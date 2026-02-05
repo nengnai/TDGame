@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# 忽略 Unity Library 文件夹
+Library/** linguist-vendored
+Temp/** linguist-vendored
+*.meta linguist-vendored
+*.shader linguist-vendored
