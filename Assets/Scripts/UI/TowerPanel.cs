@@ -8,7 +8,8 @@ public class TowerPanel : MonoBehaviour
     public RectTransform panel;
 
     [Header("参数设置")]
-    public float 滑动动画时长,半隐藏时Y坐标,完全隐藏时Y坐标;
+    public float 滑动动画时长,半隐藏时Y坐标,完全隐藏时Y坐标; 
+    
     Vector2 显示时位置, 半隐藏时位置, 完全隐藏时位置,目标位置;
     Coroutine slideCoroutine;
 
