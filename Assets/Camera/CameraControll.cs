@@ -5,11 +5,7 @@ using UnityEngine.TextCore.Text;
 
 public class CameraControll : MonoBehaviour
 {
-    public float PositionX = 0;
-    public float PositionZ = 0;
-    public int RotationY = 0;
-    public float x = 0;
-    public float y = 0;
+    
     public float moveSpeed = 40f;
     public float duration = 0.3f;
                         
@@ -22,13 +18,7 @@ public class CameraControll : MonoBehaviour
 
     private float slowMode = 1;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKey(KeyCode.LeftShift))
@@ -39,30 +29,44 @@ public class CameraControll : MonoBehaviour
         {
             slowMode = 1f;
         }
+        //按shift减摄像头移动速度
 
-        Vector3 newPosition = transform.position;
+        Vector3 当前位置 = transform.position;
+        Vector3 方向 = Vector3.zero;
 
         if (Input.GetKey(KeyCode.W))
         {
-            newPosition += transform.forward * moveSpeed * slowMode * Time.deltaTime;
+            方向 += transform.forward;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            newPosition -= transform.forward * moveSpeed * slowMode * Time.deltaTime;
+            方向 += transform.forward * -1;
         }
         if (Input.GetKey(KeyCode.A))
         {
-            newPosition -= transform.right * moveSpeed * slowMode * Time.deltaTime;
+            方向 += transform.right * -1;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            newPosition += transform.right * moveSpeed * slowMode * Time.deltaTime;
+            方向 += transform.right;
         }
 
-        newPosition.x = Mathf.Clamp(newPosition.x, minX, maxX);
-        newPosition.z = Mathf.Clamp(newPosition.z, minZ, maxZ);
 
-        transform.position = newPosition;
+        if(方向 != Vector3.zero)
+        方向.Normalize();
+
+        Vector3 movement = 方向 * moveSpeed * slowMode * Time.deltaTime;
+
+        当前位置 += movement;
+
+        //向量叠加实现摄像头移动
+
+        当前位置.x = Mathf.Clamp(当前位置.x, minX, maxX);
+        当前位置.z = Mathf.Clamp(当前位置.z, minZ, maxZ);
+        //限制摄像头移动区域
+
+        transform.position = 当前位置;
+        //更新位置来达到摄像头移动的表现
 
 
 
@@ -74,6 +78,7 @@ public class CameraControll : MonoBehaviour
         {
             StartCoroutine(SmoothRotate(45f));
         }
+        //摄像头旋转按键
     
         System.Collections.IEnumerator SmoothRotate(float angle)
         {
@@ -95,7 +100,7 @@ public class CameraControll : MonoBehaviour
                 
             canRotate = true;
         }
-        //QE转向平滑动画
+        //QE转向平滑动画，看不懂先别管能跑就行
     }
 }
 
