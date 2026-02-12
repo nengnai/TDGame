@@ -5,9 +5,9 @@ using UnityEngine.TextCore.Text;
 
 public class CameraControll : MonoBehaviour
 {
-    
-    public float moveSpeed = 40f;
-    public float duration = 0.3f;
+    [Header("移动")]
+    public float moveSpeed;
+    public float duration;
                         
     
     public float minX;
@@ -18,7 +18,23 @@ public class CameraControll : MonoBehaviour
 
     private float slowMode = 1;
 
+    [Header("远近拉伸")]
+    public Transform camera1;
+    public float 默认高度;
+    public float 最低高度;
+    public float 最高高度;
+    public float 拉伸速度;
+    public float 最小角度;
+    public float 最大角度;
+    public float 动画时间;
+    private float 目标高度;
+    private float 当前高度角度;
 
+    void Start()
+    {
+        camera1.localPosition = new Vector3(camera1.localPosition.x, 500f, camera1.localPosition.z);
+        目标高度 = 默认高度;
+    }
     void Update()
     {
         if (Input.GetKey(KeyCode.LeftShift))
@@ -78,29 +94,57 @@ public class CameraControll : MonoBehaviour
         {
             StartCoroutine(SmoothRotate(45f));
         }
+
         //摄像头旋转按键
+
+        HandleZoom();
+        
     
-        System.Collections.IEnumerator SmoothRotate(float angle)
+    }
+
+    IEnumerator SmoothRotate(float angle)
+    {
+        if (!canRotate) yield break;
+                
+        canRotate = false;
+        float elapsed = 0f;
+        Vector3 startRot = transform.eulerAngles;
+        Vector3 endRot = startRot + new Vector3(0, angle, 0);
+                
+        while (elapsed < duration)
         {
-            if (!canRotate) yield break;
-                
-            canRotate = false;
-            float elapsed = 0f;
-            Vector3 startRot = transform.eulerAngles;
-            Vector3 endRot = startRot + new Vector3(0, angle, 0);
-                
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                float t = elapsed / duration;
-                float smoothT = t * t * (3f - 2f * t); 
-                transform.eulerAngles = Vector3.Lerp(startRot, endRot, smoothT);
-                yield return null;
-            }
-                
-            canRotate = true;
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            float smoothT = t * t * (3f - 2f * t); 
+            transform.eulerAngles = Vector3.Lerp(startRot, endRot, smoothT);
+            yield return null;
         }
-        //QE转向平滑动画，看不懂先别管能跑就行
+                
+        canRotate = true;
+    }
+    //QE转向平滑动画，看不懂先别管能跑就行
+
+    void HandleZoom()
+    {
+        float scroll = Input.mouseScrollDelta.y;
+
+        if (scroll != 0)
+        {
+            目标高度 -= scroll * 拉伸速度 * Time.deltaTime;
+            目标高度 = Mathf.Clamp(目标高度, 最低高度, 最高高度);
+        }
+
+        float currentHeight = camera1.localPosition.y;
+
+        float smoothHeight = Mathf.SmoothDamp(currentHeight, 目标高度, ref 当前高度角度, 动画时间);
+
+        camera1.localPosition = new Vector3(camera1.localPosition.x, smoothHeight, camera1.localPosition.z);
+
+        float percent = (smoothHeight - 最低高度)/(最高高度 - 最低高度);
+        float targetAngle = Mathf.Lerp(最小角度, 最大角度, percent);
+
+        camera1.localRotation = Quaternion.Euler(targetAngle, 0f, 0f);
+
     }
 }
 
