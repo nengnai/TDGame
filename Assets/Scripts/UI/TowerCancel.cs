@@ -1,27 +1,24 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class TowerCancel : MonoBehaviour
 {
+
+    public TowerPre1 塔投影管理器;
+    public GameObject 塔预制体;
     private Toggle toggle;
 
-    void Awake()
+    void Start()
     {
         toggle = GetComponent<Toggle>();
-
+        toggle.onValueChanged.AddListener(触发器变化);
     }
 
-    void Update()
+    void 触发器变化(bool isOn)
     {
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (toggle.isOn)
-            {
-                toggle.isOn = false;
-
-            }
-        }
+        塔投影管理器.选中塔(toggle, 塔预制体);
     }
 
 }

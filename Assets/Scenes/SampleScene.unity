@@ -3032,19 +3032,7 @@ MonoBehaviour:
   m_Group: {fileID: 422461794}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1901597762}
-        m_TargetAssemblyTypeName: TowerPre, Assembly-CSharp
-        m_MethodName: "\u9009\u4E2D\u5854"
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 269170483526529907, guid: 6238c239fc3b0af418059abd6abb0e71, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_IsOn: 0
 --- !u!114 &1483346526
 MonoBehaviour:
@@ -3058,6 +3046,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99ecc3ee757b8604c9a7ac1bcdb96666, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  "\u5854\u6295\u5F71\u7BA1\u7406\u5668": {fileID: 1901597764}
+  "\u5854\u9884\u5236\u4F53": {fileID: 269170483526529907, guid: 6238c239fc3b0af418059abd6abb0e71, type: 3}
 --- !u!1 &1524346548
 GameObject:
   m_ObjectHideFlags: 0
@@ -3603,19 +3593,7 @@ MonoBehaviour:
   m_Group: {fileID: 422461794}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1901597762}
-        m_TargetAssemblyTypeName: TowerPre, Assembly-CSharp
-        m_MethodName: "\u9009\u4E2D\u5854"
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 4818840373360240511, guid: 74d9f88ed16de3b49be04249bfbc790c, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_IsOn: 0
 --- !u!114 &1768227190
 MonoBehaviour:
@@ -3629,6 +3607,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99ecc3ee757b8604c9a7ac1bcdb96666, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  "\u5854\u6295\u5F71\u7BA1\u7406\u5668": {fileID: 1901597764}
+  "\u5854\u9884\u5236\u4F53": {fileID: 4818840373360240511, guid: 74d9f88ed16de3b49be04249bfbc790c, type: 3}
 --- !u!1 &1901597761
 GameObject:
   m_ObjectHideFlags: 0
@@ -3638,7 +3618,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1901597763}
-  - component: {fileID: 1901597762}
+  - component: {fileID: 1901597764}
   m_Layer: 0
   m_Name: TowerPre
   m_TagString: Untagged
@@ -3646,24 +3626,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1901597762
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1901597761}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17218745a0803d94a9ee629692eb9735, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  "\u5F53\u524D\u9884\u89C8": {fileID: 0}
-  cam: {fileID: 330585545}
-  "\u68C0\u6D4B\u5C42\u7EA7":
-    serializedVersion: 2
-    m_Bits: 96
-  "\u5E73\u6ED1\u8DDF\u968F\u901F\u5EA6": 25
 --- !u!4 &1901597763
 Transform:
   m_ObjectHideFlags: 0
@@ -3679,6 +3641,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 711782382}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1901597764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901597761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ab41489043db884cae1d4be2d61c39f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 330585545}
+  "\u68C0\u6D4B\u5C42\u7EA7":
+    serializedVersion: 2
+    m_Bits: 96
+  "\u5E73\u6ED1\u8DDF\u968F\u901F\u5EA6": 25
 --- !u!1 &1951228202
 GameObject:
   m_ObjectHideFlags: 0

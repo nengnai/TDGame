@@ -30,14 +30,18 @@ public class CameraControll : MonoBehaviour
     private float 目标高度;
     private float 当前高度角度;
 
+
     void Start()
     {
+
         float defaultHeight = 500f;
 
         camera1.localPosition = new Vector3(camera1.localPosition.x, defaultHeight, camera1.localPosition.z
     );
 
         目标高度 = defaultHeight;
+
+        当前高度角度 = 0f;
     }
     void Update()
     {
@@ -130,6 +134,7 @@ public class CameraControll : MonoBehaviour
 
     void HandleZoom()
     {
+        if(Time.frameCount < 60) return;
         float scroll = Input.mouseScrollDelta.y;
 
         if (scroll != 0)
