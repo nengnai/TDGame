@@ -32,8 +32,12 @@ public class CameraControll : MonoBehaviour
 
     void Start()
     {
-        camera1.localPosition = new Vector3(camera1.localPosition.x, 500f, camera1.localPosition.z);
-        目标高度 = 默认高度;
+        float defaultHeight = 500f;
+
+        camera1.localPosition = new Vector3(camera1.localPosition.x, defaultHeight, camera1.localPosition.z
+    );
+
+        目标高度 = defaultHeight;
     }
     void Update()
     {
