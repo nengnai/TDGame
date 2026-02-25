@@ -7,6 +7,7 @@ public class TowerCancel : MonoBehaviour
 {
 
     public TowerPre1 塔投影管理器;
+    public GameObject 投影预制体;
     public GameObject 塔预制体;
     private Toggle toggle;
 
@@ -18,7 +19,7 @@ public class TowerCancel : MonoBehaviour
 
     void 触发器变化(bool isOn)
     {
-        塔投影管理器.选中塔(toggle, 塔预制体);
+        塔投影管理器.选中塔(toggle, 投影预制体, 塔预制体);
     }
 
 }
