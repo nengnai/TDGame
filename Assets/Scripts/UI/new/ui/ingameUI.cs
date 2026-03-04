@@ -34,18 +34,14 @@ public class ingameUI : MonoBehaviour
         targetPos2 = towerPanelUItargetPos + new Vector2(718, 0);
         towerPanelButtonStartAngle = towerPanelButton.localEulerAngles;
         targetAngle = new Vector3(0f, 0f, 270f);
+
+        ResetPos = UItargetPos + new Vector2(0, -476);
     }
     public void ResetBattleUI()
     {
-        if (isUIMoved)
-        {
-            UI.anchoredPosition = UItargetPos + new Vector2(0, -476);
-        }
-        if (istowerPanelUIMoved)
-        {
-            towerPanelUI.anchoredPosition = towerPanelUItargetPos + new Vector2(718, 0);
-            towerPanelButton.localEulerAngles = towerPanelButtonStartAngle;
-        }
+        UI.anchoredPosition = ResetPos;
+        towerPanelUI.anchoredPosition = targetPos2;
+        towerPanelButton.localEulerAngles = towerPanelButtonStartAngle;
     }
     //将右下角UI和防御塔主UI【瞬间】隐藏
 
