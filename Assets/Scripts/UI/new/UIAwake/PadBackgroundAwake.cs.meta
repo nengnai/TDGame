@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 7325d4f49bece88428437789c4d1aa1c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - PadBackground: {fileID: 8734407398992102094, guid: 3ee344f62a696e0499f440d41d35a0a5, type: 3}
+  - canvasGroup: {fileID: 9196659524751852768, guid: 3ee344f62a696e0499f440d41d35a0a5, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

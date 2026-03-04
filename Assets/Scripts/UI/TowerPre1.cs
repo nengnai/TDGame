@@ -113,9 +113,10 @@ public class TowerPre1 : MonoBehaviour
                 Destroy(当前预览);
                 当前预览 = null;
 
+                当前激活的Toggle.isOn = false;
                 进入待机模式(false);
             }
-            //此处可添加放置逻辑
+            //放置逻辑
         }
     }
 

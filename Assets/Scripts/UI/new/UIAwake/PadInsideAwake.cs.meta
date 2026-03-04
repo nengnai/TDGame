@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: e7a9a3c52f2c4ed4cb944cd2b2cb3cef
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - PadInsideUI: {fileID: 4457935700289731698, guid: f10a53f667a20a447860b69d1458571b, type: 3}
+  - canvasGroup: {fileID: 1017829560914550903, guid: f10a53f667a20a447860b69d1458571b, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

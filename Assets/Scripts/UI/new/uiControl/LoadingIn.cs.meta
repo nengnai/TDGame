@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: b2816e2a973ae4d42841d4fcf82d5c50
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Pad: {fileID: 7247938916526057853, guid: c66696015eeb966458d2f69cc9042d19, type: 3}
+  - canvasGroup1: {fileID: 2677112498608727448, guid: c66696015eeb966458d2f69cc9042d19, type: 3}
+  - PadScreen: {fileID: 7857113919150147883, guid: f10a53f667a20a447860b69d1458571b, type: 3}
+  - canvasGroup2: {fileID: 1017829560914550903, guid: f10a53f667a20a447860b69d1458571b, type: 3}
+  - PadBackground: {fileID: 2375349229950790493, guid: 3ee344f62a696e0499f440d41d35a0a5, type: 3}
+  - canvasGroup3: {fileID: 9196659524751852768, guid: 3ee344f62a696e0499f440d41d35a0a5, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
