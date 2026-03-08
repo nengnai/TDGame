@@ -1,7 +1,6 @@
 using System.Collections;
-using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
+using UnityEngine.EventSystems;
 
 public class CameraControll : MonoBehaviour
 {
@@ -134,10 +133,15 @@ public class CameraControll : MonoBehaviour
 
     void HandleZoom()
     {
+        
+
         if(Time.frameCount < 60) return;
+
+        bool isPointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(); //检测鼠标是否在UI上
+
         float scroll = Input.mouseScrollDelta.y;
 
-        if (scroll != 0)
+        if (scroll != 0 && !isPointerOverUI)
         {
             目标高度 -= scroll * 拉伸速度 * Time.deltaTime;
             目标高度 = Mathf.Clamp(目标高度, 最低高度, 最高高度);
@@ -158,4 +162,5 @@ public class CameraControll : MonoBehaviour
 }
 
     
+//if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 

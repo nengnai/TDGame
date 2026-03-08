@@ -19,7 +19,7 @@ public class LoadingOut : MonoBehaviour
     public PadbackgroundControl padbackgroundControl;
     public PadscreenControl padscreenControl;
     public PadInsideMove padInsideMove;
-    public ingameUI ingameUI;
+    public IngameUINEW ingameUINEW;
 
     public void SetPadScreenUI(GameObject UI)
     {
@@ -60,7 +60,7 @@ public class LoadingOut : MonoBehaviour
     {
         yield return ButtonOut();
         //按钮消失
-        ingameUI.ResetBattleUI();
+        ingameUINEW.ResetAllUI();
         //重置对局内游戏UI
         yield return StartCoroutine(LoadFadeOut());
         //UI三大件消失
@@ -72,9 +72,8 @@ public class LoadingOut : MonoBehaviour
         //摧毁平板三UI和按钮UI
         yield return StartCoroutine(blackScreenUI.FadeOut(1f, 0f)); //开启黑屏
         //加过场动画 如果有的话
-        yield return new WaitForSecondsRealtime(1f);
-        yield return StartCoroutine(ingameUI.uiHiddenShow(1f));
-        yield return StartCoroutine(ingameUI.towerPanelUIShow(0.5f));
+        //yield return new WaitForSecondsRealtime(1f);
+        yield return StartCoroutine(ingameUINEW.BeginingUI());
         //游戏内主UI初始化后出现
     }
 

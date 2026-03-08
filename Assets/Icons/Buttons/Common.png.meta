@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -206,6 +206,160 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Common_0
+      rect:
+        serializedVersion: 2
+        x: 1875
+        y: 915
+        width: 88
+        height: 106
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14ae25c1e3e9a5b40a948942d87c5fc2
+      internalID: 752736774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Common_1
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 563
+        width: 89
+        height: 123
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d803acd187afb6548955de3a3c682186
+      internalID: -1787642494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Common_2
+      rect:
+        serializedVersion: 2
+        x: 1452
+        y: 793
+        width: 146
+        height: 106
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 231c7d4abccb3e64ab0fdfc2b9d2b446
+      internalID: 2077482768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Common_3
+      rect:
+        serializedVersion: 2
+        x: 1993
+        y: 1580
+        width: 49
+        height: 76
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 608fa8d545754e1499a80462724df813
+      internalID: -1891917080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Common_4
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 1575
+        width: 67
+        height: 60
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 280ead9bacbf4c74cb8ac76576a13783
+      internalID: 387078875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Common_5
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 1552
+        width: 48
+        height: 62
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a1f827d4747d0b46af1e0da6594f726
+      internalID: 2144010822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Common_6
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 1518
+        width: 65
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c89f1b7a411341d43b4abb25ffabf513
+      internalID: 1363556448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -225,6 +379,13 @@ TextureImporter:
       Button_3: -1687466365
       Button_4: 516983564
       Button_5: 2001576722
+      Common_0: 752736774
+      Common_1: -1787642494
+      Common_2: 2077482768
+      Common_3: -1891917080
+      Common_4: 387078875
+      Common_5: 2144010822
+      Common_6: 1363556448
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
