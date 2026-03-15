@@ -617,7 +617,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: aaafd7b54129879449063d3f3751c35c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5b5b5eb33eaadf043a4d785aecd087a9, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4102,9 +4102,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxDistance: 500
   layerMask:
-    serializedVersion: 2
     m_Bits: 232
   rtsControl: {fileID: 1444399631}
+  SavedItem: {fileID: 0}
+  SavedItem_1: {fileID: 0}
+  radius: 1
 --- !u!114 &1105228579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5071,6 +5073,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraRay: {fileID: 1105228578}
+  maxDistance: 0
+  layerMask:
+    m_Bits: 0
 --- !u!114 &1444399632
 MonoBehaviour:
   m_ObjectHideFlags: 0

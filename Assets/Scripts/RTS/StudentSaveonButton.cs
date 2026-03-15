@@ -42,10 +42,10 @@ public class StudentSaveonButton : MonoBehaviour, IPointerClickHandler
                 {
                     currentNumber ++;
 
-                    var theStudent = spawnedStudent.GetComponentInChildren<CharacterState>();
+                    var theStudent = spawnedStudent.GetComponentInChildren<CharacterStat>();
                     if(theStudent != null)
                     {
-                        theStudent.Button = this;
+                        theStudent.button = this;
                     }
 
 

@@ -11,10 +11,8 @@ public class CharacterStat : MonoBehaviour
     public int maxHealth;
     int currentHealth;
     public int damage;
-    
-    
-    
-    
+    public float firingSpeed;
+    public float reloadSpeed;
     
     
     
@@ -47,7 +45,7 @@ public class CharacterStat : MonoBehaviour
     [Header("其他")]
     NavMeshAgent agent;
     Transform agentTransform;
-    StudentSaveonButton button;
+    public StudentSaveonButton button;
 
 
 
@@ -87,7 +85,7 @@ public class CharacterStat : MonoBehaviour
             agent.speed = moveSpeed;
             agent.acceleration = Acceleration;
             agent.angularSpeed = AngularSpeed;
-            agent.stoppingDistance = StoppingDistance;
+            if(agent.autoBraking != false) agent.stoppingDistance = StoppingDistance;
 
             //覆盖掉原agent参数
 

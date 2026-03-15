@@ -1,61 +1,107 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class RTSControl : MonoBehaviour
+public class RTScontrol : MonoBehaviour
 {
-    public CameraRay cameraRay;
-    float maxDistance;
-    LayerMask layerMask;
+    
+    CharacterStat selectedUnit;
 
 
-    void Awake()
-    {
-        maxDistance = cameraRay.maxDistance;
-        layerMask = cameraRay.layerMask;
-    }
-    public bool TryGetRaycastHit(out RaycastHit hit)
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        return Physics.Raycast(ray, out hit, maxDistance, layerMask);
-    }
-    //返回会把射中的物体各项数据传回参数里 其他地方调用这个的时候会直接获得所有命中物体的参数
     
 
-    public void SwitchtheRing(CharacterState targetCharacter, bool switcher)
+
+
+
+    public void DeselectUnit()
     {
-        if(targetCharacter == null) return;
-        if(targetCharacter.Ring != null)
+        if(selectedUnit == null) return;
+        SwitchControlable(selectedUnit, false);
+        SwitchtheRing(selectedUnit, false);
+        selectedUnit = null;
+    }
+    //取消选中
+
+
+    public void SelectUnit(CharacterStat targetCharacter)
+    {
+        if(selectedUnit != null) DeselectUnit();
+        selectedUnit = targetCharacter;
+        SwitchControlable(targetCharacter, true);
+        SwitchtheRing(targetCharacter, true);
+    }
+    //选中单位
+
+
+
+    public void MoveUnit(Vector3 location)
+    {
+        if(selectedUnit == null) return;
+        NavMeshAgent agent = selectedUnit.GetComponentInParent<NavMeshAgent>();
+        if(agent != null) agent.SetDestination(location);
+    }
+    //移动单位
+
+
+
+    public void AttackTarget(GameObject target)
+    {
+        if(selectedUnit == null) return;
+        NavMeshAgent agent = selectedUnit.GetComponentInParent<NavMeshAgent>();
+        if(agent != null) agent.SetDestination(target.transform.position);  //暂且只做移动到敌人位置 之后换成攻击
+    }
+    //攻击敌人
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    void SwitchControlable(CharacterStat characterStat, bool Switch)
+    {
+        characterStat.isSelected = Switch;
+        if(Switch)
         {
-            targetCharacter.Ring.SetActive(switcher);
+            Debug.Log("已选中" + characterStat.characterName);
         }
         else
         {
-            Debug.Log("缺少选中光圈特效");
+            Debug.Log("已取消选中" + characterStat.characterName);
         }
     }
-    //开关选中光圈
 
-    public void SwitchControlable(CharacterState targetCharacter, bool switcher)
+
+    void SwitchtheRing(CharacterStat characterStat, bool Switch)
     {
-        if(targetCharacter == null) return;
-        targetCharacter.isSelected = switcher;
+        if(characterStat.Ring != null)
+        {
+             characterStat.Ring.SetActive(Switch);
+        }
+        else
+        {
+            Debug.Log(characterStat.characterName + "缺少选中圆环");
+        }
     }
-    //开关是否被选中
-
-    public void MoveCommand(NavMeshAgent agent, CharacterState targetCharacter, Vector3 Location)
-    {
-        if(targetCharacter == null || !targetCharacter.isSelected) return;
-        agent.isStopped = false;
-        agent.SetDestination(Location);               //选择目的地，让navmesh的AI去做移动
-    }
-    //移动指令
-
-
-
-
-
-
-
 
 
 
