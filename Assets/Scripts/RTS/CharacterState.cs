@@ -5,21 +5,24 @@ public class CharacterState : MonoBehaviour
 {   
     [Header("选中光圈")]
     public GameObject Ring; //角色脚下的光圈 （用于提示被选中）
+
     bool FirstTime = false; //生成后让光圈灭掉 毕竟生成的时候是未选中状态
     [Header("单位属性")]
     public bool isAlly = false; //判断是否是盟友 （盟友不可控）
     public bool isSelected = false; //判断是否被选中 （只有被选中的时候才可以进行移动攻击等指令）
     [Header("单位数值")]
     public float Maxhealth; //最大生命值
-    float CurrentHealth;  //当前生命中
+    float CurrentHealth;  //当前生命值
     public float Damage;  //伤害
     public float MoveSpeed;  //移速
     public float Acceleration;  //加速度
     public float AngularSpeed;  //转身速度
     public float StoppingDistance;  //停止距离（加点 不然会因为距离问题互相顶
     public float PreparationTime; //技能CD什么的
+    [Header("其他")]
     private NavMeshAgent agent;
     private Transform agentTransform;
+    public StudentSaveonButton Button; 
 
 
 
@@ -45,11 +48,29 @@ public class CharacterState : MonoBehaviour
 
 
         agentTransform = agent.transform; //转向的玩意似乎 别动
+
+
+
+
+        CurrentHealth = Maxhealth;
     }
+
+
+    void OnDestroy()
+    {
+        if(Button != null)
+        {
+            Button.studentGotkrilled();
+        }
+    }
+
+
 
 
     void Update()
     {
+        
+
         if(agent == null) return; //单位死亡后停止更新
 
         Vector3 currentVelocity = agent.velocity;
@@ -73,7 +94,7 @@ public class CharacterState : MonoBehaviour
             agent.acceleration = Acceleration;
             agent.angularSpeed = AngularSpeed;
             agent.stoppingDistance = StoppingDistance;
-            //覆盖掉原agent参数
+            
 
             agent.updateRotation = false; //解限转角速度
         }

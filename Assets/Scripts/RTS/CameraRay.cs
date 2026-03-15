@@ -20,17 +20,17 @@ public class CameraRay : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+            if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return; //如果点到UI层就无事发生
 
             if(!rtsControl.TryGetRaycastHit(out RaycastHit hit) || hit.collider == null) return;
             //无论左右键先射一发 如果没设中任何东西就无事发生 或者射中的物体没有碰撞箱也无事发生
 
-            if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Tower")) //射中的东西是Tower层的话
+            if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Tower")) //选中的是Tower层的话
             {
 
                 SavedItem = hit.collider.gameObject;
 
-                if (SavedItem_1 == SavedItem) //如果选中的塔跟已经被选中的东西是同一个
+                if (SavedItem_1 == SavedItem) //如果选中的塔跟已经被选中的东西是同一个，做取消选择
                 {
                     CharacterState towerState = SavedItem_1.GetComponentInChildren<CharacterState>();
                     rtsControl.SwitchtheRing(towerState, false);
@@ -40,7 +40,7 @@ public class CameraRay : MonoBehaviour
                 else //如果选中的塔跟被选中的东西不是同一个
                 {
 
-                    if(SavedItem_1 != null) //如果之前已经选中了东西
+                    if(SavedItem_1 != null) //如果之前已经选中了东西，则取消他的选择改为选择当前这个
                     {
                         CharacterState towerState_1 = SavedItem_1.GetComponentInChildren<CharacterState>();
                         rtsControl.SwitchtheRing(towerState_1, false);
@@ -59,7 +59,7 @@ public class CameraRay : MonoBehaviour
             if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
             {
 
-                if(SavedItem_1 == null || SavedItem_1.layer != LayerMask.NameToLayer("Tower"))return; //如果当时啥也没选中 或者当前已选中的东西不是塔 则无事发生
+                if(SavedItem_1 == null)return; //如果当时啥也没选中无事发生
                 bool canReach = NavMesh.SamplePosition(hit.point, out navHit, radius, NavMesh.AllAreas);    //检查一下那个地点能不能站
                 if(canReach)
                 {

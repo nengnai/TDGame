@@ -46,7 +46,18 @@ public class RTSControl : MonoBehaviour
     {
         if(targetCharacter == null || !targetCharacter.isSelected) return;
         agent.isStopped = false;
-        agent.SetDestination(Location);
+        agent.SetDestination(Location);               //选择目的地，让navmesh的AI去做移动
     }
     //移动指令
+
+
+
+
+
+
+
+
+
+
+
 }
