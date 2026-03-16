@@ -7,7 +7,7 @@ public class CharacterAnimControl : MonoBehaviour
     
 
 
-
+    public float bestSpeed;
     Animator animator;
     NavMeshAgent agent;
 
@@ -30,7 +30,7 @@ public class CharacterAnimControl : MonoBehaviour
         float CurrentMovespeed = agent.velocity.magnitude;
         animator.SetBool("isWalking", CurrentMovespeed> 0.1f);
 
-        float Multiple = CurrentMovespeed / agent.speed;
+        float Multiple = CurrentMovespeed / bestSpeed;
 
         
         animator.SetFloat("RunAnimSpeed", Multiple);

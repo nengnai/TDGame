@@ -113,6 +113,10 @@ public class CharacterStat : MonoBehaviour
         Vector3 currentVelocity = agent.velocity;
 
 
+
+
+
+
         if(currentVelocity.sqrMagnitude > 0.01f)
         {
             currentVelocity.y = 0f;
@@ -121,6 +125,15 @@ public class CharacterStat : MonoBehaviour
         }
         //说是取消使用navmesh的转向 改用平滑解限转向
         //不太懂 感觉先别乱动 等吃性能的时候再说
+        
+        if(currentVelocity.sqrMagnitude == 0f)
+        {
+            agent.avoidancePriority = 0;
+        }
+        else
+        {
+            agent.avoidancePriority = 50;
+        }
     
     }
 

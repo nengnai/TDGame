@@ -137,8 +137,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1893136200517634612}
-  - component: {fileID: 6564703746309802079}
-  - component: {fileID: 5776763294994956132}
   m_Layer: 7
   m_Name: Misaki_Original_Mesh
   m_TagString: Untagged
@@ -164,40 +162,6 @@ Transform:
   - {fileID: 4977658150976955739}
   m_Father: {fileID: 9071075211978403058}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &6564703746309802079
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 430424508204508981}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: c404fc4450e64c24f996a53986c8fec5, type: 3}
-  m_Controller: {fileID: 9100000, guid: 890299bfe2ab82f40a56420b93564c6d, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5776763294994956132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 430424508204508981}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10b38a403f8f7a340b3b99b89442dcaf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &528478167347548397
 GameObject:
   m_ObjectHideFlags: 0
@@ -2814,6 +2778,8 @@ GameObject:
   - component: {fileID: 1464130947383392974}
   - component: {fileID: 2829423895423474241}
   - component: {fileID: 2658695750796848362}
+  - component: {fileID: 588740396253285685}
+  - component: {fileID: 7653731128986676676}
   m_Layer: 7
   m_Name: Misaki
   m_TagString: Untagged
@@ -2870,7 +2836,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 4447496654030906678}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.35
+  m_Radius: 0.25
   m_Speed: 3
   m_Acceleration: 50
   avoidancePriority: 50
@@ -2883,6 +2849,127 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!120 &588740396253285685
+LineRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4447496654030906678}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 0.1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 0.16316223, g: 1, b: 0, a: 1}
+      key1: {r: 0.16316223, g: 1, b: 0, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 9059
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 0
+    textureMode: 0
+    textureScale: {x: 1, y: 1}
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_MaskInteraction: 0
+  m_UseWorldSpace: 1
+  m_Loop: 0
+  m_ApplyActiveColorSpace: 1
+--- !u!114 &7653731128986676676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4447496654030906678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d276f9ae7ad71f45ad530cb0bf7cc56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lineOffsetY: 0.1
+  updateInterval: 0.1
 --- !u!1 &4611885106925162988
 GameObject:
   m_ObjectHideFlags: 0
@@ -3868,7 +3955,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6580282854770443158
 Transform:
   m_ObjectHideFlags: 0
@@ -3905,8 +3992,8 @@ MonoBehaviour:
   m_UVBias: {x: 0, y: 0}
   m_DecalLayerMask: 1
   m_ScaleMode: 0
-  m_Offset: {x: 0, y: 0, z: 0.5}
-  m_Size: {x: 0.75, y: 0.75, z: 1}
+  m_Offset: {x: 0, y: 0, z: 0.25}
+  m_Size: {x: 0.75, y: 0.75, z: 0.5}
   m_FadeFactor: 1
 --- !u!1 &6415390031038072835
 GameObject:
@@ -5100,6 +5187,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9071075211978403058}
   - component: {fileID: 936209525999012440}
+  - component: {fileID: 3981257871839049544}
+  - component: {fileID: 2831124254686846388}
   m_Layer: 7
   m_Name: Misaki
   m_TagString: Untagged
@@ -5139,14 +5228,51 @@ MonoBehaviour:
   characterName: Misaki
   maxHealth: 250
   damage: 250
+  firingSpeed: 0
+  reloadSpeed: 0
   isAlly: 0
-  moveSpeed: 1.5
-  Acceleration: 10
+  moveSpeed: 2
+  Acceleration: 100
   AngularSpeed: 1000
   StoppingDistance: 0
   SkillCD: 0
   isSelected: 0
   button: {fileID: 0}
+--- !u!95 &3981257871839049544
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8521959007712361931}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: c404fc4450e64c24f996a53986c8fec5, type: 3}
+  m_Controller: {fileID: 9100000, guid: 890299bfe2ab82f40a56420b93564c6d, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2831124254686846388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8521959007712361931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10b38a403f8f7a340b3b99b89442dcaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bestSpeed: 1.8
 --- !u!1 &8535190502969727453
 GameObject:
   m_ObjectHideFlags: 0

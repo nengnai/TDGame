@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6bcb32397c2dbb43b4ec323c8926031, type: 3}
+  m_Name: Reisa
+  m_EditorClassIdentifier: 
+  studentName: Reisa
+  trainingTime: 1
+  student: {fileID: 7390429608089020740, guid: 308c6d1e52e5c434388e3d8083030b73, type: 3}
+  currentNumber: 0
+  isMaxed: 1
