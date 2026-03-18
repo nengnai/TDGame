@@ -1702,7 +1702,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.22
+  m_Intensity: 0.16
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2570,7 +2570,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1901597763}
-  - {fileID: 1567894162}
   - {fileID: 2117907684}
   - {fileID: 1444399630}
   m_Father: {fileID: 0}
@@ -3215,7 +3214,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 880258573}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2816e2a973ae4d42841d4fcf82d5c50, type: 3}
   m_Name: 
@@ -5816,64 +5815,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameObject: {fileID: 1548814304}
---- !u!1 &1567894160
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1567894162}
-  - component: {fileID: 1567894161}
-  m_Layer: 0
-  m_Name: LoadingScreen
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1567894161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1567894160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2816e2a973ae4d42841d4fcf82d5c50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Pad: {fileID: 7247938916526057853, guid: c66696015eeb966458d2f69cc9042d19, type: 3}
-  canvasGroup1: {fileID: 2677112498608727448, guid: c66696015eeb966458d2f69cc9042d19, type: 3}
-  PadScreen: {fileID: 7857113919150147883, guid: f10a53f667a20a447860b69d1458571b, type: 3}
-  canvasGroup2: {fileID: 1017829560914550903, guid: f10a53f667a20a447860b69d1458571b, type: 3}
-  PadBackground: {fileID: 2375349229950790493, guid: 3ee344f62a696e0499f440d41d35a0a5, type: 3}
-  canvasGroup3: {fileID: 9196659524751852768, guid: 3ee344f62a696e0499f440d41d35a0a5, type: 3}
-  canvas: {fileID: 1410639480}
-  ButtonUI: {fileID: 0}
-  canvasGroup4: {fileID: 0}
-  AronaButton: {fileID: 0}
-  padbackgroundControl: {fileID: 0}
-  padInsideMove: {fileID: 0}
-  padscreenControl: {fileID: 0}
-  LoadingOut: {fileID: 0}
---- !u!4 &1567894162
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1567894160}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 711782382}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1612748135
 GameObject:
   m_ObjectHideFlags: 0
@@ -6360,7 +6301,7 @@ GameObject:
   - component: {fileID: 1776153051}
   - component: {fileID: 1776153050}
   m_Layer: 0
-  m_Name: TraningSystem
+  m_Name: TrainingSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
