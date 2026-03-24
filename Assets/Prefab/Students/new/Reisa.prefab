@@ -1921,7 +1921,6 @@ GameObject:
   - component: {fileID: 586335824943980102}
   - component: {fileID: 2018495414269513169}
   - component: {fileID: 1500571168061655156}
-  - component: {fileID: 7895711420860567378}
   m_Layer: 7
   m_Name: Reisa
   m_TagString: Untagged
@@ -1959,23 +1958,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Ring: {fileID: 6385830475311106359}
   characterName: Reisa
-  maxHealth: 250
-  currentHealth: 0
-  isDead: 0
-  isInvincible: 0
+  maxHealth: 300
+  currentHealth: 300
+  destroiedTime: 0
   damage: 250
   range: 0
+  firingWindup: 0
   firingInterval: 0
   reloadTime: 0
   fullAmmo: 0
   currentAmmo: 0
   isAlly: 0
+  isUndestroied: 0
+  isMoving: 0
+  isShooting: 0
+  isDead: 0
+  isInvincible: 0
+  isStunned: 0
+  isMarked: 0
+  isFacingTarget: 0
   moveSpeed: 2
   Acceleration: 100
   AngularSpeed: 1000
   StoppingDistance: 0
   SkillCD: 0
   isSelected: 0
+  collider: {fileID: 8352223401782226718}
+  thisUnit: {fileID: 5602586202193243231}
   button: {fileID: 0}
 --- !u!95 &1500571168061655156
 Animator:
@@ -1999,24 +2008,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7895711420860567378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3370610444367269198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10b38a403f8f7a340b3b99b89442dcaf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterStat: {fileID: 0}
-  characterCombat: {fileID: 0}
-  bestSpeed: 1.8
-  reloadSpeed: 0
-  firingSpeed: 0
-  actualWindUpTime: 0
 --- !u!1 &3446073873716591731
 GameObject:
   m_ObjectHideFlags: 0

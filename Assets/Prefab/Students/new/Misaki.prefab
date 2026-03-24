@@ -5288,6 +5288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e32ad67a003cd944a7c4454f7f4fb13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainObject: {fileID: 1464130947383392974}
   agent: {fileID: 2658695750796848362}
   stat: {fileID: 936209525999012440}
   TargetMask:

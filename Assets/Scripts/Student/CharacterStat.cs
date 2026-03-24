@@ -125,7 +125,7 @@ public class CharacterStat : MonoBehaviour
     {
         if(agent == null) return; //单位死亡后停止更新
 
-        if(currentHealth <= 0f)
+        if(currentHealth <= 0f && !isDead)
         {
             isDead = true;
             agent.ResetPath();
@@ -142,13 +142,20 @@ public class CharacterStat : MonoBehaviour
                 }
                 else
                 {
-                    Destroy(thisUnit);
+                    Destroy(thisUnit.gameObject);
                 }
             }
         }
 
 
-
+        if (isShooting)
+        {
+            agent.isStopped = true;
+        }
+        else
+        {
+            agent.isStopped = false;
+        }
 
 
 

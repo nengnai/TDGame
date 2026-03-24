@@ -13,7 +13,7 @@ public enum ActionType
 }
 public class CharacterAnimControl : MonoBehaviour
 {
-    
+    public Transform MainObject;
     public NavMeshAgent agent;
     public CharacterStat stat;
     public LayerMask TargetMask;
@@ -99,6 +99,7 @@ public class CharacterAnimControl : MonoBehaviour
     {
         currentAction = ActionType.Idle;
         MoveEndTimer = AttackTimer = AttackWindupTimer = AttackWinddownTimer = ReloadTimer = StunTimer = 0f;
+        
     }
 
 
@@ -124,6 +125,7 @@ public class CharacterAnimControl : MonoBehaviour
         {
             FaceTarget();
         }
+        
 
 
 
@@ -146,10 +148,15 @@ public class CharacterAnimControl : MonoBehaviour
         if (stat.isStunned)                                 //眩晕优先级最高
         {
             SwitchTo(ActionType.Stun);
+            return;
         }
 
         
-        if(stat.isMoving && !stat.isStunned && currentAction != ActionType.Move && !stat.isShooting) SwitchTo(ActionType.Move, currentAction);
+        if(stat.isMoving && !stat.isStunned && currentAction != ActionType.Move && !stat.isShooting)
+        {
+            SwitchTo(ActionType.Move, currentAction);
+            return;
+        }
 
 
 
@@ -235,7 +242,7 @@ public class CharacterAnimControl : MonoBehaviour
 
         
             
-        if(stat.currentAmmo == 0)                        //立刻检查弹药是否为0 是的话就换弹 不执行下面的
+        if(stat.currentAmmo <= 0)                        //立刻检查弹药是否为0 是的话就换弹 不执行下面的
         {
             SwitchTo(ActionType.Reload, ActionType.Idle);
             return;
@@ -288,7 +295,7 @@ public class CharacterAnimControl : MonoBehaviour
     void UpdateMove()                          //应该只需要检测一下有没有到目的地
     {
         
-        if (!agent.hasPath)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             SwitchTo(ActionType.Idle, ActionType.Move);
             animator.CrossFade(Anim_MoveEnd, 0.1f);
@@ -302,61 +309,54 @@ public class CharacterAnimControl : MonoBehaviour
 
     void UpdateAttack()
     {
+        
         if(AttackWindupTimer > 0f)
         {
             AttackWindupTimer -= Time.deltaTime;
+            return;
         }
-        else
+        
+        
+        if(stat.currentAmmo <= 0 && !stat.isShooting)
         {
-            Shootcheck:
-            if(stat.currentAmmo == 0)
+            
+            SwitchTo(ActionType.Reload, ActionType.Attack);
+            Debug.Log("战斗中换弹");
+            return;
+        }
+
+        if(currentTarget == null || TargetStat == null || TargetStat.isDead || isTargetRunaway)
+        {
+
+            stat.isShooting = false;
+            stat.isFacingTarget = false;
+
+            currentTarget = null;
+            TargetStat = null;
+
+            TryFindTarget();
+
+            if(currentTarget == null)
             {
-                SwitchTo(ActionType.Reload, ActionType.Attack);
+                SwitchTo(ActionType.Idle, ActionType.Attack);
                 return;
             }
+        }
+        
+        AttackTimer -= Time.deltaTime;
+        
+        bool Shooting = AttackTimer > 0f;
 
-            if(currentTarget != null && TargetStat != null && !TargetStat.isDead && !isTargetRunaway)
+        if (AttackTimer <= 0f)
+        {
+            if(stat.currentAmmo > 0)
             {
                 Shoot();
-                if(AttackTimer <= 0f)
-                {
-                    stat.isShooting = false;
-                    if(currentTarget != null && !TargetStat.isDead && !isTargetRunaway)
-                    {
-                        AttackTimer = stat.firingInterval;
-                        goto Shootcheck;
-                    }
-                    else
-                    {
-                        TryFindTarget();
-                        if(currentTarget != null)
-                        {
-                            AttackTimer = stat.firingInterval;
-                            goto Shootcheck;
-                        }
-                        else
-                        {
-                            SwitchTo(ActionType.Idle, ActionType.Attack);
-                            return;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                TryFindTarget();
-                if(currentTarget != null)
-                {
-                    AttackTimer = stat.firingInterval;
-                    goto Shootcheck;
-                }
-                else
-                {
-                    SwitchTo(ActionType.Idle, ActionType.Attack);
-                    return;
-                }
+                AttackTimer = stat.firingInterval;
+                Shooting = true;
             }
         }
+        stat.isShooting = Shooting;
     }
 
 
@@ -413,6 +413,17 @@ public class CharacterAnimControl : MonoBehaviour
 
     void SwitchTo(ActionType actionType, ActionType? lastType = null)
     {
+        
+        if(lastType == ActionType.Attack)
+        {
+            stat.isShooting = false;
+            stat.isFacingTarget = false;
+
+            
+        }
+
+
+
         if(currentAction == actionType) return;
         lastAction = lastType ?? currentAction;
         currentAction = actionType;
@@ -425,6 +436,7 @@ public class CharacterAnimControl : MonoBehaviour
             break; 
 
             case ActionType.Idle:
+            stat.isShooting = false;
             stat.isFacingTarget = false;
             detectTime = 0f;
             AmmoCheckTimer = AmmoCheckDur;
@@ -450,6 +462,7 @@ public class CharacterAnimControl : MonoBehaviour
             break;
 
             case ActionType.Reload:                       //重置换弹动画倒计时
+            stat.isShooting = false;
             stat.isFacingTarget = false;
             animator.CrossFade(Anim_Reloading, 0.1f);
             ReloadTimer = stat.reloadTime;
@@ -459,7 +472,7 @@ public class CharacterAnimControl : MonoBehaviour
             stat.isFacingTarget = true;
             animator.CrossFade(Anim_AttackStart, 0.1f);
             AttackWindupTimer = Attack_WindUp;
-            AttackTimer = stat.firingInterval;
+            AttackTimer = 0f;
             break;
         }
     }       
@@ -468,18 +481,14 @@ public class CharacterAnimControl : MonoBehaviour
 
     void Shoot()
     {
-        stat.isShooting = true;
-        if(AttackTimer >= stat.firingInterval)
-        {
-            if(agent.hasPath)  agent.ResetPath();
-            animator.CrossFade(Anim_Attacking, 0.01f);
-            AttacktheTarget();
-        }
+        if(currentTarget == null) return;
+        
+        if(agent.hasPath) agent.ResetPath();
 
-        if(AttackTimer > 0f)
-        {
-            AttackTimer -= Time.deltaTime;
-        }
+        animator.CrossFade(Anim_Attacking, 0.05f);
+
+        AttacktheTarget();
+        stat.currentAmmo -= 1;
     }
 
 
@@ -552,12 +561,14 @@ public class CharacterAnimControl : MonoBehaviour
     {
         if(currentTarget != null && TargetStat != null)
         {
+            if(TargetStat.isDead) return;
+
             TargetStat.currentHealth -= stat.damage;
+            
             if (TargetStat.isDead)
             {
                 currentTarget = null;
                 TargetStat = null;
-                return;
             }
         }
     }
@@ -567,12 +578,15 @@ public class CharacterAnimControl : MonoBehaviour
 
     void FaceTarget()
     {
-        Vector3 direction = (currentTarget.position - transform.position).normalized;
-        direction.y = 0;
-        if(direction != Vector3.zero)
+        if(currentTarget != null)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+            Vector3 direction = (currentTarget.position - MainObject.position).normalized;
+            direction.y = 0;
+            if(direction != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                MainObject.rotation = Quaternion.Slerp(MainObject.rotation, targetRotation, turnSpeed * Time.deltaTime);
+            }
         }
     }
 
