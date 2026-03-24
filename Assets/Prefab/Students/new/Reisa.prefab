@@ -1960,9 +1960,15 @@ MonoBehaviour:
   Ring: {fileID: 6385830475311106359}
   characterName: Reisa
   maxHealth: 250
+  currentHealth: 0
+  isDead: 0
+  isInvincible: 0
   damage: 250
-  firingSpeed: 0
-  reloadSpeed: 0
+  range: 0
+  firingInterval: 0
+  reloadTime: 0
+  fullAmmo: 0
+  currentAmmo: 0
   isAlly: 0
   moveSpeed: 2
   Acceleration: 100
@@ -2005,7 +2011,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10b38a403f8f7a340b3b99b89442dcaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterStat: {fileID: 0}
+  characterCombat: {fileID: 0}
   bestSpeed: 1.8
+  reloadSpeed: 0
+  firingSpeed: 0
+  actualWindUpTime: 0
 --- !u!1 &3446073873716591731
 GameObject:
   m_ObjectHideFlags: 0
@@ -4326,7 +4337,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.2857151
         inSlope: 0
         outSlope: 0
         tangentMode: 0

@@ -9,19 +9,30 @@ public class CharacterStat : MonoBehaviour
     [Header("基础数据")]
     public string characterName;
     public int maxHealth;
-    int currentHealth;
+    public int currentHealth;
+    public float destroiedTime;
+    
     public int damage;
-    public float firingSpeed;
-    public float reloadSpeed;
-    
-    
+    public float range;
+    public float firingWindup;                //射击前摇瞄准 比如制导导弹需要提前瞄准一段时间才能发射
+    public float firingInterval;              //射击后的延迟时间 也就是两个子弹发射之间的耗时 同时也是射击动画播放的时长
+    public float reloadTime;
+    public int fullAmmo;    
+    public int currentAmmo;
     
     
     
     public bool isAlly;
+    public bool isUndestroied;
 
-
-
+    [Header("状态")]
+    public bool isMoving;
+    public bool isShooting;
+    public bool isDead;
+    public bool isInvincible;              //无敌状态
+    public bool isStunned;                 //是否被眩晕
+    public bool isMarked;                  //是否被标记集火
+    public bool isFacingTarget;             
 
 
 
@@ -45,6 +56,8 @@ public class CharacterStat : MonoBehaviour
     [Header("其他")]
     NavMeshAgent agent;
     Transform agentTransform;
+    public new Collider collider;
+    public Transform thisUnit;
     public StudentSaveonButton button;
 
 
@@ -55,6 +68,8 @@ public class CharacterStat : MonoBehaviour
     void Awake()
     {
         isSelected = false;
+        isDead = false;
+        currentAmmo = fullAmmo;
     }
 
 
@@ -110,11 +125,42 @@ public class CharacterStat : MonoBehaviour
     {
         if(agent == null) return; //单位死亡后停止更新
 
+        if(currentHealth <= 0f)
+        {
+            isDead = true;
+            agent.ResetPath();
+            collider.enabled = false;
+            if(destroiedTime > 0)
+            {
+                destroiedTime -= Time.deltaTime;
+            }
+            else
+            {
+                if (isUndestroied)
+                {
+                    return;
+                }
+                else
+                {
+                    Destroy(thisUnit);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Vector3 currentVelocity = agent.velocity;
-
-
-
-
 
 
         if(currentVelocity.sqrMagnitude > 0.01f)

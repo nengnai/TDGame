@@ -2905,7 +2905,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.29591772
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5188,7 +5188,7 @@ GameObject:
   - component: {fileID: 9071075211978403058}
   - component: {fileID: 936209525999012440}
   - component: {fileID: 3981257871839049544}
-  - component: {fileID: 2831124254686846388}
+  - component: {fileID: 5521058887520584178}
   m_Layer: 7
   m_Name: Misaki
   m_TagString: Untagged
@@ -5227,16 +5227,32 @@ MonoBehaviour:
   Ring: {fileID: 6389832130846415251}
   characterName: Misaki
   maxHealth: 250
+  currentHealth: 0
+  destroiedTime: 0
   damage: 250
-  firingSpeed: 0
-  reloadSpeed: 0
+  range: 10
+  firingWindup: 0
+  firingInterval: 1.2
+  reloadTime: 3
+  fullAmmo: 1
+  currentAmmo: 1
   isAlly: 0
+  isUndestroied: 0
+  isMoving: 0
+  isShooting: 0
+  isDead: 0
+  isInvincible: 0
+  isStunned: 0
+  isMarked: 0
+  isFacingTarget: 0
   moveSpeed: 2
   Acceleration: 100
   AngularSpeed: 1000
   StoppingDistance: 0
   SkillCD: 0
   isSelected: 0
+  collider: {fileID: 2829423895423474241}
+  thisUnit: {fileID: 1464130947383392974}
   button: {fileID: 0}
 --- !u!95 &3981257871839049544
 Animator:
@@ -5260,7 +5276,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2831124254686846388
+--- !u!114 &5521058887520584178
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5269,10 +5285,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 8521959007712361931}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10b38a403f8f7a340b3b99b89442dcaf, type: 3}
+  m_Script: {fileID: 11500000, guid: 8e32ad67a003cd944a7c4454f7f4fb13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bestSpeed: 1.8
+  agent: {fileID: 2658695750796848362}
+  stat: {fileID: 936209525999012440}
+  TargetMask:
+    serializedVersion: 2
+    m_Bits: 3072
+  turnSpeed: 10
+  detectDur: 0.25
+  AmmoCheckDur: 3
+  animator: {fileID: 3981257871839049544}
+  MoveEnd: 2
+  Attack_WindUp: 1
+  Attack_WindDown: 0.6
+  Reloading: 3
+  StunDur: 0
+  MoveSpeed: 1.8
 --- !u!1 &8535190502969727453
 GameObject:
   m_ObjectHideFlags: 0
