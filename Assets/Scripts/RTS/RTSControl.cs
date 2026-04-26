@@ -1,11 +1,12 @@
+using Pathfinding;
 using UnityEngine;
-using UnityEngine.AI;
+
 
 public class RTScontrol : MonoBehaviour
 {
     
     CharacterStat selectedUnit;
-
+    FollowerEntity AI;
 
     
 
@@ -36,8 +37,10 @@ public class RTScontrol : MonoBehaviour
     public void MoveUnit(Vector3 location)
     {
         if(selectedUnit == null) return;
-        NavMeshAgent agent = selectedUnit.GetComponentInParent<NavMeshAgent>();
-        if(agent != null) agent.SetDestination(location);
+        /*NavMeshAgent agent = selectedUnit.GetComponentInParent<NavMeshAgent>();
+        if(agent != null) agent.SetDestination(location); */
+        AI = selectedUnit.GetComponentInParent<FollowerEntity>();
+        if(AI != null) AI.destination = location;
     }
     //移动单位
 
@@ -46,8 +49,7 @@ public class RTScontrol : MonoBehaviour
     public void AttackTarget(GameObject target)
     {
         if(selectedUnit == null) return;
-        NavMeshAgent agent = selectedUnit.GetComponentInParent<NavMeshAgent>();
-        if(agent != null) agent.SetDestination(target.transform.position);  //暂且只做移动到敌人位置 之后换成攻击
+        
     }
     //攻击敌人
 

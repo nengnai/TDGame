@@ -1,6 +1,27 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+
+public enum ShootingType
+{
+    Fullauto,
+    Burst,
+    Bolt
+}
+
+public enum AttackType
+{
+    Normal,
+    Pierce
+}
+
+public enum ArmorType
+{
+    Light,
+    Heavy
+}
+
+
 public class CharacterStat : MonoBehaviour
 {
     public GameObject Ring;
@@ -14,27 +35,39 @@ public class CharacterStat : MonoBehaviour
     
     public int damage;
     public float range;
-    public float firingWindup;                //射击前摇瞄准 比如制导导弹需要提前瞄准一段时间才能发射
-    public float firingInterval;              //射击后的延迟时间 也就是两个子弹发射之间的耗时 同时也是射击动画播放的时长
-    public float reloadTime;
+    public float firingWindup;                //射击前摇瞄准 比如制导导弹需要提前瞄准一段时间才能发射 如果不需要就不填写
+    public float firingDelay;                 //如果是爆发连射模式就给个数值
     public int fullAmmo;    
     public int currentAmmo;
+
+    public int burstTime;                      //如果是爆发射击模式 一次爆发射出的弹药量
+
+    [Header("动画时长")]
+    public float AttackStartTime;
+    public float AttackTime;
+    public float AttackEndTime;
+    public float ReloadTime;
+    public float IdleReloadTime;
     
-    
-    
-    public bool isAlly;
-    public bool isUndestroied;
+    public bool isAlly;                       //是否是队友
+    public bool isUndestroied;                //倒地时是否可被摧毁（复活技能用的）
+    public ShootingType shootingType;
+    public AttackType attackType;
+    public ArmorType armorType;
 
     [Header("状态")]
     public bool isMoving;
+    public bool isIdling;
+    public bool isReloading;
     public bool isShooting;
     public bool isDead;
     public bool isInvincible;              //无敌状态
     public bool isStunned;                 //是否被眩晕
     public bool isMarked;                  //是否被标记集火
-    public bool isFacingTarget;             
+    public bool isFacingTarget;            
 
-
+    [Header("AI逻辑")]
+    public bool HasIdleReloadAnim;           //待机换弹的时候是否有专属动画
 
     
     
@@ -65,130 +98,8 @@ public class CharacterStat : MonoBehaviour
 
 
 
-    void Awake()
-    {
-        isSelected = false;
-        isDead = false;
-        currentAmmo = fullAmmo;
-    }
 
 
-    void Start()
-    {
-        agent = GetComponentInParent<NavMeshAgent>();
-        UpdateStatsToAgent();
-
-
-        agentTransform = agent.transform;
-
-
-        currentHealth = maxHealth;
-    }
-
-
-
-
-
-
-
-
-
-    void UpdateStatsToAgent()
-    {
-        if(agent != null)
-        {
-            agent.speed = moveSpeed;
-            agent.acceleration = Acceleration;
-            agent.angularSpeed = AngularSpeed;
-            if(agent.autoBraking != false) agent.stoppingDistance = StoppingDistance;
-
-            //覆盖掉原agent参数
-
-
-            agent.updateRotation = false;    //解限转角速度
-        }
-    }
-
-    
-    public void UpdateSpeed(float newSpeed)
-    {
-        moveSpeed = newSpeed;
-        UpdateStatsToAgent();
-    }
-
-
-
-
-
-
-    void Update()
-    {
-        if(agent == null) return; //单位死亡后停止更新
-
-        if(currentHealth <= 0f && !isDead)
-        {
-            isDead = true;
-            agent.ResetPath();
-            collider.enabled = false;
-            if(destroiedTime > 0)
-            {
-                destroiedTime -= Time.deltaTime;
-            }
-            else
-            {
-                if (isUndestroied)
-                {
-                    return;
-                }
-                else
-                {
-                    Destroy(thisUnit.gameObject);
-                }
-            }
-        }
-
-
-        if (isShooting)
-        {
-            agent.isStopped = true;
-        }
-        else
-        {
-            agent.isStopped = false;
-        }
-
-
-
-
-
-
-
-
-
-
-
-        Vector3 currentVelocity = agent.velocity;
-
-
-        if(currentVelocity.sqrMagnitude > 0.01f)
-        {
-            currentVelocity.y = 0f;
-            Quaternion targetRotation = Quaternion.LookRotation(currentVelocity);
-            agentTransform.rotation = Quaternion.RotateTowards(agentTransform.rotation, targetRotation, AngularSpeed * Time.deltaTime);
-        }
-        //说是取消使用navmesh的转向 改用平滑解限转向
-        //不太懂 感觉先别乱动 等吃性能的时候再说
-        
-        if(currentVelocity.sqrMagnitude == 0f)
-        {
-            agent.avoidancePriority = 0;
-        }
-        else
-        {
-            agent.avoidancePriority = 50;
-        }
-    
-    }
 
 
 

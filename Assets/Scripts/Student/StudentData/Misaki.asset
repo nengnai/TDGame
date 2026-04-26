@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   studentName: Misaki
   trainingTime: 2
-  student: {fileID: 4447496654030906678, guid: ddc7c73f492f67044818992fb717c00c, type: 3}
+  student: {fileID: 1422403285069577096, guid: ddc7c73f492f67044818992fb717c00c, type: 3}
   currentNumber: 0
-  isMaxed: 1
+  isMaxed: 0

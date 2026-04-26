@@ -101,7 +101,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -268,7 +268,7 @@ ModelImporter:
       takeName: Misaki_Original_Normal_Idle
       internalID: -3403831055557180726
       firstFrame: 0
-      lastFrame: 146
+      lastFrame: 48
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -326,7 +326,7 @@ ModelImporter:
       takeName: Misaki_Original_Normal_Reload
       internalID: 260612246522761260
       firstFrame: 0
-      lastFrame: 146
+      lastFrame: 90
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -355,7 +355,7 @@ ModelImporter:
       takeName: Misaki_Original_Normal_Attack_Delay
       internalID: 57755757145509275
       firstFrame: 0
-      lastFrame: 146
+      lastFrame: 90
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -529,7 +529,7 @@ ModelImporter:
       takeName: Misaki_Original_Normal_Attack_Start
       internalID: -3260574911703356554
       firstFrame: 0
-      lastFrame: 295
+      lastFrame: 33
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -761,7 +761,7 @@ ModelImporter:
       takeName: Misaki_Original_Normal_Attack_End
       internalID: -9166899848476321320
       firstFrame: 0
-      lastFrame: 295
+      lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
