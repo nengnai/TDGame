@@ -48,6 +48,7 @@ public class CharacterStat : MonoBehaviour
     public float AttackEndTime;
     public float ReloadTime;
     public float IdleReloadTime;
+    public float boltTime;
     
     public bool isAlly;                       //是否是队友
     public bool isUndestroied;                //倒地时是否可被摧毁（复活技能用的）
@@ -87,11 +88,8 @@ public class CharacterStat : MonoBehaviour
 
 
     [Header("其他")]
-    NavMeshAgent agent;
-    Transform agentTransform;
-    public new Collider collider;
-    public Transform thisUnit;
-    public StudentSaveonButton button;
+    public LayerMask targetMask;
+    [HideInInspector] public StudentSaveonButton button;
 
 
 

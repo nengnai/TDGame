@@ -181,7 +181,7 @@ ModelImporter:
       takeName: Misaki_Original_Normal_Attack_Ing
       internalID: -58725671250909503
       firstFrame: 0
-      lastFrame: 146
+      lastFrame: 36
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -616,7 +616,7 @@ ModelImporter:
       takeName: Misaki_Original_Vital_Death
       internalID: 1690869673596261739
       firstFrame: 0
-      lastFrame: 295
+      lastFrame: 150
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
