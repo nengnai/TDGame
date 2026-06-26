@@ -61,6 +61,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs" />
+    <Compile Include="Assets\Behavior Designer\Editor\ExternalBehaviorTreeInspector.cs" />
+    <Compile Include="Assets\Behavior Designer\Editor\Object Drawers\StackedActionDrawer.cs" />
+    <Compile Include="Assets\Behavior Designer\Editor\BehaviorTreeInspector.cs" />
+    <Compile Include="Assets\Behavior Designer\Editor\Object Drawers\StackedConditionalDrawer.cs" />
+    <Compile Include="Assets\Behavior Designer\Editor\Object Drawers\FloatSliderDrawer.cs" />
+    <Compile Include="Assets\Behavior Designer\Editor\Object Drawers\IntSliderDrawer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Behavior Designer\Editor\BehaviorDesigner.Editor.dll" />
+    <None Include="Assets\Behavior Designer\Editor\GridShader.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -595,6 +605,10 @@
       <HintPath>Library\PackageCache\com.unity.visualscripting@6279e2b7c485\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="BehaviorDesigner.Runtime">
+      <HintPath>Assets\Behavior Designer\Runtime\BehaviorDesigner.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>Library\PackageCache\com.unity.visualscripting@6279e2b7c485\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
       <Private>False</Private>
@@ -605,6 +619,10 @@
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@12999e356c23\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BehaviorDesigner.Editor">
+      <HintPath>Assets\Behavior Designer\Editor\BehaviorDesigner.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">

@@ -12,4 +12,6 @@ public class States
     public static readonly MoveState Move = new MoveState();
     public static readonly StunState Stun = new StunState();
     public static readonly DeadState Dead = new DeadState();
+    public static readonly SkillState Skill = new SkillState();
+    public static readonly PassiveSkillState PassiveSkill = new PassiveSkillState();
 }

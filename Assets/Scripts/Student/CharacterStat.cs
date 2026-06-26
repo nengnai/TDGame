@@ -22,6 +22,7 @@ public enum ArmorType
 }
 
 
+
 public class CharacterStat : MonoBehaviour
 {
     public GameObject Ring;
@@ -48,6 +49,7 @@ public class CharacterStat : MonoBehaviour
     public float AttackEndTime;
     public float ReloadTime;
     public float IdleReloadTime;
+    public float SkillTime, PassiveSkillTime;
     public float boltTime;
     
     public bool isAlly;                       //是否是队友
@@ -61,14 +63,17 @@ public class CharacterStat : MonoBehaviour
     public bool isIdling;
     public bool isReloading;
     public bool isShooting;
+    public bool isSkilling;
+    public bool isPassiveSkilling;
     public bool isDead;
     public bool isInvincible;              //无敌状态
     public bool isStunned;                 //是否被眩晕
     public bool isMarked;                  //是否被标记集火
-    public bool isFacingTarget;            
+    public bool isFacingTarget;
 
     [Header("AI逻辑")]
     public bool HasIdleReloadAnim;           //待机换弹的时候是否有专属动画
+    public bool HasPassiveSkill;             //是否有被动技能
 
     
     

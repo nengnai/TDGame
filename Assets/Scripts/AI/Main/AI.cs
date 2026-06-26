@@ -17,9 +17,34 @@ public class AI : MonoBehaviour
     [Header("状态相关")]
     IState currentState;
 
+
+    [HideInInspector] public IState idleState;
+    [HideInInspector] public IState moveState;
+    [HideInInspector] public IState attackStartState;
+    [HideInInspector] public IState attackState;
+    [HideInInspector] public IState attackEndState;
+    [HideInInspector] public IState reloadState;
+    [HideInInspector] public IState idleReloadState;
+    [HideInInspector] public IState passiveSkillState;
+    [HideInInspector] public IState skillState;
+    [HideInInspector] public IState stunState;
+    [HideInInspector] public IState deadState;
+
     void Awake()
     {
         shootingFunction = new ShootingFunction();
+
+        idleState = States.Idle;
+        moveState = States.Move;
+        attackStartState = States.attackStart;
+        attackState = States.Attack;
+        attackEndState = States.attackEnd;
+        reloadState = States.Reload;
+        idleReloadState = States.IdleReload;
+        passiveSkillState = States.PassiveSkill;
+        skillState = States.Skill;
+        stunState = States.Stun;
+        deadState = States.Dead;
     }
 
     void Start()
@@ -33,6 +58,9 @@ public class AI : MonoBehaviour
         
         firingDelayTimer = stat.firingDelay;
         burstCount = stat.burstTime;
+
+
+        
     }
 
     public void ChangeState(IState TargetState)
@@ -62,10 +90,14 @@ public class AI : MonoBehaviour
         }
 
 
+
         if (stat.isStunned && currentState != States.Stun)
         {
             ChangeState(States.Stun);
         }
+
+
+
   
 
         if(PathAI.hasPath && !PathAI.reachedDestination && currentState != States.Stun)
@@ -90,6 +122,7 @@ public class AI : MonoBehaviour
     [Header("计时器")]
     public float detectTime;
     [HideInInspector] public float attackStartTime, attackTime, boltTime, attackEndTime, reloadTime, idleReloadTime, stunTime;
+    [HideInInspector] public float skillTimer, passiveSkillTimer;
     [HideInInspector] public float detectTimer;               //索敌检测间隔
     [HideInInspector] public float attackStartTimer;
     [HideInInspector] public float attackTimer;               //开火用时（其实就是相当于攻击间隔）
