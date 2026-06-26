@@ -35,8 +35,7 @@ public class CameraControll : MonoBehaviour
 
         float defaultHeight = 500f;
 
-        camera1.localPosition = new Vector3(camera1.localPosition.x, defaultHeight, camera1.localPosition.z
-    );
+        camera1.localPosition = new Vector3(camera1.localPosition.x, defaultHeight, camera1.localPosition.z);
 
         目标高度 = defaultHeight;
 
@@ -137,7 +136,7 @@ public class CameraControll : MonoBehaviour
 
         if(Time.frameCount < 60) return;
 
-        bool isPointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(); //检测鼠标是否在UI上
+        bool isPointerOverUI = EventSystem.current && EventSystem.current.IsPointerOverGameObject(); //检测鼠标是否在UI上
 
         float scroll = Input.mouseScrollDelta.y;
 
