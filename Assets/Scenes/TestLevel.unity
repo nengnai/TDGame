@@ -3160,6 +3160,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 711782382}
+  - component: {fileID: 711782383}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3185,6 +3186,18 @@ Transform:
   - {fileID: 1444399630}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &711782383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 711782380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba0f647934d7ce14eac4729427cd823b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &748843040
 GameObject:
   m_ObjectHideFlags: 0
@@ -6869,7 +6882,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: -15}
+  m_AnchoredPosition: {x: 0, y: -14.999939}
   m_SizeDelta: {x: 0, y: 29.85498}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1508452886
@@ -7411,8 +7424,8 @@ MonoBehaviour:
   ShiftSpeedRate: 0.5
   DistanceSpeed: 50
   SpringArm: {fileID: 569765212}
-  bCanMove: 1
-  bCanZoom: 1
+  CanMove: 1
+  CanZoom: 1
 --- !u!1001 &1660231088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9118,7 +9131,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 25.900146, y: -149.59998}
+  m_AnchoredPosition: {x: 25.899902, y: -149.59998}
   m_SizeDelta: {x: 50, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1966265998
