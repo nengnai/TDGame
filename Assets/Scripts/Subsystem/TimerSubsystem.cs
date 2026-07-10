@@ -1,37 +1,39 @@
+// 
+
 using System;
 using System.Collections.Generic;
+using TDGameLibrary;
 using UnityEngine;
 
-public class FTimerData
-{
-    public int Index;
-    public float CostTime;
-    public bool IsLoop;
-    public bool IsUnscaledTime;
-    public Action CallBack; 
-}
-
-
-public struct FTimer
-{
-    public double FadedTimer;
-    public FTimerHandle TimerHandle;
-
-}
 
 public struct FTimerHandle
 {
     public uint TimerHandle;
-
 }
 
-public class FTimerMain : MonoBehaviour
+public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
 {
+    public class FTimerData
+    {
+        public int Index;
+        public float CostTime;
+        public bool IsLoop;
+        public bool IsUnscaledTime;
+        public Action CallBack; 
+    }
+    
+    public struct FTimer
+    {
+        public double FadedTimer;
+        public FTimerHandle TimerHandle;
+    }
+    
+    
     private List<FTimer> TimerList = new List<FTimer>();
     private Dictionary<FTimerHandle, FTimerData> TimerDict = new Dictionary<FTimerHandle, FTimerData>();
     protected uint ID = 0;
-
-
+    
+    
     void Update()
     {
         if(TimerList.Count == 0) return;
@@ -52,13 +54,8 @@ public class FTimerMain : MonoBehaviour
             }
         }
     }
-
-
-
-
-
-
-
+    
+    
     public bool AddTimer(float CostTime, bool IsLoop, bool IsUnscaledTime, Action CallBack)
     {
 
@@ -88,8 +85,8 @@ public class FTimerMain : MonoBehaviour
 
         return true;
     }
-
-
+    
+    
     public void RemoveTimer(FTimerHandle Handle)
     {
         if(!TimerDict.ContainsKey(Handle)) return;
@@ -104,28 +101,19 @@ public class FTimerMain : MonoBehaviour
 
         TimerDict.Remove(Handle);
     }
-
-
-
-
-
-
-
+    
+    
     public void SwapIndex(int Index1, int Index2)
     {
         if(Index1 == Index2) return;
         if(Index1 < 0 || Index2 < 0 || Index1 >= TimerList.Count || Index2 >= TimerList.Count) return;
-
+        
         FTimer Slot = TimerList[Index1];
         TimerList[Index1] = TimerList[Index2];
         TimerList[Index2] = Slot;
-
-
+        
         TimerDict[TimerList[Index1].TimerHandle].Index = Index1;
         TimerDict[TimerList[Index2].TimerHandle].Index = Index2;
     }
-
-
     
-
 }
