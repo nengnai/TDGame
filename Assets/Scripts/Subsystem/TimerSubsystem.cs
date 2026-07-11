@@ -60,6 +60,7 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
     
     
     private List<FTimer> TimerList = new List<FTimer>();
+    private List<FTimer> UTimerList = new List<FTimer>();
     private Dictionary<FTimerHandle, FTimerData> TimerDict = new Dictionary<FTimerHandle, FTimerData>();
     private uint ID = 0;
     
@@ -87,11 +88,37 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
 
             Data.CallBack?.Invoke();
         }
+
+
+        while (UTimerList.Count > 0)
+        {
+            FTimer Timer = UTimerList[^1];
+
+            if(Timer.FadedTimer > Time.unscaledTime)
+                break;
+
+                FTimerData Data = TimerDict[Timer.TimerHandle];
+
+            if (Data.IsLoop)
+            {
+                Timer.FadedTimer += Data.CostTime;
+                FastSortEnd(UTimerList);
+            }
+            else
+            {
+                RemoveTimer(Timer.TimerHandle);
+            }
+
+            Data.CallBack?.Invoke();
+        }
     }
     
     
     public FTimerHandle AddTimer(float CostTime, bool IsLoop, bool IsUnscaledTime, Action CallBack)
     {
+        int Index = IsUnscaledTime ? UTimerList.Count : TimerList.Count;
+
+
         // 创建新句柄
         FTimerHandle TimerHandle = new FTimerHandle(ID++);
         
@@ -99,21 +126,29 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
         FTimer Timer = new FTimer(
             Time.time + CostTime,
             TimerHandle);
+        if(IsUnscaledTime) Timer.FadedTimer = Time.unscaledTime + CostTime;
         
         // 创建数据保存元素
         FTimerData TimerData = new FTimerData(
-            TimerList.Count,
+            Index,
             CostTime, 
             IsLoop,
             IsUnscaledTime,
             CallBack);
-        
+
         // 添加到素组和字典
-        TimerList.Add(Timer);
+        if (!IsUnscaledTime)
+        {
+            TimerList.Add(Timer);
+            FastSortEnd(TimerList);
+        }
+        else
+        {
+            UTimerList.Add(Timer);
+            FastSortEnd(UTimerList);
+        }
         TimerDict.Add(TimerHandle, TimerData);
         
-        // 进行排序归为
-        FastSortEnd(TimerList);
 
         return TimerHandle;
     }
@@ -121,17 +156,27 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
     
     public void RemoveTimer(FTimerHandle Handle)
     {
+        List<FTimer> List;
         if (!TimerDict.TryGetValue(Handle, out FTimerData Data))
         {
             return;
         }
 
+        if (!TimerDict[Handle].IsUnscaledTime)
+        {
+            List = TimerList;
+        }
+        else
+        {
+            List = UTimerList;
+        }
+
         int Index = Data.Index;
 
-        TimerList.RemoveAt(Index);
-        for(int i = Index; i < TimerList.Count; i++)
+        List.RemoveAt(Index);
+        for(int i = Index; i < List.Count; i++)
         {
-            TimerDict[TimerList[i].TimerHandle].Index = i;
+            TimerDict[List[i].TimerHandle].Index = i;
         }
 
         TimerDict.Remove(Handle);
@@ -140,16 +185,16 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
     
     /* 工具函数 */
     
-    private void SwapIndex(int Index1, int Index2)
+    private void SwapIndex(int Index1, int Index2, List<FTimer> SortList)
     {
         if(Index1 == Index2) return;
-        if(Index1 < 0 || Index2 < 0 || Index1 >= TimerList.Count || Index2 >= TimerList.Count) return;
+        if(Index1 < 0 || Index2 < 0 || Index1 >= SortList.Count || Index2 >= SortList.Count) return;
         
         // 通过析构交换
-        (TimerList[Index1], TimerList[Index2]) = (TimerList[Index2], TimerList[Index1]);
+        (SortList[Index1], SortList[Index2]) = (SortList[Index2], SortList[Index1]);
         
-        TimerDict[TimerList[Index1].TimerHandle].Index = Index1;
-        TimerDict[TimerList[Index2].TimerHandle].Index = Index2;
+        TimerDict[SortList[Index1].TimerHandle].Index = Index1;
+        TimerDict[SortList[Index2].TimerHandle].Index = Index2;
     }
     
     
@@ -163,14 +208,14 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
      * 注意：
      *   本函数只能对最后一个数进行排序，其他部分需要有序
      */
-    private void FastSortEnd(List<FTimer> SortList)
+    private void FastSortEnd(List<FTimer> SortList)                  //循环快速重排
     {
-        int Index = TimerList.Count - 1;
+        int Index = SortList.Count - 1;
         
         while (Index > 0 &&
-               TimerList[Index].FadedTimer > TimerList[Index - 1].FadedTimer)
+               SortList[Index].FadedTimer > SortList[Index - 1].FadedTimer)
         {
-            SwapIndex(Index, Index - 1);
+            SwapIndex(Index, Index - 1, SortList);
             Index--;
         }
     }
