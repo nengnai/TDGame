@@ -8,16 +8,16 @@ using UnityEngine;
 
 public struct FTimerHandle
 {
-    private readonly uint _TimerHandle;
+    private readonly uint TimerHandle;
     
     public FTimerHandle(uint InTimerHandle)
     {
-        _TimerHandle = InTimerHandle;
+        TimerHandle = InTimerHandle;
     }
     
     public override int GetHashCode()
     {
-        return (int)_TimerHandle;
+        return (int)TimerHandle;
     }
 }
 
@@ -59,21 +59,23 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
     }
     
     
-    private List<FTimer> TimerList = new List<FTimer>();
-    private List<FTimer> UTimerList = new List<FTimer>();
-    private Dictionary<FTimerHandle, FTimerData> TimerDict = new Dictionary<FTimerHandle, FTimerData>();
+    private readonly List<FTimer> TimerList = new List<FTimer>();
+    private readonly List<FTimer> UTimerList = new List<FTimer>();
+    private readonly Dictionary<FTimerHandle, FTimerData> TimerDict = new Dictionary<FTimerHandle, FTimerData>();
     private uint ID = 0;
     
     
-    void Update()
+    protected void Update()
     {
         while (TimerList.Count > 0)
         {
             FTimer Timer = TimerList[^1];
 
             if (Timer.FadedTimer > Time.time)
+            {
                 break;
-
+            }
+            
             FTimerData Data = TimerDict[Timer.TimerHandle];
 
             if (Data.IsLoop)
@@ -85,7 +87,7 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
             {
                 RemoveTimer(Timer.TimerHandle);
             }
-
+            
             Data.CallBack?.Invoke();
         }
 
@@ -95,9 +97,11 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
             FTimer Timer = UTimerList[^1];
 
             if(Timer.FadedTimer > Time.unscaledTime)
+            {
                 break;
+            }
 
-                FTimerData Data = TimerDict[Timer.TimerHandle];
+            FTimerData Data = TimerDict[Timer.TimerHandle];
 
             if (Data.IsLoop)
             {
@@ -116,17 +120,16 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
     
     public FTimerHandle AddTimer(float CostTime, bool IsLoop, bool IsUnscaledTime, Action CallBack)
     {
-        int Index = IsUnscaledTime ? UTimerList.Count : TimerList.Count;
-
-
+        List<FTimer> List = IsUnscaledTime ? UTimerList : TimerList;
+        int Index = List.Count;
+        
         // 创建新句柄
         FTimerHandle TimerHandle = new FTimerHandle(ID++);
         
         // 创建计时用元素
         FTimer Timer = new FTimer(
-            Time.time + CostTime,
+            (IsUnscaledTime ? Time.unscaledTime : Time.time) + CostTime,
             TimerHandle);
-        if(IsUnscaledTime) Timer.FadedTimer = Time.unscaledTime + CostTime;
         
         // 创建数据保存元素
         FTimerData TimerData = new FTimerData(
@@ -137,16 +140,8 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
             CallBack);
 
         // 添加到素组和字典
-        if (!IsUnscaledTime)
-        {
-            TimerList.Add(Timer);
-            FastSortEnd(TimerList);
-        }
-        else
-        {
-            UTimerList.Add(Timer);
-            FastSortEnd(UTimerList);
-        }
+        List.Add(Timer);
+        FastSortEnd(List);
         TimerDict.Add(TimerHandle, TimerData);
         
 
@@ -156,25 +151,15 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
     
     public void RemoveTimer(FTimerHandle Handle)
     {
-        List<FTimer> List;
         if (!TimerDict.TryGetValue(Handle, out FTimerData Data))
         {
             return;
         }
 
-        if (!TimerDict[Handle].IsUnscaledTime)
-        {
-            List = TimerList;
-        }
-        else
-        {
-            List = UTimerList;
-        }
+        var List = !Data.IsUnscaledTime ? TimerList : UTimerList;
 
-        int Index = Data.Index;
-
-        List.RemoveAt(Index);
-        for(int i = Index; i < List.Count; i++)
+        List.RemoveAt(Data.Index);
+        for(var i = Data.Index; i < List.Count; i++)
         {
             TimerDict[List[i].TimerHandle].Index = i;
         }
