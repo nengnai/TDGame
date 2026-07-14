@@ -1,9 +1,13 @@
 using UnityEngine;
 using TDGameLibrary;
 using UnityEngine.Serialization;
+using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
+    [Header("输入")]
+    public InputActionAsset InputMap;
+
     [Header("范围")]
     public Transform RangeTransform;
     public Vector3 Range =  new Vector3(30.0f, 30.0f, 30.0f);
@@ -28,6 +32,12 @@ public class CameraController : MonoBehaviour
     protected float MoveSpeedRate = 1.0f;
     protected float TargetDistance;
     protected float CurrentDistance;
+
+
+    [Header("按键")]
+    private InputAction _MoveAction;
+    private InputAction _ZoomAction;
+    private InputAction _SpeedupAction;
     
     
     
@@ -35,6 +45,17 @@ public class CameraController : MonoBehaviour
     {
         TargetDistance = MaxDistance;
         CurrentDistance = MaxDistance;
+
+        var CameraMoveMap = InputMap.FindActionMap("IngameCameraMove", throwIfNotFound : true);
+        _MoveAction = CameraMoveMap.FindAction("Move", throwIfNotFound : true);
+        _SpeedupAction = CameraMoveMap.FindAction("Speedup", throwIfNotFound : true);
+
+        var CameraZoomMap = InputMap.FindActionMap("IngameCameraZoom", throwIfNotFound : true);
+        _ZoomAction = CameraZoomMap.FindAction("Zoom", throwIfNotFound : true);
+        
+
+        CameraMoveMap.Enable();
+        CameraZoomMap.Enable();
     }
 
     // Update is called once per frame
@@ -43,7 +64,8 @@ public class CameraController : MonoBehaviour
         if (CanZoom)
         {
             TargetDistance = Mathf.Clamp(
-                TargetDistance - Input.mouseScrollDelta.y * DistanceSpeed,
+                //TargetDistance - Input.mouseScrollDelta.y * DistanceSpeed,
+                TargetDistance - _ZoomAction.ReadValue<float>() * DistanceSpeed,
                 MinDistance,
                 MaxDistance);
             
@@ -66,11 +88,12 @@ public class CameraController : MonoBehaviour
         {
             MoveSpeedRate = TDUtility.FInterpTo(
                 MoveSpeedRate, 
-                Mathf.Lerp(1.0f, ShiftSpeedRate, TDUtility.BoolToFloat(Input.GetKey(KeyCode.LeftShift))),
+                //Mathf.Lerp(1.0f, ShiftSpeedRate, TDUtility.BoolToFloat(Input.GetKey(KeyCode.LeftShift))),
+                Mathf.Lerp(1.0f, ShiftSpeedRate, TDUtility.BoolToFloat(_SpeedupAction.IsPressed())),
                 Time.deltaTime, 
                 10.0f);
             
-            var HorizontalInput = new Vector2(
+            /*var HorizontalInput = new Vector2(
                 MoveSpeed * MoveSpeedRate *(
                     TDUtility.BoolToFloat(Input.GetKey(KeyCode.D))
                     -TDUtility.BoolToFloat(Input.GetKey(KeyCode.A))
@@ -80,6 +103,10 @@ public class CameraController : MonoBehaviour
                     -TDUtility.BoolToFloat(Input.GetKey(KeyCode.S))
                 )
             );
+                */
+                Vector2 MoveInput = _MoveAction.ReadValue<Vector2>();
+                Vector2 HorizontalInput = MoveInput * (MoveSpeed * MoveSpeedRate);
+            
             AddMoveInput(HorizontalInput);
         }
     }
@@ -115,6 +142,14 @@ public class CameraController : MonoBehaviour
 
         // 局部空间 到 世界空间 
         return RangeTransform.TransformPoint(ClampedLocalPos);
+    }
+
+
+
+    void OnDestroy()
+    {
+        if(_MoveAction != null) _MoveAction.actionMap.Disable();
+        if(_ZoomAction != null) _ZoomAction.actionMap.Disable();
     }
 
 }
