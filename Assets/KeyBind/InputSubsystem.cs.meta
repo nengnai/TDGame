@@ -1,2 +1,13 @@
 fileFormatVersion: 2
-guid: 53b47692f0754be4eb120683e4e2f1a0
+guid: 273cc84f0e003fa488b4c8b5ebedbb21
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - IngameActionMap: {fileID: -944628639613478452, guid: 59f0cc605eb72684386cd44c75ee41b7, type: 3}
+  - UIActionMap: {fileID: -944628639613478452, guid: 9fb5a0ddfc3a2254eb7a28c0f6e5946f, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

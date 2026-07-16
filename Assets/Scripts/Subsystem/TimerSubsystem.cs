@@ -141,8 +141,8 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
 
         // 添加到素组和字典
         List.Add(Timer);
-        FastSortEnd(List);
         TimerDict.Add(TimerHandle, TimerData);
+        FastSortEnd(List);
         
 
         return TimerHandle;

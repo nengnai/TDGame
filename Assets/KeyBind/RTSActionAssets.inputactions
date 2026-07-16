@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "name": "InputAction",
+    "name": "RTSActionAssets",
     "maps": [
         {
             "name": "IngameMouse_UnSelectUnit",

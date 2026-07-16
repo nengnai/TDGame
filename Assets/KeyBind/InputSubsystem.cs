@@ -1,54 +1,84 @@
-using UnityEngine;
+
+using TDGameLibrary;
 using UnityEngine.InputSystem;
 
-
-
-public enum KeyState
+public class InputSubsystem : WorldSubsystem<InputSubsystem>
 {
-    Pressed,             //按下
-    Released,          //松开
-    Held               //按住
-
-}
-
-public struct InputData
-{
-    public InputControl Key;
-    public KeyState State;
-}
-
-
-
-public delegate bool InputHandle(InputData Data);
-
-
-public class InputHandleContext
-{
-    public int Priority;
-    public InputHandle Handle;
-    
-}
-
-
-
-
-
-public class InputSubsystem
-{
-    private static InputSubsystem _InputSystem;
-
-    public static InputSubsystem InputSystem
+    public enum InputState : uint
     {
-        get
+        Ingame,
+        UI,
+        Unknow= 255
+    }
+    
+
+    private InputActionAsset IngameInputGroup;
+    private InputActionAsset UIInputGroup;
+
+    private InputState CurrentInputState;
+
+
+    #region 公开函数
+    public void ChangeCurrentInputState(InputState NewState)
+    {
+        if(NewState == CurrentInputState) return;
+
+        var LastState = CurrentInputState;
+        CurrentInputState = NewState;
+        UpdateInputAsset(LastState, NewState);
+
+    }
+
+
+    public void SwitchIngameAsset(InputActionAsset NewAsset)
+    {
+        if(CurrentInputState == InputState.Ingame)
         {
-            if(_InputSystem == null) _InputSystem = new InputSubsystem();
-            return _InputSystem;
+            IngameInputGroup.Disable();
+            NewAsset.Enable();
+        } 
+        
+        IngameInputGroup = NewAsset;
+
+    }
+
+
+    #endregion
+
+    #region 工具
+
+    private void UpdateInputAsset(InputState LastState, InputState NewState)
+    {
+        switch (LastState)
+        {
+            case InputState.Ingame:
+            IngameInputGroup.Disable();
+            break;
+
+            case InputState.UI:
+            UIInputGroup.Disable();
+            break;
+
+            case InputState.Unknow:
+            IngameInputGroup.Disable();
+            UIInputGroup.Disable();
+            break;
+        }
+
+        switch (NewState)
+        {
+            case InputState.Ingame:
+            IngameInputGroup.Enable();
+            break;
+
+            case InputState.UI:
+            UIInputGroup.Enable();
+            break;
+
+            case InputState.Unknow:
+            break;
         }
     }
 
-    private InputSubsystem() {}
-
-
+    #endregion
 }
-
-
