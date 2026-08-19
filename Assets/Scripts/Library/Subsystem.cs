@@ -9,6 +9,9 @@ namespace TDGameLibrary
         where T : WorldSubsystem<T>
     {
         protected static T _Subsystem;
+        
+        // 是否需要无效时自动创建
+        protected static Func<bool> AutoCreateChecker = () => true;
 
 
         protected virtual void Awake()
@@ -23,15 +26,14 @@ namespace TDGameLibrary
             _Subsystem = this as T;
         }
 
-        public static T GetSubsystem()
+        public static T GetSubsystem()//
         {
-            if (_Subsystem != null)
+            if (_Subsystem)
             {
                 return _Subsystem;
             }
-
-            // @todo:这里也许以后会加一个开关？
-            if (true)
+            
+            if (AutoCreateChecker())
             {
                 GameObject NewObject = new GameObject();
                 _Subsystem = NewObject.AddComponent<T>();
@@ -48,8 +50,11 @@ namespace TDGameLibrary
     {
         protected override void Awake()
         {
+            if (_Subsystem == null)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
             base.Awake();
-            DontDestroyOnLoad(_Subsystem);
         }
     }
 }
