@@ -1,13 +1,8 @@
 {
-    "name": "OLD",
+    "name": "TDLibraryGame",
     "rootNamespace": "",
     "references": [
-        "AstarPathfindingProject",
-        "Unity.TextMeshPro",
-        "Unity.Mathematics",
-        "Unity.Transforms",
-        "Unity.AI.Navigation",
-        "UnityEngine.UI"
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
