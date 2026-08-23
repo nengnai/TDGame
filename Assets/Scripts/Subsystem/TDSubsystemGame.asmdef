@@ -2,6 +2,7 @@
     "name": "TDSubsystemGame",
     "rootNamespace": "",
     "references": [
+        "Unity.InputSystem",
         "TDLibraryGame"
     ],
     "includePlatforms": [],
