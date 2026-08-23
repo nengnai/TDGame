@@ -1,4 +1,4 @@
-// For more information, visit -> https://github.com/ColinLeung-NiloCat/UnityURPToonLitShaderExample
+﻿// For more information, visit -> https://github.com/ColinLeung-NiloCat/UnityURPToonLitShaderExample
 
 /*
 这个着色器是一个简单的例子，向你展示了如何用“最少”的着色器代码编写你的第一个URP自定义光照着色器。
@@ -29,29 +29,29 @@ Shader "SimpleURPToonLitExample"
 {
     Properties
     {
-        [Header(High Level Setting)]
-        [ToggleUI]_IsFace("Is Face? (please turn on if this is a face material)", Float) = 0
-        [Toggle(_UseMosaic)]_UseMosaic("UseMosaic", Float) = 0
-        [Toggle(_MAIN_LIGHT_SHADOWS)]_MAIN_LIGHT_SHADOWS("_MAIN_LIGHT_SHADOWS", Float) = 1
-        _RenderRef("_RenderRef",Int) = 0
+        [Header(High Level Setting)] // High Level Setting
+        [ToggleUI]_IsFace("为面？（如果这是面，请打开）", Float) = 0 //Is Face? (please turn on if this is a face material)
+        [Toggle(UseMosaic)]_UseMosaic("使用马赛克", Float) = 0 //UseMosaic
+        [Toggle(_MAIN_LIGHT_SHADOWS)]_MAIN_LIGHT_SHADOWS("主光照阴影", Float) = 1 // _MAIN_LIGHT_SHADOWS
+        _RenderRef("渲染参考",Int) = 0 // _RenderRef
        
-        _Threshold("Threshold", Range(0.0, 1.0)) = 0//消融阀值
+        _Threshold("消融阀值", Range(0.0, 1.0)) = 0 // Threshold
 
         //所有属性都将尝试遵循URP光照着色器的命名约定
         //因此，将URP光照材质的着色器切换到此卡通光照着色器将保留大多数原始属性(如果在此着色器中定义)
 
         //有关URP光照着色器的命名约定，请参见URP的光照着色器
         [Header(Base Color)]
-        [MainTexture]_BaseMap("_BaseMap (Albedo)", 2D) = "white" {}
+        [MainTexture]_BaseMap("基础贴图（反照率）", 2D) = "white" {} // _BaseMap (Albedo)
         //混合纹理
-        _BlendingScale("_BlendingScale", Range(0,1)) = 0
-        _BlendingMap("_BlendingMap", 2D) = "white" {}
+        _BlendingScale("混合比例", Range(0,1)) = 0 // _BlendingScale
+        _BlendingMap("混合贴图", 2D) = "white" {} // _BlendingMap
         
 
-        [Toggle(_UseMouthMap)]_UseMouthMap("_UseMouthMap", Float) = 0
-        [MainTexture]_MouthMap("_Mouth (Albedo)", 2D) = "white" {}
-        _Expression("_Expression", Int) = 24
-        _Column("_Column", Int) = 8
+        [Toggle(_UseMouthMap)]_UseMouthMap("使用嘴部贴图", Float) = 0 // _UseMouthMap
+        [MainTexture]_MouthMap("嘴部贴图（反照率）", 2D) = "white" {} // _Mouth (Albedo)
+        _Expression("行", Int) = 24 // _Expression
+        _Column("列", Int) = 8 // _Column
 
         [HDR][MainColor]_BaseColor("_BaseColor", Color) = (1,1,1,1)
         [ToggleUI]_Discoloration("on/off Discoloration", Float) = 0

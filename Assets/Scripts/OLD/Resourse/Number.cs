@@ -8,7 +8,6 @@ public class Number : MonoBehaviour
     private StringBuilder sb = new StringBuilder();
     void Awake()
     {
-
         myText = GetComponent<TextMeshProUGUI>();
     }
 

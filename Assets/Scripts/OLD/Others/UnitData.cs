@@ -7,12 +7,4 @@ public class UnitData : ScriptableObject
     public GameObject student; 
     public int currentNumber;
     public bool isMaxed = false;
-
-    
-    
-
-
-
-
-
 }
