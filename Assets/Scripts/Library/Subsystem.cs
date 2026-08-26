@@ -26,7 +26,7 @@ namespace TDGameLibrary
             _Subsystem = this as T;
         }
 
-        public static T GetSubsystem()//
+        public static T GetSubsystem()
         {
             if (_Subsystem)
             {
@@ -42,6 +42,15 @@ namespace TDGameLibrary
 
             return null;
         }
+
+        /*[RuntimeInitializeOnLoadMethod]
+        public static void Init()
+        {
+            if (_Subsystem) { return; }
+            
+            GameObject NewObject = new();
+            _Subsystem = NewObject.AddComponent<T>();
+        }*/
     }
 
 
