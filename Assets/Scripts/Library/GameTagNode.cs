@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using NUnit.Framework.Constraints;
 using TDGameLibrary;
-using UnityEngine;
 
 public class GameTagNode
 {
@@ -72,7 +70,11 @@ public class GameTagManager : GameInstanceSubsystem<GameTagManager>
 
 public struct FGameTag : IEquatable<FGameTag> //, ISerializationCallbackReceiver
 {
-    private GameTagNode Node;
+    public GameTagNode Node
+    {
+        get;
+        private set;
+    }
     
     
     public FGameTag(string Value)
@@ -115,7 +117,7 @@ public struct FGameTag : IEquatable<FGameTag> //, ISerializationCallbackReceiver
         return (Node != null ? Node.GetHashCode() : 0); 
     }
 
-    public string ToString()
+    public override string ToString()
     {
         return Node.InFullName.ToString();
     }
@@ -124,4 +126,129 @@ public struct FGameTag : IEquatable<FGameTag> //, ISerializationCallbackReceiver
     {
         return Node != null;
     }
+}
+
+
+
+
+public class GameTagContainer
+{
+    private HashSet<GameTagNode> ExactTag = new();
+    private Dictionary<GameTagNode, int> ImplicitTag = new();
+    public void AddTag(FGameTag Tag)
+    {
+        GameTagNode Node = Tag.Node;
+        ExactTag.Add(Node);
+
+        GameTagNode CurrentNode = Node;
+        while(CurrentNode.InParent != null)
+        {
+            if(ImplicitTag.TryGetValue(CurrentNode, out int Count))
+            {
+                ImplicitTag[CurrentNode]++;
+            }
+            else
+            {
+                ImplicitTag.Add(CurrentNode, 1);
+            }
+
+            CurrentNode = CurrentNode.InParent;
+        }
+    }
+
+    public void RemoveTag(FGameTag Tag)
+    {
+        GameTagNode Node = Tag.Node;
+        ExactTag.Remove(Node);
+
+        GameTagNode CurrentNode = Node;
+        while(CurrentNode.InParent != null)
+        {
+            if(ImplicitTag.TryGetValue(CurrentNode, out int Count))
+            {
+                if(Count - 1 <= 0)
+                {
+                    ImplicitTag.Remove(CurrentNode);
+                }
+                else
+                {
+                    ImplicitTag[CurrentNode]--;
+                }
+            }
+
+            CurrentNode = CurrentNode.InParent;
+        }
+    }
+
+
+    public bool HasTag(FGameTag Tag)
+    {
+        return ImplicitTag.ContainsKey(Tag.Node);
+    }
+
+
+    public bool HasTagExact(FGameTag Tag)
+    {
+        return ExactTag.Contains(Tag.Node);
+    }
+
+
+
+
+
+
+
+    public bool HasAnyTag(List<FGameTag> Tags)
+    {
+        foreach(FGameTag tag in Tags)
+        {
+            if(HasTag(tag))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool HasAllTags(List<FGameTag> Tags)
+    {
+        foreach(FGameTag tag in Tags)
+        {
+            if (!HasTag(tag))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public bool HasAnyTagExact(List<FGameTag> Tags)
+    {
+        foreach(FGameTag tag in Tags)
+        {
+            if (HasTagExact(tag))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool HasAllTagsExact(List<FGameTag> Tags)
+    {
+        foreach(FGameTag tag in Tags)
+        {
+            if (!HasTagExact(tag))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
 }
