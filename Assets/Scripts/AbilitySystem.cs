@@ -51,16 +51,17 @@ public struct FEffectHandle
 }
 
 
-public class StackEntry
+/*public class StackEntry
 {
     public FTimerHandle TimerHandle;
-    public int StackCount;
-    public StackEntry(int Count)
+    public FEffectHandle EffectHandle;
+    public StackEntry(FTimerHandle THandle, FEffectHandle EHandle)
     {
-        StackCount = Count;
+        TimerHandle = THandle;
+        EffectHandle = EHandle;
     }
 }
-
+*/
 
 
 public class AbilityTimeManager
@@ -102,9 +103,10 @@ public class AbilitySystemComponent : MonoBehaviour
 
     /* 效果数据存放 */
     // 句柄对应技能
-    private Dictionary<FEffectHandle, GameEffect> Effects = new();
-    private Dictionary<FGameTag, List<FEffectHandle>> EffectsByTag = new();
-    private Dictionary<FEffectHandle, List<StackEntry>> EffectsStacks = new();
+    private Dictionary<FEffectHandle, GameEffect> EffectHandles = new();
+    private Dictionary<FGameTag, GameEffect> EffectsByTag = new();
+    private Dictionary<GameEffect, List<FEffectHandle>> EffectInstances = new();
+    private Dictionary<FEffectHandle, FTimerHandle> EffectTimers = new();
     private uint EffectID;
 
 
@@ -114,9 +116,9 @@ public class AbilitySystemComponent : MonoBehaviour
 
     void Update()
     {
-        foreach(var pair in Effects)
+        foreach(var Effect in EffectInstances.Keys)
         {
-            pair.Value.OnTick();
+            Effect.OnTick();
         }
     }
 
@@ -297,62 +299,48 @@ public class AbilitySystemComponent : MonoBehaviour
         
         // 
         if (Config.EffectTag.IsValid()
-            && EffectsByTag.TryGetValue(Config.EffectTag, out List<FEffectHandle> Handle) && Handle.Count > 0)
+            && EffectsByTag.TryGetValue(Config.EffectTag, out GameEffect Effect1))
         {
-            FEffectHandle ExistHandle = Handle[0];
-            GameEffect ExistEffect = Effects[ExistHandle];
-            
-            if(ExistEffect.CurrentStack >= ExistEffect.MaxStack)
-            { return ExistHandle; }
-            
-            StackEntry NewStack = new(StackCount);
-            FTimerHandle TimerHandle1 = TimerSubsystem.GetSubsystem().AddTimer(
-                ExistEffect.GetDuration(),
-                false, 
-                false,
-                () => OnStackExpired(ExistHandle, NewStack)
-            );
-            NewStack.TimerHandle = TimerHandle1;
+            if(Effect1.CurrentStack > Effect1.MaxStack)
+            {
+                return FEffectHandle.Invalid;
+            }
+            FEffectHandle Handle = FEffectHandle.Create(ref EffectID);
+            FTimerHandle THandle = TimerSubsystem.GetSubsystem().AddTimer(Effect1.GetDuration(), false, false, () => OnStackExpired(Handle));
+        
 
-            EffectsStacks[ExistHandle].Add(NewStack);
-            ExistEffect.CurrentStack += StackCount;
-            ExistEffect.OnStackChanged();
+            EffectHandles[Handle] = Effect1;
+            EffectInstances[Effect1].Add(Handle);
+            EffectTimers[Handle] = THandle;
 
-            return ExistHandle;
+
+            Effect1.CurrentStack++;
+            Effect1.OnStackChanged();
+
+            return Handle;
         }
         
-        FEffectHandle NewHandle = FEffectHandle.Create(ref AbilityID);
+        FEffectHandle NewHandle = FEffectHandle.Create(ref EffectID);
         
 
         Effect.Owner = this;
-        Effect.CurrentStack = StackCount;
-
-        Effects[NewHandle] = Effect;
+        Effect.CurrentStack = 1;
+        EffectHandles[NewHandle] = Effect;
+        EffectInstances[Effect] = new List<FEffectHandle>{ NewHandle };
 
         if (Config.EffectTag.IsValid())
         {
-            if(!EffectsByTag.TryGetValue(Effect.EffectTag, out List<FEffectHandle> List))
-            {
-                List = new List<FEffectHandle>();
-                EffectsByTag[Effect.EffectTag] = List;
-            }
-
-            List.Add(NewHandle);
+            EffectsByTag[Effect.EffectTag] = Effect;
         }
         
-
-
-        List<StackEntry> StackList = new();
-        StackEntry NewStackEntry = new(StackCount);
         FTimerHandle TimerHandle = TimerSubsystem.GetSubsystem().AddTimer(
             Effect.GetDuration(),
             false, 
             false,
-            () => OnStackExpired(NewHandle, NewStackEntry)
+            () => OnStackExpired(NewHandle)
         );
-        NewStackEntry.TimerHandle = TimerHandle;
-        StackList.Add(NewStackEntry);
-        EffectsStacks[NewHandle] = StackList;
+
+        EffectTimers[NewHandle] = TimerHandle;
 
         Effect.OnApplied();
 
@@ -374,39 +362,42 @@ public class AbilitySystemComponent : MonoBehaviour
 
     public void RemoveEffect(FEffectHandle Handle)
     {
-        if(!Effects.TryGetValue(Handle, out GameEffect Effect)) return;
-        if(EffectsStacks.TryGetValue(Handle, out List<StackEntry> List))
+        if(!EffectHandles.TryGetValue(Handle, out GameEffect Effect)) return;
+        if(EffectTimers.TryGetValue(Handle, out FTimerHandle THandle))
         {
-            foreach (StackEntry Entry in List)
-            {
-                TimerSubsystem.GetSubsystem().RemoveTimer(Entry.TimerHandle);
-            }
-            EffectsStacks.Remove(Handle);
+            TimerSubsystem.GetSubsystem().RemoveTimer(THandle);
+            EffectTimers.Remove(Handle);
         }
-        if(Effect.Period > 0) TimerSubsystem.GetSubsystem().RemoveTimer(Effect.PeriodTimerHandle);  
-        Effect.OnRemoved();
-        Effects.Remove(Handle);
-        if (Effect.EffectTag.IsValid())
+
+        if(EffectInstances.TryGetValue(Effect, out List<FEffectHandle> EHandle))
         {
-            if(EffectsByTag.TryGetValue(Effect.EffectTag, out List<FEffectHandle> List2))
-            {
-                List2.Remove(Handle);
-                if(List2.Count == 0) EffectsByTag.Remove(Effect.EffectTag);
-            }
-            
+            EHandle.Remove(Handle);
         }
+
+        EffectHandles.Remove(Handle);
+        Effect.CurrentStack--;
+
+        if(EffectInstances[Effect].Count <= 0)
+        {
+            if(Effect.Period > 0) TimerSubsystem.GetSubsystem().RemoveTimer(Effect.PeriodTimerHandle);
+            Effect.OnRemoved();
+            EffectInstances.Remove(Effect);
+
+            if(Effect.EffectTag.IsValid()) EffectsByTag.Remove(Effect.EffectTag);
+
+            if(Effect.Policy == GameEffect.InstantiationPolicy.OnGranted) Destroy(Effect);
+        }
+        else
+        {
+            Effect.OnStackChanged();
+        }
+        
     }
 
 
-    private void OnStackExpired(FEffectHandle Handle, StackEntry ExpiredStack)
+    private void OnStackExpired(FEffectHandle Handle)
     {
-        if(!Effects.TryGetValue(Handle, out GameEffect Effect)) return;
-        if(!EffectsStacks.TryGetValue(Handle, out List<StackEntry> List)) return;
-        List.Remove(ExpiredStack);
-        Effect.CurrentStack -= ExpiredStack.StackCount;
-        Effect.OnStackChanged();
-
-        if(Effect.CurrentStack <= 0 || List.Count == 0) RemoveEffect(Handle);
+        RemoveEffect(Handle);
     }
     
 }
