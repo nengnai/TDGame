@@ -33,12 +33,12 @@ public class GameAbility : ScriptableObject
 
     public virtual void Cancel()
     {
-        if(TimeManager != null) TimeManager.ClearAll();
+        TimeManager?.ClearAll();
     }
 
     public virtual void EndAbility()
     {
-        if(Owner != null) Owner.OnAbilityEnd(this);
+        Owner?.OnAbilityEnd(this);
     }
 
 
