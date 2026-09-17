@@ -1,103 +1,168 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-
-
-
-
-
-
+using System.Collections.Generic;
+using System;
 public struct FAbilityHandle
 {
-    private readonly uint AbilityHandle;
-    public FAbilityHandle(uint InAbilityHandle)
+    private readonly uint HandleID;
+    public FAbilityHandle(uint ID)
     {
-        AbilityHandle = InAbilityHandle;
+        HandleID = ID;
     }
 
     public override int GetHashCode()
     {
-        return (int)AbilityHandle;
+        return (int)HandleID;
     }
 }
 
 public struct FEffectHandle
 {
-    private readonly uint EffectHandle;
-    public FEffectHandle(uint InEffectHandle)
+    private readonly uint HandleID;
+    public FEffectHandle(uint ID)
     {
-        EffectHandle = InEffectHandle;
+        HandleID = ID;
     }
 
     public override int GetHashCode()
     {
-        return (int)EffectHandle;
+        return (int)HandleID;
     }
-} 
+
+}
 
 
-
-public class AbilitySystem : MonoBehaviour
+public class StackEntry
 {
-    private Dictionary<FAbilityHandle, GameAbilityInstance> Abilities = new Dictionary<FAbilityHandle, GameAbilityInstance>();
-    private Dictionary<FGameTag, List<FAbilityHandle>> AbilitiesByTag = new Dictionary<FGameTag, List<FAbilityHandle>>();
-    private List<GameAbilityInstance> OnActivateInstances = new List<GameAbilityInstance>();
-    
-
-    private Dictionary<FEffectHandle, GameEffectInstance> Effects = new Dictionary<FEffectHandle, GameEffectInstance>();
-    private Dictionary<FGameTag, List<FEffectHandle>> EffectsByTag = new Dictionary<FGameTag, List<FEffectHandle>>();
-
-
-    public GameTagContainer Tags;
-
-    private uint AbilityID = 0;
-    private uint EffectID = 0;
-
-    void Awake()
+    public FTimerHandle TimerHandle;
+    public int StackCount;
+    public StackEntry(FTimerHandle Handle, int Count)
     {
-        Tags = new GameTagContainer();
+        TimerHandle = Handle;
+        StackCount = Count;
+    }
+}
+
+
+
+public class AbilityTimeManager
+{
+    private List<FTimerHandle> Handles = new List<FTimerHandle>();
+
+    public FTimerHandle AddTimer(float Time, bool IsLoop, bool IsUnscaled, Action Callback)
+    {
+        FTimerHandle Handle = TimerSubsystem.GetSubsystem().AddTimer(Time, IsLoop, IsUnscaled, Callback);
+        Handles.Add(Handle);
+        return Handle;
+    }
+
+    public void RemoveTimer(FTimerHandle Handle)
+    {
+        TimerSubsystem.GetSubsystem().RemoveTimer(Handle);
+        Handles.Remove(Handle);
+    }
+
+    public void ClearAll()
+    {
+        foreach (FTimerHandle Handle in Handles)
+        {
+            TimerSubsystem.GetSubsystem().RemoveTimer(Handle);
+        }
+        Handles.Clear();
+    }
+
+}
+
+
+public class AbilitySystemComponent : MonoBehaviour
+{
+    
+    private Dictionary<FAbilityHandle, GameAbility> Abilities = new Dictionary<FAbilityHandle, GameAbility>();
+    private Dictionary<FGameTag, List<FAbilityHandle>> AbilitiesByTag = new Dictionary<FGameTag, List<FAbilityHandle>>();
+    private List<GameAbility> OnActivateAbilities = new List<GameAbility>();
+    private uint AbilityID;
+
+
+    private Dictionary<FEffectHandle, GameEffect> Effects = new Dictionary<FEffectHandle, GameEffect>();
+    private Dictionary<FGameTag, List<FEffectHandle>> EffectsByTag = new Dictionary<FGameTag, List<FEffectHandle>>();
+    private Dictionary<FEffectHandle, List<StackEntry>> EffectsStacks = new Dictionary<FEffectHandle, List<StackEntry>>();
+    private uint EffectID;
+
+
+    public GameTagContainer Tags = new GameTagContainer();
+
+
+
+    void Update()
+    {
+        foreach(var pair in Effects)
+        {
+            pair.Value.OnTick();
+        }
     }
 
 
-    #region 技能
-    public FAbilityHandle AddAbility(GameAbility Ability)
+    public FAbilityHandle AddAbility(GameAbility Config)
     {
-        FAbilityHandle handle = new FAbilityHandle(AbilityID++);
-        
-        GameAbilityInstance Instance = new GameAbilityInstance{Config = Ability, Owner = this};
+        FAbilityHandle Handle = new FAbilityHandle(AbilityID++);
 
-        Abilities[handle] = Instance;
+        GameAbility Ability = null;
+
+        switch (Config.Policy)
+        {
+            case GameAbility.InstantiationPolicy.Static:
+            Ability = Config;
+            break;
+
+            case GameAbility.InstantiationPolicy.OnGranted:
+            Ability = Instantiate(Config);
+            Ability.OnGranted();
+            break;
+
+            case GameAbility.InstantiationPolicy.OnActivate:
+            Ability = Config;
+            break;
+        }
+
+        Ability.Owner = this;
+
+        Abilities[Handle] = Ability;
+
+        if(Config.AbilityTag.IsValid() == true)
+        {
+            if(!AbilitiesByTag.TryGetValue(Config.AbilityTag, out List<FAbilityHandle> List))
+            {
+                List = new List<FAbilityHandle>();
+                AbilitiesByTag[Config.AbilityTag] = List;
+            }
+
+            List.Add(Handle);
+        }
+
+        return Handle;
+    }
+
+
+
+
+    public void RemoveAbility(FAbilityHandle Handle)
+    {
+        if(!Abilities.TryGetValue(Handle, out GameAbility Ability)) return;
+
+        Abilities.Remove(Handle);
 
         if (Ability.AbilityTag.IsValid())
         {
             if(AbilitiesByTag.TryGetValue(Ability.AbilityTag, out List<FAbilityHandle> List))
             {
-                List.Add(handle);
-            }
-            else
-            {
-                List<FAbilityHandle> NewList = new List<FAbilityHandle>();
-                AbilitiesByTag.Add(Ability.AbilityTag, NewList);
-                NewList.Add(handle);
+                List.Remove(Handle);
+
+                if(List.Count == 0) AbilitiesByTag.Remove(Ability.AbilityTag);
+
             }
         }
 
-        return handle;
-    }
+        if(Ability.Policy == GameAbility.InstantiationPolicy.OnActivate) OnActivateAbilities.Remove(Ability);
 
-
-    public void RemoveAbility(FAbilityHandle Handle)
-    {
-        if (Abilities.TryGetValue(Handle, out GameAbilityInstance GameAbility))
-        {
-            if(GameAbility.Config.AbilityTag.IsValid()) AbilitiesByTag[GameAbility.Config.AbilityTag].Remove(Handle);
-        }
-        else
-        {
-            return;
-        }
-
-        Abilities.Remove(Handle);
     }
 
 
@@ -105,55 +170,45 @@ public class AbilitySystem : MonoBehaviour
 
     public void ActivateAbility(FAbilityHandle Handle)
     {
-        if(!CanActivateAbility(Handle)) return;
+        if(CanActivateAbility(Handle) == false) return;
+        if(!Abilities.TryGetValue(Handle, out GameAbility Ability)) return;
 
-        if(Abilities.TryGetValue(Handle, out GameAbilityInstance Ability))
+        GameAbility AbilityToActivate;
+
+        if(Ability.Policy == GameAbility.InstantiationPolicy.OnActivate)
         {
-            if(Ability.Config.Policy == GameAbility.InstantiationPolicy.OnActivate)
-            {
-                GameAbilityInstance TempInstance = new GameAbilityInstance{Config = Ability.Config, Owner = this};
-                OnActivateInstances.Add(TempInstance);
-                TempInstance.Activate();
-                if(Ability.Config.AbilityTag.IsValid()) Tags.AddTag(Ability.Config.AbilityTag);
-            }
-            else
-            {
-                Ability.Activate();
-                if(Ability.Config.AbilityTag.IsValid()) Tags.AddTag(Ability.Config.AbilityTag);
-            }
+            AbilityToActivate = Instantiate(Ability);
+            AbilityToActivate.Owner = this;
+            AbilityToActivate.OnGranted();
+            OnActivateAbilities.Add(AbilityToActivate);
         }
         else
         {
-            return;
+            AbilityToActivate = Ability;
         }
+
+        if(AbilityToActivate.AbilityTag.IsValid()) Tags.AddTag(AbilityToActivate.AbilityTag);
+
+        AbilityToActivate.Activate();
+
     }
+
+
+
 
 
     public void CancelAbility(FAbilityHandle Handle)
     {
-        if(Abilities.TryGetValue(Handle, out GameAbilityInstance Ability))
-        {
-            if(Ability.Config.Policy == GameAbility.InstantiationPolicy.OnActivate)
-            {
-                for(int i = OnActivateInstances.Count - 1; i >= 0; i--)
-                {
-                    if (OnActivateInstances[i].Config == Ability.Config)
-                    {
-                        OnActivateInstances[i].Cancel();
-                        OnActivateInstances.RemoveAt(i);
-                    }
-                }
-            }
-            else
-            {
-                Ability.Cancel();
-            }
+        if(!Abilities.TryGetValue(Handle, out GameAbility Ability)) return;
 
-            if(Ability.Config.AbilityTag.IsValid()) Tags.RemoveTag(Ability.Config.AbilityTag);
-        }
-        else
+        Ability.Cancel();
+
+        if(Ability.AbilityTag.IsValid()) Tags.RemoveTag(Ability.AbilityTag);
+
+        if(Ability.Policy == GameAbility.InstantiationPolicy.OnActivate)
         {
-            return;
+            OnActivateAbilities.Remove(Ability);
+            Destroy(Ability);
         }
     }
 
@@ -163,57 +218,126 @@ public class AbilitySystem : MonoBehaviour
 
     public bool CanActivateAbility(FAbilityHandle Handle)
     {
-        if(Abilities.TryGetValue(Handle, out GameAbilityInstance Ability))
-        {
-            if(Tags.HasAllTags(Ability.Config.RequiredTags) == true && Tags.HasAnyTag(Ability.Config.BlockedTags) == false)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        if(!Abilities.TryGetValue(Handle, out GameAbility Ability)) return false;
 
-        return false;
+        if(Ability.RequiredTags.Count != 0)
+        {
+            if(Tags.HasAllTags(Ability.RequiredTags) == false) return false;
+        }
+        if(Ability.BlockedTags.Count != 0)
+        {
+            if(Tags.HasAnyTag(Ability.BlockedTags) == true) return false;
+        }
+        
+        return true;
     }
 
 
-    public void AbilityInstanceEnd(GameAbilityInstance Instance)
+
+
+
+    public void OnAbilityEnd(GameAbility Instance)
     {
-        OnActivateInstances.Remove(Instance);
-        Instance.Cancel();
+        if(!OnActivateAbilities.Contains(Instance)) return;
+
+        OnActivateAbilities.Remove(Instance);
+
+        if(Instance.AbilityTag.IsValid()) Tags.RemoveTag(Instance.AbilityTag);
+
+        Destroy(Instance);
     }
 
-    #endregion
 
 
-
-    
-    #region 效果
-    public FEffectHandle AddEffect(GameEffect Effect)
+    public FEffectHandle ApplyEffect(GameEffect Config, int StackCount = 1)
     {
-        FEffectHandle handle = new FEffectHandle(EffectID++);
-
-        GameEffectInstance Instance = new GameEffectInstance{Config = Effect, Owner = this};
-
-        Effects[handle] = Instance;
-
-        if (Effect.EffectTag.IsValid())
+        GameEffect Effect = null;
+        if(Config.DurPolicy == GameEffect.DurationPolicy.Instant)
         {
-            if(EffectsByTag.TryGetValue(Effect.EffectTag, out List<FEffectHandle> List))
+            if(Config.Policy == GameEffect.InstantiationPolicy.Static)
             {
-                List.Add(handle);
+                Effect = Config;
             }
             else
             {
-                List<FEffectHandle> NewList = new List<FEffectHandle>();
-                EffectsByTag.Add(Effect.EffectTag, NewList);
-                NewList.Add(handle);
+                Effect = Instantiate(Config);
             }
+
+            Effect.Owner = this;
+            Effect.OnApplied();
+            Effect.OnPeriod();
+            return default;
+        }
+        else
+        {
+            if (Config.EffectTag.IsValid() == true)
+            {
+                if(EffectsByTag.TryGetValue(Config.EffectTag, out List<FEffectHandle> Handle) && Handle.Count > 0)
+                {
+                    FEffectHandle ExistHandle = Handle[0];
+                    GameEffect ExistEffect = Effects[ExistHandle];
+
+                    if(ExistEffect.CurrentStack >= ExistEffect.MaxStack) return ExistHandle;
+
+
+                    StackEntry NewStack = null;
+                    FTimerHandle TimerHandle1 = TimerSubsystem.GetSubsystem().AddTimer(ExistEffect.GetDuration(), false, false, () => OnStackExpired(ExistHandle, NewStack));
+                    NewStack = new StackEntry(TimerHandle1, StackCount);
+
+                    EffectsStacks[ExistHandle].Add(NewStack);
+                    ExistEffect.CurrentStack += StackCount;
+                    ExistEffect.OnStackChanged();
+
+                    return ExistHandle;
+                }
+            }
+            
+            FEffectHandle NewHandle = new FEffectHandle(EffectID++);
+
+            if(Config.Policy == GameEffect.InstantiationPolicy.Static)
+            {
+                Effect = Config;
+            }
+            else
+            {
+                Effect = Instantiate(Config);
+            }
+
+            Effect.Owner = this;
+            Effect.CurrentStack = StackCount;
+
+            Effects[NewHandle] = Effect;
+
+            if (Config.EffectTag.IsValid())
+            {
+                if(!EffectsByTag.TryGetValue(Effect.EffectTag, out List<FEffectHandle> List))
+                {
+                    List = new List<FEffectHandle>();
+                    EffectsByTag[Effect.EffectTag] = List;
+                }
+
+                List.Add(NewHandle);
+            }
+            
+
+
+            List<StackEntry> StackList = new List<StackEntry>();
+            StackEntry NewStackEntry = null;
+            FTimerHandle TimerHandle = TimerSubsystem.GetSubsystem().AddTimer(Effect.GetDuration(), false, false, () => OnStackExpired(NewHandle, NewStackEntry));
+            NewStackEntry = new StackEntry(TimerHandle, StackCount);
+            StackList.Add(NewStackEntry);
+            EffectsStacks[NewHandle] = StackList;
+
+            Effect.OnApplied();
+
+            if(Effect.Period > 0)
+            {
+                Effect.PeriodTimerHandle = TimerSubsystem.GetSubsystem().AddTimer(Effect.Period, true, false, () => Effect.OnPeriod());
+
+            }
+            return NewHandle;
         }
 
-        return handle;
     }
 
 
@@ -221,122 +345,48 @@ public class AbilitySystem : MonoBehaviour
 
     public void RemoveEffect(FEffectHandle Handle)
     {
-        if(Effects.TryGetValue(Handle, out GameEffectInstance GameEffect))
+        if(!Effects.TryGetValue(Handle, out GameEffect Effect)) return;
+        if(EffectsStacks.TryGetValue(Handle, out List<StackEntry> List))
         {
-            if(GameEffect.Config.EffectTag.IsValid()) EffectsByTag[GameEffect.Config.EffectTag].Remove(Handle);
+            foreach (StackEntry Entry in List)
+            {
+                TimerSubsystem.GetSubsystem().RemoveTimer(Entry.TimerHandle);
+            }
+            EffectsStacks.Remove(Handle);
         }
-        else
-        {
-            return;
-        }
-
+        if(Effect.Period > 0) TimerSubsystem.GetSubsystem().RemoveTimer(Effect.PeriodTimerHandle);  
+        Effect.OnRemoved();
         Effects.Remove(Handle);
-    }
-
-
-    public FEffectHandle ApplyEffect(GameEffect Config)
-    {
-
-        GameEffectInstance ExistInstance = null;
-        FEffectHandle ExistingHandle = new FEffectHandle(0);
-
-
-        if (Config.EffectTag.IsValid())
+        if (Effect.EffectTag.IsValid())
         {
-            if(EffectsByTag.TryGetValue(Config.EffectTag, out List<FEffectHandle> handles))
+            if(EffectsByTag.TryGetValue(Effect.EffectTag, out List<FEffectHandle> List2))
             {
-                foreach(FEffectHandle Handle in handles)
-                {
-                    if(Effects.TryGetValue(Handle, out GameEffectInstance InstanceHandle))
-                    {
-                        if(InstanceHandle.Config == Config)
-                        {
-                            ExistInstance = InstanceHandle;
-                            ExistingHandle = Handle;
-                            break;
-                        }   
-                    }
-                }
+                List2.Remove(Handle);
+                if(List2.Count == 0) EffectsByTag.Remove(Effect.EffectTag);
             }
-        }
-
-        if(ExistInstance != null)
-        {
-            if(ExistInstance.CurrentStack < Config.MaxStacks)
-            {
-                ExistInstance.CurrentStack++;
-            }
-
-            if(Config.DurPolicy == GameEffect.DurationPolicy.Duration)
-            {
-                ExistInstance.RefreshDuration(ExistingHandle);
-            }
-
-            return ExistingHandle;
-        }
-        else
-        {
-            FEffectHandle NewHandle = AddEffect(Config);
-
-            if(Effects.TryGetValue(NewHandle, out GameEffectInstance NewInstance))
-            {
-                if(Config.DurPolicy == GameEffect.DurationPolicy.Instant)
-                {  
-                    RemoveEffect(NewHandle);
-                }
-                else
-                {
-                    NewInstance.InitializeTimers(NewHandle);
-                }
-            }
-
-            return NewHandle;
+            
         }
     }
 
 
-
-    #endregion
-
-}
-
-
-
-public class AbilityTimeManager
-{
-    private List<FTimerHandle> handles = new List<FTimerHandle>();
-
-    public FTimerHandle AddTimer(float CostTime, bool IsLoop, bool IsUnscaledTime, Action CallBack)
+    private void OnStackExpired(FEffectHandle Handle, StackEntry ExpiredStack)
     {
-        FTimerHandle handle = TimerSubsystem.GetSubsystem().AddTimer(CostTime, IsLoop, IsUnscaledTime, CallBack);
-        handles.Add(handle);
-        return handle;
+        if(!Effects.TryGetValue(Handle, out GameEffect Effect)) return;
+        if(!EffectsStacks.TryGetValue(Handle, out List<StackEntry> List)) return;
+        List.Remove(ExpiredStack);
+        Effect.CurrentStack -= ExpiredStack.StackCount;
+        Effect.OnStackChanged();
+
+        if(Effect.CurrentStack <= 0 || List.Count == 0) RemoveEffect(Handle);
     }
 
 
-    public void RemoveTimer(FTimerHandle Handle)
-    {
-        TimerSubsystem.GetSubsystem().RemoveTimer(Handle);
-        handles.Remove(Handle);
-    }
-
-    public void ClearAll()
-    {
-        foreach(FTimerHandle Handle in handles)
-        {
-            TimerSubsystem.GetSubsystem().RemoveTimer(Handle);
-        }
-        handles.Clear();
-    }
-
-    
-
-}
 
 
 
 
-public class EffectTimeManager
-{
-    
+
+
+
+
 }

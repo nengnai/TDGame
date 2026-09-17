@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,47 +12,34 @@ public class GameAbility : ScriptableObject
         OnActivate
     }
     public InstantiationPolicy Policy;
-
-    public List<FGameTag> RequiredTags;
-    public List<FGameTag> BlockedTags;
-
+    public List<FGameTag> RequiredTags = new List<FGameTag>();
+    public List<FGameTag> BlockedTags = new List<FGameTag>();
 
 
-    public virtual void Activate(GameAbilityInstance Instance)
+    [NonSerialized] public AbilitySystemComponent Owner;
+    [NonSerialized] public AbilityTimeManager TimeManager;
+
+
+    public virtual void OnGranted()
+    {
+        TimeManager = new AbilityTimeManager();
+    }
+
+
+    public virtual void Activate()
     {
         
     }
 
-    public virtual void Cancel(GameAbilityInstance Instance)
+    public virtual void Cancel()
     {
-        
+        if(TimeManager != null) TimeManager.ClearAll();
     }
 
-}
-
-
-
-
-
-public class GameAbilityInstance
-{
-    public GameAbility Config;
-    public AbilitySystem Owner;
-    public AbilityTimeManager TimeManager = new AbilityTimeManager();
-
-    public void Activate()
+    public virtual void EndAbility()
     {
-        Config.Activate(this);
+        if(Owner != null) Owner.OnAbilityEnd(this);
     }
 
-    public void Cancel()
-    {
-        Config.Cancel(this);
-        TimeManager.ClearAll();
-    }
 
-    public void EndAbility()
-    {
-        Owner.AbilityInstanceEnd(this);
-    }
 }

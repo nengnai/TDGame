@@ -41,7 +41,7 @@ public class CharacterStats : MonoBehaviour
 
 
     public float DetectRange;
-    public float ShootRange;        
+    public float ShootRange;
 
     public int MaxAmmo;
     public int CurrentAmmo;

@@ -1,4 +1,5 @@
-
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameEffect : ScriptableObject
@@ -7,66 +8,96 @@ public class GameEffect : ScriptableObject
     public enum InstantiationPolicy
     {
         Static,
-        OnGranted,
+        OnGranted
     }
-    public InstantiationPolicy Policy;
 
+    public InstantiationPolicy Policy;
     public enum DurationPolicy
     {
         Instant,
         Duration,
         Inf
     }
-
     public DurationPolicy DurPolicy;
     public float DurTime;
     public float Period;
-
-
-    public int MaxStacks = 1;
-}
+    public int MaxStack;
 
 
 
+    [SerializeReference] public List<GameEffectModifier> Modifiers = new List<GameEffectModifier>();
+    [SerializeReference] public List<GameEffectExecutor> Executors = new List<GameEffectExecutor>();
 
-public class GameEffectInstance
-{
-    public GameEffect Config;
-    public AbilitySystem Owner;
-    public int CurrentStack = 1;
-    private float RemainingTime;
-    private float PeriodTimer;
-    public AbilityTimeManager TimeManager = new AbilityTimeManager();
+    [NonSerialized] public AbilitySystemComponent Owner;
+    [NonSerialized] public int CurrentStack;
+    [NonSerialized] public FTimerHandle PeriodTimerHandle;
 
-    private FTimerHandle DurTimerHandle;
-    private FTimerHandle PeriodTimerHandle;
-
-
-    public void InitializeTimers(FEffectHandle Handle)
+    public virtual float GetDuration()
     {
-        if(Config.DurPolicy == GameEffect.DurationPolicy.Instant)
+        return DurTime;
+    }
+
+    public virtual void OnApplied()
+    {
+        foreach (GameEffectExecutor Executor in Executors)
         {
-            return;
-        }
-        else if(Config.DurPolicy == GameEffect.DurationPolicy.Duration)
-        {
-            DurTimerHandle = TimeManager.AddTimer(Config.DurTime, false, false, () => {Owner.RemoveEffect(Handle);});
-            PeriodTimerHandle = TimeManager.AddTimer(Config.Period, true, false, () => {});
-        }
-        else
-        {
-            PeriodTimerHandle = TimeManager.AddTimer(Config.Period, true, false, () => {});
+            Executor.OnApplied(this);
         }
     }
 
-    public void RefreshDuration(FEffectHandle Handle)
+    public virtual void OnRemoved()
     {
-        TimeManager.RemoveTimer(DurTimerHandle);
-        DurTimerHandle = TimeManager.AddTimer(Config.DurTime, false, false, () => {Owner.RemoveEffect(Handle);});
+        foreach (GameEffectModifier Modifier in Modifiers)
+        {
+            if(Modifier is ModifyModifier Modify)
+            {
+                Modify.Remove(Owner.GetComponent<CharacterStats>(), this);
+            }
+        }
+
+        foreach (GameEffectExecutor Executor in Executors)
+        {
+            Executor.OnRemoved(this);
+        }
     }
 
 
+    
+    public virtual void OnTick()
+    {
+        foreach (GameEffectExecutor Executor in Executors)
+        {
+            Executor.OnTick(this);
+        }
+    }
+
+    public virtual void OnPeriod()
+    {
+        foreach (GameEffectModifier Modifier in Modifiers)
+        {
+            if(Modifier is AddModifier Add)
+            {
+                Add.Apply(Owner.GetComponent<CharacterStats>(), this);
+            }
+        }
+
+        foreach (GameEffectExecutor Executor in Executors)
+        {
+            Executor.OnPeriod(this);
+        }
+    }
 
 
+    public virtual void OnStackChanged()
+    {
+        foreach (var Modifier in Modifiers)
+        {
+            Modifier.OnStackChanged(Owner.GetComponent<CharacterStats>(), this);
+        }
+        foreach (var Executor in Executors)
+        {
+            Executor.OnStackChanged(this);
+        }
+    }
 
 }
