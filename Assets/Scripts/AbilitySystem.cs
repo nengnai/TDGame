@@ -288,8 +288,6 @@ public class AbilitySystemComponent : MonoBehaviour
 
     public FEffectHandle ApplyEffect(GameEffect Config)
     {
-        
-
         if(Config.DurPolicy == GameEffect.DurationPolicy.Instant)
         {
             GameEffect Effect = Config.Policy == GameEffect.InstantiationPolicy.Static ? Config : Instantiate(Config);
@@ -298,57 +296,70 @@ public class AbilitySystemComponent : MonoBehaviour
             Effect.OnPeriod();
             return FEffectHandle.Invalid;
         }
+        
+        FEffectHandle NewHandle = FEffectHandle.Create(ref EffectID);
 
         int ConfigID = Config.GetInstanceID();
-
-        if(EffectInstances.TryGetValue(ConfigID, out GameEffect Effect1))
+        
+        if(EffectInstances.TryGetValue(ConfigID, out GameEffect InstancesEffect))
         {
-            if(Effect1.CurrentStack >= Effect1.MaxStack) return FEffectHandle.Invalid;
-            FEffectHandle NewHandle = FEffectHandle.Create(ref EffectID);
+            // 如果已经有效果实例
+            if(InstancesEffect.CurrentStack >= InstancesEffect.MaxStack) return FEffectHandle.Invalid;
+            
             
 
             HandleToEffect.Add(NewHandle, ConfigID);
             EffectToHandle[ConfigID].Add(NewHandle);
             if (Config.DurPolicy == GameEffect.DurationPolicy.Duration)
             {
-                FTimerHandle THandle = TimerSubsystem.GetSubsystem().AddTimer(Effect1.GetDuration(), false, false, () => OnStackExpired(NewHandle));
+                FTimerHandle THandle = TimerSubsystem.GetSubsystem().AddTimer(InstancesEffect.GetDuration(), false, false, () => OnStackExpired(NewHandle));
                 EffectTimers.Add(NewHandle, THandle);
             }
             
 
-            Effect1.CurrentStack++;
-            Effect1.OnStackChanged();
+            InstancesEffect.CurrentStack++;
+            InstancesEffect.OnStackChanged();
 
             return NewHandle;
         }
 
-        GameEffect Effect2 = Config.Policy == GameEffect.InstantiationPolicy.Static ? Config : Instantiate(Config);
-        Effect2.Owner = this;
-        Effect2.CurrentStack = 1;
-        EffectInstances.Add(ConfigID, Effect2);
-
-        FEffectHandle NewHandle1 = FEffectHandle.Create(ref EffectID);
-
-        HandleToEffect.Add(NewHandle1, ConfigID);
-        EffectToHandle.Add(ConfigID, new List<FEffectHandle> {NewHandle1});
-
-        if (Config.EffectTag.IsValid())
+        // 无实例时获取默认实例
+        GameEffect TargetEffect = Config.Policy == GameEffect.InstantiationPolicy.Static ? Config : Instantiate(Config);
+        TargetEffect.Owner = this;
+        TargetEffect.CurrentStack = 1;
+        
+        // 注册
+        EffectInstances.Add(ConfigID, TargetEffect);
+        HandleToEffect.Add(NewHandle, ConfigID);
+        EffectToHandle.Add(ConfigID, new List<FEffectHandle> {NewHandle});
+        if (Config.EffectTag.IsValid()) { EffectsByTag[Config.EffectTag] = ConfigID; }
+        
+        // 注册 GE 时长
+        if(TargetEffect.DurPolicy == GameEffect.DurationPolicy.Duration)
         {
-            EffectsByTag[Config.EffectTag] = ConfigID;
-        }
-        if(Effect2.DurPolicy == GameEffect.DurationPolicy.Duration)
-        {
-            FTimerHandle THandle = TimerSubsystem.GetSubsystem().AddTimer(Effect2.GetDuration(), false, false, () => OnStackExpired(NewHandle1));
-            EffectTimers.Add(NewHandle1, THandle);
-        }
-
-        Effect2.OnApplied();
-        if(Effect2.Period > 0)
-        {
-            Effect2.PeriodTimerHandle = TimerSubsystem.GetSubsystem().AddTimer(Effect2.Period, true, false, () => Effect2.OnPeriod());
+            FTimerHandle THandle = TimerSubsystem.GetSubsystem().AddTimer(
+                TargetEffect.GetDuration(),
+                false,
+                false,
+                () => OnStackExpired(NewHandle)
+            );
+            EffectTimers.Add(NewHandle, THandle);
         }
 
-        return NewHandle1;
+        TargetEffect.OnApplied();
+        
+        // 周期注册
+        if(TargetEffect.Period > 0)
+        {
+            TargetEffect.PeriodTimerHandle = TimerSubsystem.GetSubsystem().AddTimer(
+                TargetEffect.Period,
+                true,
+                false,
+                () => TargetEffect.OnPeriod()
+            );
+        }
+
+        return NewHandle;
         
         
         
