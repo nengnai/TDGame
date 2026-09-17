@@ -31,6 +31,7 @@ public class GameEffect : ScriptableObject
     [NonSerialized] public AbilitySystemComponent Owner;
     [NonSerialized] public int CurrentStack;
     [NonSerialized] public FTimerHandle PeriodTimerHandle;
+    [NonSerialized] public GameEffect OriginalConfig;
 
     public virtual float GetDuration()
     {
