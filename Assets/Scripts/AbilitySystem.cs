@@ -10,11 +10,21 @@ public struct FAbilityHandle
     {
         HandleID = ID;
     }
+    public static FAbilityHandle Create(ref uint _abilityID)
+    {
+        if (_abilityID == UInt32.MaxValue)
+        {
+            _abilityID = 0;
+        }
+        return new FAbilityHandle(_abilityID++);
+    }
 
+    public bool IsValid => HandleID != UInt32.MaxValue;
     public override int GetHashCode()
     {
         return (int)HandleID;
     }
+    public static readonly FAbilityHandle Invalid = new FAbilityHandle(UInt32.MaxValue);
 }
 
 public struct FEffectHandle
@@ -29,12 +39,11 @@ public struct FEffectHandle
     
     public static FEffectHandle Create(ref uint _effectID)
     {
-        uint ID = _effectID++;
-        if (ID == UInt32.MaxValue)
+        if (_effectID == UInt32.MaxValue)
         {
-            ID = _effectID = 0;
+            _effectID = 0;
         }
-        return new FEffectHandle(ID);
+        return new FEffectHandle(_effectID++);
     }
     
     
@@ -98,7 +107,9 @@ public class AbilitySystemComponent : MonoBehaviour
     /* 技能数据存放 */
     private Dictionary<FAbilityHandle, GameAbility> Abilities = new();
     private Dictionary<FGameTag, List<FAbilityHandle>> AbilitiesByTag = new();
-    private List<GameAbility> OnActivateAbilities = new();
+    private List<GameAbility> ActivateAbilities = new();
+    private GameTagContainer BlockedAbilityTags = new();
+    private List<GameAbility> TickAbilityBuffer = new();
     private uint AbilityID;
 
     /* 效果数据存放 */
@@ -108,6 +119,7 @@ public class AbilitySystemComponent : MonoBehaviour
     private Dictionary<int, List<FEffectHandle>> EffectToHandle = new();
     private Dictionary<FEffectHandle, FTimerHandle> EffectTimers = new();
     private Dictionary<int, GameEffect> EffectInstances = new();
+    private List<GameEffect> TickEffectBuffer = new();
 
 
     private uint EffectID;
@@ -117,18 +129,28 @@ public class AbilitySystemComponent : MonoBehaviour
 
 
 
+
     void Update()
     {
-        foreach(var Effect in EffectInstances.Values)
+        TickAbilityBuffer.Clear();
+        TickAbilityBuffer.AddRange(ActivateAbilities);
+        foreach(var Target in TickAbilityBuffer)
         {
-            Effect.OnTick();
+            if(Target.IsActive) Target.OnTick();
+        }
+
+        TickEffectBuffer.Clear();
+        TickEffectBuffer.AddRange(EffectInstances.Values);
+        foreach(var Target in TickEffectBuffer)
+        {
+            Target.OnTick();
         }
     }
 
 
     public FAbilityHandle AddAbility(GameAbility Config)
     {
-        FAbilityHandle Handle = new FAbilityHandle(AbilityID++);
+        FAbilityHandle Handle = FAbilityHandle.Create(ref AbilityID);
 
         GameAbility Ability = null;
 
@@ -157,7 +179,7 @@ public class AbilitySystemComponent : MonoBehaviour
         }
 
         Ability.Owner = this;
-
+        Ability.Handle = Handle;
         Abilities[Handle] = Ability;
 
         if (Config.AbilityTag.IsValid())
@@ -178,8 +200,11 @@ public class AbilitySystemComponent : MonoBehaviour
 
     public void RemoveAbility(FAbilityHandle Handle)
     {
-        if(!Abilities.Remove(Handle, out GameAbility Ability))
+        if(!Abilities.TryGetValue(Handle, out GameAbility Ability))
         { return; }
+
+        CancelAbility(Handle);
+        Abilities.Remove(Handle);
 
         if (Ability.AbilityTag.IsValid())
         {
@@ -192,7 +217,7 @@ public class AbilitySystemComponent : MonoBehaviour
             }
         }
 
-        if(Ability.Policy == GameAbility.InstantiationPolicy.OnActivate) OnActivateAbilities.Remove(Ability);
+        if(Ability.Policy == GameAbility.InstantiationPolicy.OnGranted) Destroy(Ability);
 
     }
 
@@ -201,30 +226,52 @@ public class AbilitySystemComponent : MonoBehaviour
 
     public void ActivateAbility(FAbilityHandle Handle)
     {
-        if(CanActivateAbility(Handle) == false)
-        { return; }
+        if(!Abilities.TryGetValue(Handle, out GameAbility Ability)) return;
         
-        if(!Abilities.TryGetValue(Handle, out GameAbility Ability))
-        { return; }
+        if(Ability.AbilityTag.IsValid() && BlockedAbilityTags.HasTag(Ability.AbilityTag)) return;
+
+        if(!Ability.CanActivate()) return;
+        if(Ability.Policy != GameAbility.InstantiationPolicy.OnActivate && Ability.IsActive == true) return;
+
+        if(Ability.CancelTags.Count > 0)
+        {
+            List<GameAbility> CheckList = new();
+            foreach (GameAbility Active in ActivateAbilities)
+            {
+                foreach(FGameTag Tag in Active.OwnTags)
+                {
+                    bool Matched = false;
+                    foreach(FGameTag CancelTag in Ability.CancelTags)
+                    {
+                        if(Tag == CancelTag) {Matched = true; break;}
+                    }
+                    if(Matched) {CheckList.Add(Active); break;}
+                }
+            }
+
+            foreach (GameAbility Target in CheckList) CancelAbility(Target.Handle);
+        }
 
         GameAbility AbilityToActivate;
-
         if(Ability.Policy == GameAbility.InstantiationPolicy.OnActivate)
         {
             AbilityToActivate = Instantiate(Ability);
             AbilityToActivate.Owner = this;
+            AbilityToActivate.Handle = Handle;
             AbilityToActivate.OnGranted();
-            OnActivateAbilities.Add(AbilityToActivate);
         }
         else
         {
             AbilityToActivate = Ability;
         }
 
-        if(AbilityToActivate.AbilityTag.IsValid()) Tags.AddTag(AbilityToActivate.AbilityTag);
+        ActivateAbilities.Add(AbilityToActivate);
+        AbilityToActivate.IsActive = true;
+        foreach(FGameTag Tag in AbilityToActivate.OwnTags) Tags.AddTag(Tag);
+        foreach(FGameTag Tag in AbilityToActivate.BlockingTags) BlockedAbilityTags.AddTag(Tag);
+
 
         AbilityToActivate.Activate();
-
     }
 
 
@@ -233,39 +280,38 @@ public class AbilitySystemComponent : MonoBehaviour
 
     public void CancelAbility(FAbilityHandle Handle)
     {
-        if (!Abilities.TryGetValue(Handle, out GameAbility Ability))
-        { return; }
-
-        Ability.Cancel();
-
-        if (Ability.AbilityTag.IsValid()) Tags.RemoveTag(Ability.AbilityTag);
-
-        if (Ability.Policy == GameAbility.InstantiationPolicy.OnActivate)
+        List<GameAbility> CheckList = new();
+        foreach(GameAbility Active in ActivateAbilities)
         {
-            OnActivateAbilities.Remove(Ability);
-            Destroy(Ability);
+            if(Active.Handle.Equals(Handle)) CheckList.Add(Active);
+        }
+
+        foreach(GameAbility Target in CheckList)
+        {
+            Target.IsActive = false;
+            Target.Cancel();
+            ShutdownAbilityInstance(Target);
         }
     }
 
 
-
-
-
-    public bool CanActivateAbility(FAbilityHandle Handle)
+    private void ShutdownAbilityInstance(GameAbility Instance)
     {
-        if (!Abilities.TryGetValue(Handle, out GameAbility Ability))
-        { return false; }
+        Instance.IsActive = false;
+        foreach(FGameTag Tag in Instance.OwnTags)
+        {
+            Tags.RemoveTag(Tag);
+        }
+        foreach(FGameTag Tag in Instance.BlockingTags)
+        {
+            BlockedAbilityTags.RemoveTag(Tag);
+        }
+        ActivateAbilities.Remove(Instance);
 
-        if (Ability.RequiredTags.Count != 0
-            && Tags.HasAllTags(Ability.RequiredTags) == false)
-        { return false; }
-        
-        if (Ability.BlockedTags.Count != 0
-            && Tags.HasAnyTag(Ability.BlockedTags))
-        { return false; }
-        
-        return true;
+        if(Instance.Policy == GameAbility.InstantiationPolicy.OnActivate) Destroy(Instance);
     }
+
+
 
 
 
@@ -273,15 +319,10 @@ public class AbilitySystemComponent : MonoBehaviour
 
     public void OnAbilityEnd(GameAbility Instance)
     {
-        if(!OnActivateAbilities.Contains(Instance))
+        if(!ActivateAbilities.Contains(Instance))
         { return; }
 
-        OnActivateAbilities.Remove(Instance);
-
-        if(Instance.AbilityTag.IsValid())
-        { Tags.RemoveTag(Instance.AbilityTag); }
-
-        Destroy(Instance);
+        ShutdownAbilityInstance(Instance);
     }
 
 
