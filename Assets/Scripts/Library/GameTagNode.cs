@@ -250,5 +250,15 @@ public class GameTagContainer
         return true;
     }
 
+    public bool MatchAllContainer(GameTagContainer Container)
+    {
+        return ExactTag.SetEquals(Container.ExactTag);
+    }
+    
+    public bool MatchAnyContainer(GameTagContainer Container)
+    {
+        return ExactTag.Overlaps(Container.ExactTag);
+    }
+
 
 }
