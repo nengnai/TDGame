@@ -113,7 +113,6 @@ public struct FGameTag : IEquatable<FGameTag> //, ISerializationCallbackReceiver
 
     public override int GetHashCode()
     {
-        //@todo:这块没仔细看，回头再仔细看下？？
         return (Node != null ? Node.GetHashCode() : 0); 
     }
 

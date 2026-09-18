@@ -12,6 +12,8 @@ public class GameAbility : ScriptableObject
         OnActivate
     }
     public InstantiationPolicy Policy;
+    
+    //@todo:将 List 换成 GameTagContainer
     public List<FGameTag> RequiredTags = new List<FGameTag>();         //激活技能需要的tags
     public List<FGameTag> BlockedByTags = new List<FGameTag>();        //有这些tags 技能无法激活
     public List<FGameTag> BlockingTags = new List<FGameTag>();         //技能激活时拒绝让有这些tags的技能激活
@@ -67,7 +69,7 @@ public class GameAbility : ScriptableObject
     {
         if(IsActive == false) return;
         IsActive = false;
-        Owner?.OnAbilityEnd(this);
+        Owner?.ShutdownAbility(this);
     }
 
 
