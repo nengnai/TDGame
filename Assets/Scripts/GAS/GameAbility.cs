@@ -14,12 +14,12 @@ public class GameAbility : ScriptableObject
     public InstantiationPolicy Policy;
     
     //@todo:将 List 换成 GameTagContainer
-    public List<FGameTag> RequiredTags = new List<FGameTag>();         //激活技能需要的tags
-    public List<FGameTag> BlockedByTags = new List<FGameTag>();        //有这些tags 技能无法激活
-    public List<FGameTag> BlockingTags = new List<FGameTag>();         //技能激活时拒绝让有这些tags的技能激活
-    public List<FGameTag> CancelTags = new List<FGameTag>();           //激活时要打断目标身上有这些tags的技能（眩晕）
-    public List<FGameTag> OwnTags = new List<FGameTag>();              //激活时给目标身上挂的Tags
-
+    public readonly List<FGameTag> RequiredTags = new();         //激活技能需要的tags
+    public readonly List<FGameTag> BlockedByTags = new();        //有这些tags 技能无法激活
+    public readonly List<FGameTag> BlockingTags = new();         //技能激活时拒绝让有这些tags的技能激活
+    public readonly List<FGameTag> CancelTags = new();           //激活时要打断目标身上有这些tags的技能（眩晕）
+    public readonly List<FGameTag> OwnTags = new();              //激活时给目标身上挂的Tags
+    
 
     [NonSerialized] public AbilitySystemComponent Owner;
     [NonSerialized] public AbilityTimeManager TimeManager;
@@ -74,21 +74,3 @@ public class GameAbility : ScriptableObject
 
 
 }
-
-
-/*public bool CanActivateAbility(FAbilityHandle Handle)
-    {
-        if (!Abilities.TryGetValue(Handle, out GameAbility Ability))
-        { return false; }
-
-        if (Ability.RequiredTags.Count != 0
-            && Tags.HasAllTags(Ability.RequiredTags) == false)
-        { return false; }
-        
-        if (Ability.BlockedByTags.Count != 0
-            && Tags.HasAnyTag(Ability.BlockedByTags))
-        { return false; }
-        
-        return true;
-    }
-    */

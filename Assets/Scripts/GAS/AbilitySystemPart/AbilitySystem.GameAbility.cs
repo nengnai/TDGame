@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-
 public struct FAbilityHandle
 {
     private readonly uint HandleID;
@@ -27,56 +26,15 @@ public struct FAbilityHandle
     public static readonly FAbilityHandle Invalid = new FAbilityHandle(UInt32.MaxValue);
 }
 
-
-
-
-/*public class StackEntry
-{
-    public FTimerHandle TimerHandle;
-    public FEffectHandle EffectHandle;
-    public StackEntry(FTimerHandle THandle, FEffectHandle EHandle)
-    {
-        TimerHandle = THandle;
-        EffectHandle = EHandle;
-    }
-}
-*/
-
-
 public partial class AbilitySystemComponent : MonoBehaviour
 {
-    /* Tag */
-    public readonly GameTagContainer Tags = new();
-    
-    
     /* 技能数据存放 */
     private readonly Dictionary<FAbilityHandle, GameAbility> HandleToAbilitie = new();
     private readonly Dictionary<FGameTag, List<FAbilityHandle>> AbilitiesByTag = new();
     private readonly List<GameAbility> ActivateAbilities = new();
-    private readonly List<GameAbility> TickAbilityBuffer = new();
     private uint AbilityID;
     
-
-
-    private void Update()
-    {
-        TickAbilityBuffer.Clear();
-        TickAbilityBuffer.AddRange(ActivateAbilities);
-        foreach(var Target in TickAbilityBuffer)
-        {
-            // 此处无需判定是否为激活,因为在 Buffer 中的值均为已激活
-            Target.OnTick();
-        }
-
-        TickEffectBuffer.Clear();
-        TickEffectBuffer.AddRange(EffectInstances.Values);
-        foreach(var Target in TickEffectBuffer)
-        {
-            Target.OnTick();
-        }
-    }
-
-
+    
     public FAbilityHandle AddAbility(GameAbility Config)
     {
         FAbilityHandle Handle = FAbilityHandle.Create(ref AbilityID);
@@ -245,5 +203,4 @@ public partial class AbilitySystemComponent : MonoBehaviour
 
         if(Instance.Policy == GameAbility.InstantiationPolicy.OnActivate) Destroy(Instance);
     }
-    
 }

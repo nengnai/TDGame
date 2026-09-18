@@ -70,6 +70,18 @@ public class AbilityTimeManager
 
 }
 
+/*public class StackEntry
+{
+    public FTimerHandle TimerHandle;
+    public FEffectHandle EffectHandle;
+    public StackEntry(FTimerHandle THandle, FEffectHandle EHandle)
+    {
+        TimerHandle = THandle;
+        EffectHandle = EHandle;
+    }
+}
+*/
+
 public partial class AbilitySystemComponent : MonoBehaviour
 {
     /* 效果数据存放 */
@@ -78,7 +90,7 @@ public partial class AbilitySystemComponent : MonoBehaviour
     private readonly Dictionary<int, List<FEffectHandle>> EffectToHandle = new();
     private readonly Dictionary<FEffectHandle, FTimerHandle> EffectTimers = new();
     private readonly Dictionary<int, GameEffect> EffectInstances = new();
-    private readonly List<GameEffect> TickEffectBuffer = new();
+    
     private uint EffectID;
     
     
