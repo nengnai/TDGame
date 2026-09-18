@@ -2,61 +2,98 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-public struct FAbilityHandle
+
+public struct FAbilityHandle // : IEquatable<FAbilityHandle> 也许以后需要比较?
 {
     private readonly uint HandleID;
+
     public FAbilityHandle(uint ID)
     {
         HandleID = ID;
     }
+
     public static FAbilityHandle Create(ref uint _abilityID)
     {
-        if (_abilityID == UInt32.MaxValue)
-        {
-            _abilityID = 0;
-        }
+        if (_abilityID == 0) { _abilityID = 1; } // 0 是无效值,永不发出
+
         return new FAbilityHandle(_abilityID++);
     }
 
-    public bool IsValid => HandleID != UInt32.MaxValue;
-    public override int GetHashCode()
-    {
-        return (int)HandleID;
-    }
-    public static readonly FAbilityHandle Invalid = new FAbilityHandle(UInt32.MaxValue);
+    public bool IsValid => HandleID != 0;
+    
+    public override int GetHashCode() => (int)HandleID;
+
+    public override string ToString() => IsValid ? HandleID.ToString() : "Invalid";
+
+    public static readonly FAbilityHandle Invalid = default;
 }
+
 
 public partial class AbilitySystemComponent : MonoBehaviour
 {
-    /* 技能数据存放 */
-    private readonly Dictionary<FAbilityHandle, GameAbility> HandleToAbilitie = new();
-    private readonly Dictionary<FGameTag, List<FAbilityHandle>> AbilitiesByTag = new();
-    private readonly List<GameAbility> ActivateAbilities = new();
+    private readonly Dictionary<FAbilityHandle, GameAbilitySpec> HandleToSpec = new();
+    
+    private readonly List<GameAbilitySpec> EndBuffer = new();
+
+    private bool bIsAbilityActivating; // 重入保护
+
     private uint AbilityID;
+
+
+    /* 查询 */
+    public bool TryGetSpec(FAbilityHandle Handle, out GameAbilitySpec Spec)
+    {
+        return HandleToSpec.TryGetValue(Handle, out Spec);
+    }
+
+    public bool IsAbilityActive(FAbilityHandle Handle)
+    {
+        return HandleToSpec.TryGetValue(Handle, out GameAbilitySpec Spec) && Spec.IsActive;
+    }
+
+    public GameAbility GetLiveAbility(FAbilityHandle Handle)
+    {
+        return HandleToSpec.TryGetValue(Handle, out GameAbilitySpec Spec) ? Spec.Instance : null;
+    }
+    
+    
+    public void GetActiveSpecs(List<GameAbilitySpec> Out)
+    {
+        if (Out == null) return;
+
+        Out.Clear();
+        foreach (GameAbilitySpec Spec in HandleToSpec.Values)
+        {
+            if (Spec.IsActive) Out.Add(Spec);
+        }
+    }
+    
     
     
     public FAbilityHandle AddAbility(GameAbility Config)
     {
-        FAbilityHandle Handle = FAbilityHandle.Create(ref AbilityID);
+        if (Config == null) return FAbilityHandle.Invalid;
 
-        GameAbility Ability;
+        FAbilityHandle Handle = FAbilityHandle.Create(ref AbilityID);
+        GameAbilitySpec Spec = new(Config, Handle);
+        HandleToSpec.Add(Handle, Spec);
 
         switch (Config.Policy)
         {
             case GameAbility.InstantiationPolicy.Static:
             {
-                Ability = Config;
+                Spec.Instance = Config; // 资产本身就是实例:授予时不写任何字段
                 break;
             }
             case GameAbility.InstantiationPolicy.OnGranted:
             {
-                Ability = Instantiate(Config);
-                Ability.OnGranted();
+                Spec.Instance = Instantiate(Config);
+                Spec.Instance.OnGranted();
                 break;
             }
             case GameAbility.InstantiationPolicy.OnActivate:
             {
-                Ability = Config;
+                Spec.Instance = null;
                 break;
             }
             default:
@@ -65,142 +102,150 @@ public partial class AbilitySystemComponent : MonoBehaviour
             }
         }
 
-        Ability.Owner = this;
-        Ability.Handle = Handle;
-        HandleToAbilitie[Handle] = Ability;
-
-        if (Config.AbilityTag.IsValid())
-        {
-            if(!AbilitiesByTag.TryGetValue(Config.AbilityTag, out var List))
-            {
-                List = new List<FAbilityHandle>();
-                AbilitiesByTag[Config.AbilityTag] = List;
-            }
-            List.Add(Handle);
-        }
-
         return Handle;
     }
-    
-    
+
+
     public void RemoveAbility(FAbilityHandle Handle)
     {
-        if(!HandleToAbilitie.TryGetValue(Handle, out GameAbility Ability))
-        { return; }
+        if (!HandleToSpec.TryGetValue(Handle, out GameAbilitySpec Spec)) { return; }
 
-        EndAbility(Ability);
-        HandleToAbilitie.Remove(Handle);
+        EndAbility(Handle);
+        HandleToSpec.Remove(Handle);
 
-        if (Ability.AbilityTag.IsValid())
+        if (Spec.Config.Policy == GameAbility.InstantiationPolicy.OnGranted && Spec.Instance != null)
         {
-            if(AbilitiesByTag.TryGetValue(Ability.AbilityTag, out List<FAbilityHandle> List))
-            {
-                List.Remove(Handle);
-
-                if(List.Count == 0) AbilitiesByTag.Remove(Ability.AbilityTag);
-
-            }
+            Destroy(Spec.Instance); // OnActivate 的实例已在 ShutdownAbility 里销毁
         }
-        
-        if(Ability.Policy == GameAbility.InstantiationPolicy.OnGranted) Destroy(Ability);
-        
+
+        Spec.Instance = null;
     }
 
     
-    // 尝试激活技能时调用
-    public void ActivateAbility(FAbilityHandle Handle)
+    public bool ActivateAbility(FAbilityHandle Handle)
     {
-        if(!HandleToAbilitie.TryGetValue(Handle, out GameAbility Ability)) return;
-        
-        if(Ability.AbilityTag.IsValid() && Tags.HasTag(Ability.AbilityTag)) return;
+        if (bIsAbilityActivating) { return false; }
 
-        if(!Ability.CanActivate()) return;
-        
-        if(Ability.Policy != GameAbility.InstantiationPolicy.OnActivate && Ability.IsActive == true) return;
+        if (!HandleToSpec.TryGetValue(Handle, out GameAbilitySpec Spec)) { return false; }
 
-        //@todo:优化判定逻辑,以下为临时逻辑
-        if(Ability.CancelTags.Count > 0)
+        if (Spec.IsActive) { return false; } // 已激活:一次字典命中,不靠标签判断
+
+        // 判断是否可以激活
         {
-            List<GameAbility> CheckList = new();
-            foreach (GameAbility Active in ActivateAbilities)
+            GameAbility TempInstance = Spec.Instance ?? Spec.Config;
+            BindContext(Spec, TempInstance);
+            bool bCanActivate = TempInstance.CanActivate();
+            UnbindContext(Spec, TempInstance);
+            if (!bCanActivate) { return false; }
+        }
+
+        // 被正在激活技能的 BlockingTags 阻止?
+        foreach (GameAbilitySpec CheckSpec in HandleToSpec.Values)
+        {
+            if (!CheckSpec.IsActive || CheckSpec.Instance == null) { continue; }
+            if (CheckSpec.Instance.BlockingTags.IsEmpty) { continue; }
+            if (CheckSpec.Instance.BlockingTags.MatchAnyContainer(Spec.Config.OwnTags)) { return false; }
+        }
+
+        GameAbility Live = Spec.Instance;
+        if (Spec.Config.Policy == GameAbility.InstantiationPolicy.OnActivate)
+        {
+            Live = Instantiate(Spec.Config);
+            Spec.Instance = Live;
+            Live.OnGranted();
+        }
+        if (Live == null) { return false; }
+
+        bIsAbilityActivating = true;
+        try
+        {
+            Spec.IsActive = true;
+
+            // 打断: CancelTags 命中其它激活中技能的 OwnTags (不打断自己)
+            EndBuffer.Clear();
+            foreach (GameAbilitySpec ForSpec in HandleToSpec.Values)
             {
-                foreach(FGameTag Tag in Active.OwnTags)
-                {
-                    foreach(FGameTag CancelTag in Ability.CancelTags)
-                    {
-                        if (Tag == CancelTag)
-                        {
-                            CheckList.Add(Active);
-                            goto FinishTagMatch;
-                        }
-                    }
-                }
-                FinishTagMatch: ;
+                if (ForSpec == Spec) { continue; }
+                if (!ForSpec.IsActive || ForSpec.Instance == null) { continue; }
+                if (ForSpec.Instance.OwnTags.MatchAnyContainer(Live.CancelTags)) { EndBuffer.Add(ForSpec); }
+            }
+            foreach (GameAbilitySpec EndSpec in EndBuffer)
+            {
+                EndAbility(EndSpec.Handle);
             }
 
-            foreach (GameAbility Target in CheckList)
-            {
-                EndAbility(Target);
-            }
+            Tags.AppendTags(Live.OwnTags); // 挂自己的标签
+
+            BindContext(Spec, Live);
+            Live.Activate();
+            UnbindContext(Spec, Live);
+        }
+        finally
+        {
+            bIsAbilityActivating = false;
         }
 
-        GameAbility AbilityToActivate;
-        if(Ability.Policy == GameAbility.InstantiationPolicy.OnActivate)
-        {
-            AbilityToActivate = Instantiate(Ability);
-            AbilityToActivate.Owner = this;
-            AbilityToActivate.Handle = Handle;
-            AbilityToActivate.OnGranted();
-        }
-        else
-        {
-            AbilityToActivate = Ability;
-        }
-
-        ActivateAbilities.Add(AbilityToActivate);
-        AbilityToActivate.IsActive = true;
-        foreach(FGameTag Tag in AbilityToActivate.OwnTags)
-        {
-            Tags.AddTag(Tag);
-        }
-        
-        
-        AbilityToActivate.Activate();
+        return true;
     }
-    
-    
-    
-    
-    
-    // 当用户尝试取消技能时调用(不代表技能结束,仅做为请求)
+
+
+    public bool EndAbility(FAbilityHandle Handle)
+    {
+        if (!HandleToSpec.TryGetValue(Handle, out GameAbilitySpec Spec)) { return false; }
+        if (!Spec.IsActive || Spec.Instance == null) { return false; }
+        
+        BindContext(Spec, Spec.Instance);
+        Spec.Instance.EndAbility();
+        UnbindContext(Spec, Spec.Instance);
+
+        return true;
+    }
+
+
     public void CancelAbility(FAbilityHandle Handle)
     {
-        if (!HandleToAbilitie.TryGetValue(Handle, out GameAbility Value))
-        { return; }
-        
-        Value.Cancel();
-    }
-    
-    // 技能结束时调用
-    public void EndAbility(GameAbility Instance)
-    {
-        if(!ActivateAbilities.Contains(Instance))
-        { return; }
-        Instance.EndAbility();
-    }
-    
-    
-    // GA 结束之后自动调用的回调
-    public void ShutdownAbility(GameAbility Instance)
-    {
-        Instance.IsActive = false;
-        
-        foreach(FGameTag Tag in Instance.OwnTags)
-        {
-            Tags.RemoveTag(Tag);
-        }
-        ActivateAbilities.Remove(Instance);
+        if (!HandleToSpec.TryGetValue(Handle, out GameAbilitySpec Spec)) { return; }
+        if (!Spec.IsActive || Spec.Instance == null) { return; }
 
-        if(Instance.Policy == GameAbility.InstantiationPolicy.OnActivate) Destroy(Instance);
+        BindContext(Spec, Spec.Instance);
+        Spec.Instance.Cancel();
+        UnbindContext(Spec, Spec.Instance);
+
+        if (Spec.IsActive) { EndAbility(Handle); }
+    }
+
+    
+
+    // GA 回调入口
+    public void ShutdownAbility(GameAbility Live)
+    {
+        if (Live == null || !HandleToSpec.TryGetValue(Live.Handle, out GameAbilitySpec Spec)) { return; }
+
+        if (!Spec.IsActive) { return; }
+
+        Tags.RemoveTags(Live.OwnTags);
+        Spec.IsActive = false;
+
+        if (Spec.Config.Policy == GameAbility.InstantiationPolicy.OnActivate)
+        {
+            Destroy(Live);
+            Spec.Instance = null;
+        }
+    }
+
+
+    // 只有 CanActivate / Activate / EndAbility 调用前绑上下文(GA 内部直接读 Owner/Handle)
+    private void BindContext(GameAbilitySpec Spec, GameAbility Target)
+    {
+        Target.Owner = this;
+        Target.Handle = Spec.Handle;
+    }
+
+    private void UnbindContext(GameAbilitySpec Spec, GameAbility Target)
+    {
+        if (Spec.Config.Policy != GameAbility.InstantiationPolicy.Static) { return; }
+
+        Target.Owner = null;
+        Target.Handle = FAbilityHandle.Invalid;
     }
 }

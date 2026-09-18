@@ -81,6 +81,12 @@ public struct FGameTag : IEquatable<FGameTag> //, ISerializationCallbackReceiver
     {
         Node = GameTagManager.GetSubsystem().GetNode(Value);
     }
+
+    // 由已有节点直接构造(容器做集合操作时避免再走一次字符串查询)
+    internal FGameTag(GameTagNode InNode)
+    {
+        Node = InNode;
+    }
     
     /* 序列化 */
     //@todo:添加序列化支持
@@ -134,6 +140,16 @@ public class GameTagContainer
 {
     private HashSet<GameTagNode> ExactTag = new();
     private Dictionary<GameTagNode, int> ImplicitTag = new();
+    
+    public bool IsEmpty => ExactTag.Count == 0;
+
+    public void Clear()
+    {
+        ExactTag.Clear();
+        ImplicitTag.Clear();
+    }
+    
+    
     public void AddTag(FGameTag Tag)
     {
         GameTagNode Node = Tag.Node;
@@ -212,9 +228,9 @@ public class GameTagContainer
 
     public bool HasAllTags(List<FGameTag> Tags)
     {
-        foreach(FGameTag tag in Tags)
+        foreach(FGameTag Tag in Tags)
         {
-            if (!HasTag(tag))
+            if (!HasTag(Tag))
             {
                 return false;
             }
@@ -225,9 +241,9 @@ public class GameTagContainer
 
     public bool HasAnyTagExact(List<FGameTag> Tags)
     {
-        foreach(FGameTag tag in Tags)
+        foreach(FGameTag Tag in Tags)
         {
-            if (HasTagExact(tag))
+            if (HasTagExact(Tag))
             {
                 return true;
             }
@@ -249,15 +265,42 @@ public class GameTagContainer
         return true;
     }
 
+    
+    
+    
     public bool MatchAllContainer(GameTagContainer Container)
     {
         return ExactTag.SetEquals(Container.ExactTag);
     }
-    
+
+
     public bool MatchAnyContainer(GameTagContainer Container)
     {
         return ExactTag.Overlaps(Container.ExactTag);
     }
+    
+    
 
+    // 将 Container的 Tag 全部加入
+    public void AppendTags(GameTagContainer Other)
+    {
+        if (Other == null || ReferenceEquals(Other, this)) return;
+
+        foreach (GameTagNode Node in Other.ExactTag)
+        {
+            AddTag(new FGameTag(Node));
+        }
+    }
+
+    // 将 Container的 Tag 全部移除
+    public void RemoveTags(GameTagContainer Other)
+    {
+        if (Other == null || ReferenceEquals(Other, this)) return;
+
+        foreach (GameTagNode Node in Other.ExactTag)
+        {
+            RemoveTag(new FGameTag(Node));
+        }
+    }
 
 }
