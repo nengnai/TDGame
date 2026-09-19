@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TDGameLibrary;
 
@@ -136,9 +137,9 @@ public struct FGameTag : IEquatable<FGameTag> //, ISerializationCallbackReceiver
 
 
 
-public class GameTagContainer
+public class GameTagContainer : IEnumerable<FGameTag>
 {
-    private HashSet<GameTagNode> ExactTag = new();
+    private HashSet<FGameTag> ExactTag = new();
     private Dictionary<GameTagNode, int> ImplicitTag = new();
     
     public bool IsEmpty => ExactTag.Count == 0;
@@ -153,7 +154,7 @@ public class GameTagContainer
     public void AddTag(FGameTag Tag)
     {
         GameTagNode Node = Tag.Node;
-        ExactTag.Add(Node);
+        ExactTag.Add(Tag);
 
         GameTagNode CurrentNode = Node;
         while(CurrentNode.InParent != null)
@@ -174,7 +175,7 @@ public class GameTagContainer
     public void RemoveTag(FGameTag Tag)
     {
         GameTagNode Node = Tag.Node;
-        ExactTag.Remove(Node);
+        ExactTag.Remove(Tag);
 
         GameTagNode CurrentNode = Node;
         while(CurrentNode.InParent != null)
@@ -204,7 +205,7 @@ public class GameTagContainer
 
     public bool HasTagExact(FGameTag Tag)
     {
-        return ExactTag.Contains(Tag.Node);
+        return ExactTag.Contains(Tag);
     }
 
 
@@ -286,9 +287,9 @@ public class GameTagContainer
     {
         if (Other == null || ReferenceEquals(Other, this)) return;
 
-        foreach (GameTagNode Node in Other.ExactTag)
+        foreach (FGameTag Node in Other.ExactTag)
         {
-            AddTag(new FGameTag(Node));
+            AddTag(Node);
         }
     }
 
@@ -297,10 +298,18 @@ public class GameTagContainer
     {
         if (Other == null || ReferenceEquals(Other, this)) return;
 
-        foreach (GameTagNode Node in Other.ExactTag)
+        foreach (FGameTag Node in Other.ExactTag)
         {
-            RemoveTag(new FGameTag(Node));
+            RemoveTag(Node);
         }
     }
 
+    public IEnumerator<FGameTag> GetEnumerator()
+    {
+        return ExactTag.GetEnumerator();
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }
