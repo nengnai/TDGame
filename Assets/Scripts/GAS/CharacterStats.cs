@@ -17,31 +17,20 @@ public class CharacterStats : MonoBehaviour
         Light,
         Heavy
     }
+    
 
+
+    public  int TeamID;                 //阵营 目前先用0和1表示敌人和友军 之后在其他地方建立一个局内阵营关系和存阵营的字典 然后这里改成enum 逻辑改成目标是否在当前关阵营敌对表内
 
 
 
 
     public int Damage;
-    public enum ShootType                           //d
-    {
-        Normal,
-        Burst,
-    }
-
-    public float ShootSpeed;    //【连发模式】一秒内能射几次          射击速度小于射击动画播放时长的时候就得需要同时加快射击动画播放速度
-                                //非连发模式的角色将不使用该参数
-
-    public int MaxBurstCount;
-    public int CurrentBurstCount;
-    public float BurstShootSpeed;    //【爆发射击模式】一秒内能射几次   动画同理
-                                     //受到buff影响则和BurstDelay一起改变
-    public float BurstDelay;         //【爆发射击模式】射完一组爆发后等待的时间
-                                     //非爆发射击模式的角色将不使用该参数     受到buff影响则和BurstShootSpeed一起改变
-
-
     public float DetectRange;
     public float ShootRange;
+
+
+    
 
     public int MaxAmmo;
     public int CurrentAmmo;
