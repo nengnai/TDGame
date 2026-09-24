@@ -12,7 +12,8 @@ public class CharacterStats : MonoBehaviour
     public int CurrentShield;
     public int Armor;
     public float MoveSpeed;
-    public enum ArmorType
+    public ArmorType ArmorKind;
+    public enum ArmorType 
     {
         Light,
         Heavy
@@ -26,6 +27,7 @@ public class CharacterStats : MonoBehaviour
 
 
     public int Damage;
+    public ArmorType FocusArmorType;
     public float DetectRange;
     public float ShootRange;
 

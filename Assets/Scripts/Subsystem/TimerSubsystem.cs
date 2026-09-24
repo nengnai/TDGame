@@ -14,6 +14,8 @@ public struct FTimerHandle
     {
         TimerHandle = InTimerHandle;
     }
+
+    public bool IsValid => TimerHandle != 0;
     
     public override int GetHashCode()
     {
