@@ -104,7 +104,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 592435723958826741}
-  - component: {fileID: 2502634436935045925}
   - component: {fileID: 2669728352776825600}
   m_Layer: 7
   m_Name: Misaki_AI
@@ -129,18 +128,6 @@ Transform:
   - {fileID: 1909332376601830090}
   m_Father: {fileID: 1552231620373532803}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2502634436935045925
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 212633480827569464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46bfd56b151552b4f8d84687117215b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &2669728352776825600
 Animator:
   serializedVersion: 7
@@ -971,7 +958,6 @@ GameObject:
   - component: {fileID: 1552231620373532803}
   - component: {fileID: 4402729367719278808}
   - component: {fileID: 9167485881522067411}
-  - component: {fileID: 1481817735830480752}
   m_Layer: 7
   m_Name: Misaki
   m_TagString: Untagged
@@ -1160,18 +1146,6 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &1481817735830480752
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1422403285069577096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ecb725fec09865429095619f5f7ca25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1555613485615450421
 GameObject:
   m_ObjectHideFlags: 0
