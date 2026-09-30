@@ -27,7 +27,6 @@ public class CharacterStats : MonoBehaviour
 
 
     public int Damage;
-    public ArmorType FocusArmorType;
     public float DetectRange;
     public float ShootRange;
 
@@ -41,19 +40,8 @@ public class CharacterStats : MonoBehaviour
 
 
     public Action OnDeath;
-
     public bool IsDead;
 
-
-
-    
-    public float AniIdleTime;
-    public float AniShootTime;
-    public float AniMoveTime;
-    public float AniReloadTime;
-    public float AniBoltTime;
-    public float AniAttackWindupTime;
-    public float AniAttackWinddownTime;
 
 
 

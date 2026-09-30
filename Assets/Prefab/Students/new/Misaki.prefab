@@ -104,9 +104,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 592435723958826741}
-  - component: {fileID: 8634505997021551219}
+  - component: {fileID: 2502634436935045925}
   - component: {fileID: 2669728352776825600}
-  - component: {fileID: 7842416026028635351}
   m_Layer: 7
   m_Name: Misaki_AI
   m_TagString: Untagged
@@ -130,7 +129,7 @@ Transform:
   - {fileID: 1909332376601830090}
   m_Father: {fileID: 1552231620373532803}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8634505997021551219
+--- !u!114 &2502634436935045925
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,52 +138,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 212633480827569464}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: feaba8622cba55d4a8201be26f455ec8, type: 3}
+  m_Script: {fileID: 11500000, guid: 46bfd56b151552b4f8d84687117215b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Ring: {fileID: 910736698013432481}
-  characterName: Misaki
-  maxHealth: 250
-  currentHealth: 250
-  destroiedTime: 0
-  damage: 250
-  range: 10
-  firingWindup: 0
-  firingDelay: 0
-  fullAmmo: 1
-  currentAmmo: 1
-  burstTime: 0
-  AttackStartTime: 1.1
-  AttackTime: 1.2
-  AttackEndTime: 0.66
-  ReloadTime: 3
-  IdleReloadTime: 3
-  boltTime: 0
-  isAlly: 0
-  isUndestroied: 0
-  shootingType: 0
-  attackType: 0
-  armorType: 0
-  isMoving: 0
-  isIdling: 0
-  isReloading: 0
-  isShooting: 0
-  isDead: 0
-  isInvincible: 0
-  isStunned: 0
-  isMarked: 0
-  isFacingTarget: 0
-  HasIdleReloadAnim: 1
-  moveSpeed: 2
-  Acceleration: 100
-  AngularSpeed: 1000
-  StoppingDistance: 0
-  SkillCD: 0
-  isSelected: 0
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 3072
-  button: {fileID: 0}
 --- !u!95 &2669728352776825600
 Animator:
   serializedVersion: 7
@@ -207,43 +163,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7842416026028635351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 212633480827569464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68eee2ef475f6104690a1ae48e6e1d73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stat: {fileID: 8634505997021551219}
-  animator: {fileID: 2669728352776825600}
-  PathAI: {fileID: 4402729367719278808}
-  MainObject: {fileID: 1552231620373532803}
-  detectTime: 0.2
-  attackStartTime: 0
-  attackTime: 0
-  boltTime: 0
-  attackEndTime: 0
-  reloadTime: 0
-  idleReloadTime: 0
-  stunTime: 0
-  detectTimer: 0
-  attackStartTimer: 0
-  attackTimer: 0
-  firingDelayTimer: 0
-  attackEndTimer: 0
-  reloadTimer: 0
-  idleReloadTimer: 0
-  stunTimer: 0
-  DeadTimer: 0
-  burstCount: 0
-  currentTarget: {fileID: 0}
-  targetStat: {fileID: 0}
-  turnSpeed: 30
 --- !u!1 &566853173291898499
 GameObject:
   m_ObjectHideFlags: 0

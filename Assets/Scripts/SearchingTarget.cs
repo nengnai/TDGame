@@ -75,13 +75,13 @@ public class SearchingTarget : MonoBehaviour
         CollectCandidatesInRange(Weapon.GetShootRange());
         if(CandidateBuffer.Count > 0)
         {
-            CurrentAttackTarget = SelectBestTarget(CandidateBuffer, Weapon, Myself, false);
+            CurrentAttackTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself, false);
             CurrentChaseTarget = null;
             return;
         }
 
         CollectCandidatesInRange(Weapon.GetChaseRange());
-        CurrentChaseTarget = SelectBestTarget(CandidateBuffer, Weapon, Myself, true);
+        CurrentChaseTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself, true);
         CurrentAttackTarget = null;
     }
 
@@ -100,7 +100,7 @@ public class SearchingTarget : MonoBehaviour
 
 
 
-    CharacterStats SelectBestTarget(List<CharacterStats> Candidates, GA_WeaponBase Weapon, CharacterStats Self, bool IsForChase)
+    CharacterStats SelectNormalShootTarget(List<CharacterStats> Candidates, GA_WeaponBase Weapon, CharacterStats Self, bool IsForChase)
     {
         if(Candidates.Count == 0) return null;
         CharacterStats BestTarget = null;
@@ -110,7 +110,16 @@ public class SearchingTarget : MonoBehaviour
         foreach(var Candidate in Candidates)
         {
             float CurrentScore = 0f;
-            if(!Weapon.ScoreTarget(Candidate, Self, ref CurrentScore, Range)) continue;
+            if(!TargetScoringLibrary.IsEnemyTeam(Candidate, Self)) continue;
+            if(!TargetScoringLibrary.IsAlive(Candidate)) continue;
+            if(AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先近距离")))
+            {
+                TargetScoringLibrary.ScoreByDistance(Candidate, Self, ref CurrentScore, Range, 1f);
+            }
+            else if (AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先远距离")))
+            {
+                TargetScoringLibrary.ScoreByDistance(Candidate, Self, ref CurrentScore, Range, -1f);
+            }
 
             if(AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先轻甲")))
             {
@@ -154,5 +163,12 @@ public class SearchingTarget : MonoBehaviour
 
         return BestTarget;
     }
+
+
+
+
+
+
+
 
 }
