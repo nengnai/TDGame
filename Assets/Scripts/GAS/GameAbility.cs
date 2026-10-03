@@ -55,7 +55,7 @@ public class GameAbility : ScriptableObject
     
     public virtual void Cancel()
     {
-        TimeManager?.ClearAll();
+        EndAbility();
     }
 
     

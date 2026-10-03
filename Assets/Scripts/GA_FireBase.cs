@@ -96,7 +96,7 @@ public class GA_FireBase : GA_WeaponBase
 
     void StopFiringLoop()
     {
-        if(ShootLoopHandle.IsValid) TimeManager.RemoveTimer(ShootLoopHandle);
+        if(ShootLoopHandle.IsValid()) TimeManager.RemoveTimer(ShootLoopHandle);
     }
 
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TDGameLibrary;
 
-public class GameTagNode
+internal class GameTagNode
 {
     public FName InFullName;
     public FName InName;
@@ -19,7 +19,7 @@ public class GameTagNode
 }
 
 
-public class GameTagManager : GameInstanceSubsystem<GameTagManager>
+internal class GameTagManager : GameInstanceSubsystem<GameTagManager>
 {
     public GameTagNode RootNode;
     private Dictionary<string, GameTagNode> AllNodes = new();
@@ -71,11 +71,11 @@ public class GameTagManager : GameInstanceSubsystem<GameTagManager>
 
 public struct FGameTag : IEquatable<FGameTag> //, ISerializationCallbackReceiver
 {
-    public GameTagNode Node
-    {
+    internal GameTagNode Node;
+    /*{
         get;
         private set;
-    }
+    }*/
     
     
     public FGameTag(string Value)
