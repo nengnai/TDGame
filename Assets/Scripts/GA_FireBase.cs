@@ -2,22 +2,23 @@ using UnityEngine;
 
 public class GA_FireBase : GA_WeaponBase
 {
-    public float AttackWindUpTime;
-    public float AttackWindDownTime;
     public float ShootDelay;                //攻击间隔
     public int BurstTime;                  //一轮最大连发次数
     private int BurstCount;
-    public int BurstDelay;                 //连发后间隔
+    public float BurstDelay;                 //连发后间隔
+
+    
     
 
 
     FTimerHandle ShootLoopHandle;
+    FTimerHandle BurstDelayHandle;
     SearchingTarget SearchingSystem;
     CharacterStats MyStats;
 
 
 
-    public int AmmoCostPerShot;
+    public int AmmoCostPerShot = 1;
 
 
 
@@ -52,11 +53,17 @@ public class GA_FireBase : GA_WeaponBase
         SearchingSystem.ScanWithWeapon(this);
         CharacterStats Target = SearchingSystem.AttackTarget;
 
-        if(Target == null)return;
+        if(Target == null)
+        {
+            StopFiringLoop();
+            EndAbility();
+            return;
+        }
 
         if(MyStats.CurrentAmmo <= 0)
         {
             StopFiringLoop();
+            EndAbility();
              //之后接转换弹技能
             return;
         }
@@ -69,10 +76,11 @@ public class GA_FireBase : GA_WeaponBase
         if(BurstCount >= BurstTime)
         {
             TimeManager.RemoveTimer(ShootLoopHandle);
-            TimeManager.AddTimer(BurstDelay, false, false, () => 
+            BurstDelayHandle = TimeManager.AddTimer(BurstDelay, false, false, () => 
             {
                 BurstCount = 0;
                 StartFiringLoop();
+                
             });
         }
     }
@@ -97,7 +105,10 @@ public class GA_FireBase : GA_WeaponBase
     void StopFiringLoop()
     {
         if(ShootLoopHandle.IsValid()) TimeManager.RemoveTimer(ShootLoopHandle);
+        if(BurstDelayHandle.IsValid()) TimeManager.RemoveTimer(BurstDelayHandle);
     }
+
+
 
 
 }

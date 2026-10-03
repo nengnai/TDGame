@@ -15,12 +15,6 @@ public class GA_WeaponBase : GameAbility
         return ChaseRange;
     }
 
-    public virtual bool ScoreTarget(CharacterStats Target, CharacterStats Self, ref float Score, float Range)
-    {
-        if(!TargetScoringLibrary.IsEnemyTeam(Target, Self)) return false;
-        if(!TargetScoringLibrary.IsAlive(Target)) return false;
-        TargetScoringLibrary.ScoreByDistance(Target, Self, ref Score, Range, 1f);
-        return true;
-    }
+    
 
 }

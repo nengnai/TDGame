@@ -43,5 +43,6 @@ public static class TargetScoringLibrary
     {
         if(Target.ArmorKind == Armor) Score += BonusScore;
     }
+    
 
 }
