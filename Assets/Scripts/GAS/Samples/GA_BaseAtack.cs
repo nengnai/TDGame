@@ -1,5 +1,9 @@
 // 基础普攻
 
+// @todo:将获取浮点值改为使用新的 modify 系统
+// @todo:实现准备射击技能，当准备射击之后调用最终攻击 GA，或者直接内置一个前摇系统
+// @todo:实现伤害、特效、动画函数
+
 using UnityEngine;
 
 interface IWeaponAtackInterface
