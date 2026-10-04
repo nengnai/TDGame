@@ -104,7 +104,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 592435723958826741}
+  - component: {fileID: 5358513432270711248}
   - component: {fileID: 2669728352776825600}
+  - component: {fileID: 6116595100470518560}
   m_Layer: 7
   m_Name: Misaki_AI
   m_TagString: Untagged
@@ -128,6 +130,36 @@ Transform:
   - {fileID: 1909332376601830090}
   m_Father: {fileID: 1552231620373532803}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5358513432270711248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212633480827569464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 519ca8dbc5cfabb4a8817526b90faa3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxHealth: 300
+  CurrentHealth: 300
+  MaxShield: 0
+  CurrentShield: 0
+  Armor: 10
+  MoveSpeed: 5
+  ArmorKind: 0
+  TeamID: 1
+  Damage: 0
+  ExplosionDmg: 70
+  PenetrationDmg: 50
+  EnergyDmg: 30
+  DetectRange: 100
+  ShootRange: 100
+  MaxAmmo: 1
+  CurrentAmmo: 1
+  FinalFixed: 0
+  IsDead: 0
 --- !u!95 &2669728352776825600
 Animator:
   serializedVersion: 7
@@ -138,7 +170,7 @@ Animator:
   m_GameObject: {fileID: 212633480827569464}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c404fc4450e64c24f996a53986c8fec5, type: 3}
-  m_Controller: {fileID: 9100000, guid: 890299bfe2ab82f40a56420b93564c6d, type: 2}
+  m_Controller: {fileID: 22100000, guid: 2f8c906e05d8e884da39973d26d46f6d, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -150,6 +182,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6116595100470518560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212633480827569464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f060b05761923747a4e416f1754c66e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScanDur: 0.1
+  Myself: {fileID: 5358513432270711248}
 --- !u!1 &566853173291898499
 GameObject:
   m_ObjectHideFlags: 0

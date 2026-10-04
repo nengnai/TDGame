@@ -40,6 +40,13 @@ public class GameEffect : ScriptableObject
 
     public virtual void OnApplied()
     {
+
+        foreach ( GameEffectModifier Modifier in Modifiers)
+        {
+            if(Modifier is ModifyModifier Modify) Modify.Apply(Owner.GetComponent<CharacterStats>(), this);
+        }
+
+
         foreach (GameEffectExecutor Executor in Executors)
         {
             Executor.OnApplied(this);

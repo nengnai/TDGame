@@ -17,16 +17,13 @@ using UnityEngine;
 
 [Serializable] public class AddModifier : GameEffectModifier
 {
-    public FName TargetAttribute;
+    public FGameTag TargetAttribute;
     public float Value;
 
     public override void Apply(CharacterStats Target, GameEffect Effect)
     {
-        if (Target.HasAdditionalStat(TargetAttribute))
-        {
-            float OldValue = Target.GetAdditionalStat(TargetAttribute);
-            Target.AdditionalStats[TargetAttribute] = OldValue + Value;
-        }
+        float Current = Target.GetBaseValue(TargetAttribute);
+        Target.SetBaseStat(TargetAttribute, Current + Value);
         
     }
 
@@ -37,7 +34,7 @@ using UnityEngine;
 
     public override void OnStackChanged(CharacterStats Target, GameEffect Effect)
     {
-        
+        Apply(Target, Effect);
     }
 }
 
@@ -45,29 +42,22 @@ using UnityEngine;
 
 [Serializable] public class ModifyModifier : GameEffectModifier
 {
-    public FName TargetAttribute;
+    public FGameTag TargetAttribute;
     public float Value;
 
-    [NonSerialized] public float OriginalValue;
+
     public override void Apply(CharacterStats Target, GameEffect Effect)
     {
-        if (Target.HasAdditionalStat(TargetAttribute))
-        {
-            OriginalValue = Target.AdditionalStats[TargetAttribute];
-            Target.AdditionalStats[TargetAttribute] = OriginalValue + Value;
-        }
-        
+        ValueChange VC = new ValueChange{Add = Value};
+        Target.AddModifier(TargetAttribute, VC);
     }
 
     public override void Remove(CharacterStats Target, GameEffect Effect)
     {
-        if (Target.HasAdditionalStat(TargetAttribute))
-        {
-            Target.AdditionalStats[TargetAttribute] = OriginalValue;
-        }
+        ValueChange VC = new ValueChange {Add = Value};
+        Target.RemoveModifier(TargetAttribute, VC);
         
     }
-
 
     public override void OnStackChanged(CharacterStats Target, GameEffect Effect)
     {

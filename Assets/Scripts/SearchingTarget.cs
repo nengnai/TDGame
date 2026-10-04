@@ -1,7 +1,6 @@
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class SearchingTarget : MonoBehaviour
 {
@@ -61,7 +60,7 @@ public class SearchingTarget : MonoBehaviour
 
 
 
-    public void ScanWithWeapon(GA_WeaponBase Weapon)
+    public void ScanWithWeapon(GA_BaseAttack Weapon)
     {
         if(Weapon == null) return;
         if(Myself == null) return;
@@ -80,7 +79,7 @@ public class SearchingTarget : MonoBehaviour
             return;
         }
 
-        CollectCandidatesInRange(Weapon.GetChaseRange());
+        CollectCandidatesInRange(Weapon.GetDetectRange());
         CurrentChaseTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself, true);
         CurrentAttackTarget = null;
     }
@@ -100,13 +99,13 @@ public class SearchingTarget : MonoBehaviour
 
 
 
-    CharacterStats SelectNormalShootTarget(List<CharacterStats> Candidates, GA_WeaponBase Weapon, CharacterStats Self, bool IsForChase)
+    CharacterStats SelectNormalShootTarget(List<CharacterStats> Candidates, GA_BaseAttack Weapon, CharacterStats Self, bool IsForChase)
     {
         if(Candidates.Count == 0) return null;
         CharacterStats BestTarget = null;
 
         float BestScore = float.MinValue;
-        float Range = IsForChase ? Weapon.GetChaseRange() : Weapon.GetShootRange();
+        float Range = IsForChase ? Weapon.GetDetectRange() : Weapon.GetShootRange();
         foreach(var Candidate in Candidates)
         {
             float CurrentScore = 0f;
