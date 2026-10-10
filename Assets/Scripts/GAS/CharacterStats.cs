@@ -1,6 +1,9 @@
+// 用于角色数据的储存
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using TDGameLibrary;
 
 public struct ValueChange
 {
@@ -13,6 +16,7 @@ public struct ValueChange
         return (OriginalValue + Add) * (1 + Percent);
     }
 }
+
 
 public class CharacterStats : MonoBehaviour
 {
@@ -34,7 +38,7 @@ public class CharacterStats : MonoBehaviour
     
 
 
-    public  int TeamID;                 //阵营 目前先用0和1表示敌人和友军 之后在其他地方建立一个局内阵营关系和存阵营的字典 然后这里改成enum 逻辑改成目标是否在当前关阵营敌对表内
+    public FTeamID TeamID; //阵营 目前先用0和1表示敌人和友军 之后在其他地方建立一个局内阵营关系和存阵营的字典 然后这里改成enum 逻辑改成目标是否在当前关阵营敌对表内
 
 
 
@@ -70,12 +74,6 @@ public class CharacterStats : MonoBehaviour
         CurrentShield = MaxShield;
         IsDead = false;
 
-        InitAccessors();
-    }
-
-
-    private void InitAccessors()
-    {
         StatAccessors = new()
         {
             [TDGameTags.MaxHealth]      = (() => MaxHealth,       v => MaxHealth = v),
@@ -92,7 +90,6 @@ public class CharacterStats : MonoBehaviour
             [TDGameTags.ShootRange]     = (() => ShootRange,       v => ShootRange = v),
         };
     }
-
 
 
     public void NewAdditionalStat(FName StatName, float Value)

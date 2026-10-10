@@ -1,3 +1,4 @@
+using TDGameLibrary;
 using UnityEngine;
 
 public static class TargetScoringLibrary
@@ -13,9 +14,8 @@ public static class TargetScoringLibrary
     }
     public static bool IsEnemyTeam(CharacterStats Target, CharacterStats Self)
     {
-        if(Target.TeamID == Self.TeamID) return false;
-
-        return true;
+        ETeamAttitude TeamAttitude = Target.TeamID.GetTargetAttitude(Self.TeamID);
+        return TeamAttitude != ETeamAttitude.Hostile;
     }
 
     public static bool IsAlive(CharacterStats Target)

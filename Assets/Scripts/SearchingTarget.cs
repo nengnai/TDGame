@@ -60,14 +60,15 @@ public class SearchingTarget : MonoBehaviour
 
 
 
-    public void ScanWithWeapon(GA_BaseAttack Weapon)
+    public CharacterStats ScanWithWeapon(GA_BaseAttack Weapon)
     {
-        if(Weapon == null) return;
-        if(Myself == null) return;
+        if(Weapon == null) return null;
+        if(Myself == null) return null;
 
 
-        if(Time.time - LastScanTime < ScanDur) return;
-        LastScanTime = Time.time;
+        // todo:这里限制时间的逻辑不对，1:没区分武器 2:未到的时候应该返回上次检查的缓存值
+        /*if(Time.time - LastScanTime < ScanDur) return null;
+        LastScanTime = Time.time;*/
 
 
 
@@ -76,12 +77,13 @@ public class SearchingTarget : MonoBehaviour
         {
             CurrentAttackTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself, false);
             CurrentChaseTarget = null;
-            return;
+            return CurrentAttackTarget;
         }
 
         CollectCandidatesInRange(Weapon.GetDetectRange());
         CurrentChaseTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself, true);
         CurrentAttackTarget = null;
+        return CurrentChaseTarget;
     }
 
 
