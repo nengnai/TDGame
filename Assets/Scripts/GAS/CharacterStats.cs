@@ -97,13 +97,13 @@ public class CharacterStats : MonoBehaviour
     // 动画事件
     public EventSystem<AnimatorEventData> AnimatorEvent = new();
 
-    public float MaxHealth;
+    public float MaxHealth = 300.0f;
     public float CurrentHealth;
-    public float MaxShield;
+    public float MaxShield = 0.0f;
     public float CurrentShield;
-    public float Armor;
-    public float MoveSpeed;
-    public ArmorType ArmorKind;
+    public float Armor = 10.0f;
+    public float MoveSpeed = 5.0f;
+    public ArmorType ArmorKind = ArmorType.Light;
     public enum ArmorType 
     {
         Light,
@@ -118,20 +118,12 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public float Damage;
-    public float ExplosionDmg;
+    public float Damage = 10.0f;
+    public float ExplosionDmg = 70.0f;
     public float PenetrationDmg;
     public float EnergyDmg;
-    public float ShootDelay;
-    public float BurstDelay;  
-    
-    public float DetectRange;
-    public float ShootRange;
 
-
-    
-
-    public float FinalFixed;              //造成最终伤害之前的独立增减伤乘区值
+    public float FinalFixed = 0.0f;              //造成最终伤害之前的独立增减伤乘区值
 
     public Action OnDeath;
     public bool IsDead;
@@ -161,8 +153,6 @@ public class CharacterStats : MonoBehaviour
             [TDGameTags.ExplosionDmg]   = (() => ExplosionDmg,    v => ExplosionDmg = v),
             [TDGameTags.PenetrationDmg] = (() => PenetrationDmg,  v => PenetrationDmg = v),
             [TDGameTags.EnergyDmg]      = (() => EnergyDmg,       v => EnergyDmg = v),
-            [TDGameTags.DetectRange]    = (() => DetectRange,      v => DetectRange = v),
-            [TDGameTags.ShootRange]     = (() => ShootRange,       v => ShootRange = v),
         };
     }
 

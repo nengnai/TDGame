@@ -1,11 +1,9 @@
 // 基础普攻
 
-// @todo:将获取浮点值改为使用新的 modify 系统
-// @todo:实现准备射击技能，当准备射击之后调用最终攻击 GA，或者直接内置一个前摇系统
-// @todo:实现伤害、特效、动画函数
-// @todo:动画方面应该调用事件总线上的触发函数，动画播放器监听总线上的时间来触发动画，而不是直接在这里调用
+// @todo:实现伤害、特效函数
 
 using UnityEngine;
+using TDGameLibrary;
 
 interface IWeaponAtackInterface
 {
@@ -16,15 +14,20 @@ interface IWeaponAtackInterface
 public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
 {
     // 攻击间隔
+    public float ShootDelay = 0.1f;
+    public float BurstDelay = 0.01f;
+    
     //一轮最大连发次数
     public int MaxBurstCount = 1;
-    // 消耗弹药数
-
+    
+    // 攻击距离
+    public float DetectRange = 100.0f;
+    public float ShootRange = 100.0f;
     
     private FTimerHandle BurstDelayHandle;
     private FTimerHandle ShootDelayHandle;
     private int BurstCount = 0;
-
+    
     private CharacterStats MyStats;
     private SearchingTarget SearchingTarget;
 
@@ -61,19 +64,13 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
     
     /* ---- 实现接口 ---- */
     // 获取射击距离
-    public float GetShootRange() => MyStats.GetModifiedValue(TDGameTags.ShootRange);
-    public float GetDetectRange() => MyStats.GetModifiedValue(TDGameTags.DetectRange);
+    public float GetShootRange() => MyStats.GetModifiedValue(TDGameTags.ShootRange, ShootRange);
+    public float GetDetectRange() => MyStats.GetModifiedValue(TDGameTags.DetectRange, DetectRange);
     
     // 获取射击时间
-    protected float GetFireDelay(bool IsBurst = false)
-    {
-        if (IsBurst)
-        {
-            return MyStats.GetModifiedValue(TDGameTags.BurstDelay);
-        }
-
-        return MyStats.GetModifiedValue(TDGameTags.ShootDelay);
-    }
+    protected float GetFireDelay(bool IsBurst = false) => IsBurst ? 
+            MyStats.GetModifiedValue(TDGameTags.BurstDelay, BurstDelay) :
+            MyStats.GetModifiedValue(TDGameTags.ShootDelay, ShootDelay);
     
     /* ---- 射击实现 ---- */
     // 用于计算是否可以射击
