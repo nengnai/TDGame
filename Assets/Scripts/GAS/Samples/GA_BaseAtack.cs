@@ -64,6 +64,17 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
     public float GetShootRange() => MyStats.GetModifiedValue(TDGameTags.ShootRange);
     public float GetDetectRange() => MyStats.GetModifiedValue(TDGameTags.DetectRange);
     
+    // 获取射击时间
+    protected float GetFireDelay(bool IsBurst = false)
+    {
+        if (IsBurst)
+        {
+            return MyStats.GetModifiedValue(TDGameTags.BurstDelay);
+        }
+
+        return MyStats.GetModifiedValue(TDGameTags.ShootDelay);
+    }
+    
     /* ---- 射击实现 ---- */
     // 用于计算是否可以射击
     protected virtual bool CanShoot()
@@ -88,11 +99,11 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
         
         BurstCount++;
 
-        Shoot(Target);
+        Shoot(Target, BurstCount < MaxBurstCount);
 
         if (BurstCount >= MaxBurstCount)
         {
-            ShootDelayHandle = TimeManager.AddTimer(MyStats.GetModifiedValue(TDGameTags.ShootDelay), false, false, () => 
+            ShootDelayHandle = TimeManager.AddTimer(GetFireDelay(), false, false, () => 
             {
                 BurstCount = 0;
                 TryShoot();
@@ -100,15 +111,22 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
         }
         else
         {
-            BurstDelayHandle = TimeManager.AddTimer(MyStats.GetModifiedValue(TDGameTags.BurstDelay), false, false, TryShoot);
+            BurstDelayHandle = TimeManager.AddTimer(GetFireDelay(true), false, false, TryShoot);
         }
     }
 
     // 最终射击代码
-    protected virtual void Shoot(CharacterStats Target)
+    protected virtual void Shoot(CharacterStats Target, bool IsBurst)
     {
         // 伤害、特效、动画 啥的
+        AnimatorEventData AnimatorData;
+        AnimatorData.AnimatorTime = GetFireDelay(IsBurst);
+        
+        MyStats.AnimatorEvent?.TriggerAction(TDGameTags.AnimatorFireEvent, AnimatorData);
+        
         
         // @todo: 调用 CharacterStats 的一个伤害函数，传入攻击类型与伤害
     }
+    
+    
 }

@@ -25,4 +25,7 @@ public static class TDGameTags
     
     /* ---- 状态相关标签 ---- */
     public static readonly FGameTag IsMove = new FGameTag("Game.Stats.IsMove");
+    
+    /* ---- 动画事件标签 ---- */
+    public static readonly FGameTag AnimatorFireEvent = new FGameTag("Animator.Event.Fire");
 }

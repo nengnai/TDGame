@@ -17,10 +17,21 @@ public struct ValueChange
     }
 }
 
+public struct AnimatorEventData
+{
+    public float AnimatorTime;
+
+    public AnimatorEventData(float InAnimatorTime)
+    {
+        AnimatorTime =  InAnimatorTime;
+    }
+}
+
 
 public class CharacterStats : MonoBehaviour
 {
-    
+    // 动画事件
+    public EventSystem<AnimatorEventData> AnimatorEvent = new();
 
     public float MaxHealth;
     public float CurrentHealth;
@@ -37,8 +48,8 @@ public class CharacterStats : MonoBehaviour
     }
     
 
-
-    public FTeamID TeamID; //阵营 目前先用0和1表示敌人和友军 之后在其他地方建立一个局内阵营关系和存阵营的字典 然后这里改成enum 逻辑改成目标是否在当前关阵营敌对表内
+    // 阵营
+    public FTeamID TeamID;
 
 
 
