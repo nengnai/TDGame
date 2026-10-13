@@ -6,6 +6,7 @@ using System;
 public partial class AbilitySystemComponent : MonoBehaviour
 {
     /* Tag */
+    [NonSerialized]
     public readonly GameTagContainer Tags = new();
     
     /* 循环专用 Buffer */

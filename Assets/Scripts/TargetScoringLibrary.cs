@@ -15,7 +15,7 @@ public static class TargetScoringLibrary
     public static bool IsEnemyTeam(CharacterStats Target, CharacterStats Self)
     {
         ETeamAttitude TeamAttitude = Target.TeamID.GetTargetAttitude(Self.TeamID);
-        return TeamAttitude != ETeamAttitude.Hostile;
+        return TeamAttitude == ETeamAttitude.Hostile;
     }
 
     public static bool IsAlive(CharacterStats Target)
