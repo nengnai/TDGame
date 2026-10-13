@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class SearchingTarget : MonoBehaviour
 {
-    public float ScanDur = 0.1f;             //检测间隔(sec)
+    //检测间隔(sec)
+    public float ScanDur = 0.1f;
     private float LastScanTime;
     public CharacterStats Myself;
 
@@ -113,39 +114,39 @@ public class SearchingTarget : MonoBehaviour
             float CurrentScore = 0f;
             if(!TargetScoringLibrary.IsEnemyTeam(Candidate, Self)) continue;
             if(!TargetScoringLibrary.IsAlive(Candidate)) continue;
-            if(AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先近距离")))
+            if(AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先近距离))
             {
                 TargetScoringLibrary.ScoreByDistance(Candidate, Self, ref CurrentScore, Range, 1f);
             }
-            else if (AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先远距离")))
+            else if (AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先远距离))
             {
                 TargetScoringLibrary.ScoreByDistance(Candidate, Self, ref CurrentScore, Range, -1f);
             }
 
-            if(AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先轻甲")))
+            if(AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先轻甲))
             {
                 TargetScoringLibrary.ScoreByArmorMatch(Candidate, ref CurrentScore, CharacterStats.ArmorType.Light, 2f);
             }
-            else if(AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先重甲")))
+            else if(AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先重甲))
             {
                 TargetScoringLibrary.ScoreByArmorMatch(Candidate, ref CurrentScore, CharacterStats.ArmorType.Heavy, 2f);
             }
             
 
 
-            if(AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先低血量护甲")))
+            if(AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先低血量护甲))
             {
                 TargetScoringLibrary.ScoreByHealthShield(Candidate, ref CurrentScore, true, 1f);
             }
-            else if(AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先高血量护甲")))
+            else if(AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先高血量护甲))
             {
                 TargetScoringLibrary.ScoreByHealthShield(Candidate, ref CurrentScore, true, -1f);
             }
-            else if(AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先低血量")))
+            else if(AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先低血量))
             {
                 TargetScoringLibrary.ScoreByHealthShield(Candidate, ref CurrentScore, false, 11f);
             }
-            else if(AbilitySystem.Tags.HasTagExact(new FGameTag("逻辑.索敌.优先高血量")))
+            else if(AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先高血量))
             {
                 TargetScoringLibrary.ScoreByHealthShield(Candidate, ref CurrentScore, false, -1f);
             }

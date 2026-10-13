@@ -20,12 +20,22 @@ public static class TDGameTags
     public static readonly FGameTag BurstDelay = new("Modify.Stats.BurstDelay");
     // .....
     
-    /* ---- 普攻相关标签 ---- */
+    /* ---- 普攻 ---- */
     public static readonly FGameTag FireReady = new("Game.Fire.FireReady");
     
-    /* ---- 状态相关标签 ---- */
+    /* ---- 状态 ---- */
     public static readonly FGameTag IsMove = new("Game.Stats.IsMove");
     
-    /* ---- 动画事件标签 ---- */
+    /* ---- 索敌逻辑 ---- */
+    public static readonly FGameTag Search优先近距离 = new("Logic.Search.优先近距离");
+    public static readonly FGameTag Search优先远距离 = new("Logic.Search.优先远距离");
+    public static readonly FGameTag Search优先轻甲 = new("Logic.Search.优先轻甲");
+    public static readonly FGameTag Search优先重甲 = new("Logic.Search.优先重甲");
+    public static readonly FGameTag Search优先低血量护甲 = new("Logic.Search.优先低血量护甲");
+    public static readonly FGameTag Search优先高血量护甲 = new("Logic.Search.优先高血量护甲");
+    public static readonly FGameTag Search优先低血量 = new("Logic.Search.优先低血量");
+    public static readonly FGameTag Search优先高血量 = new("Logic.Search.优先高血量");
+    
+    /* ---- 动画事件 ---- */
     public static readonly FGameTag AnimatorFireEvent = new("Animator.Event.Fire");
 }
