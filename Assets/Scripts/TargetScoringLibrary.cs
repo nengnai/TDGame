@@ -6,7 +6,7 @@ public static class TargetScoringLibrary
 
     public static bool IsValidTarget(CharacterStats Target, CharacterStats Self)
     {
-        if(Target == null) return false;
+        if(!Target) return false;
         if(!IsAlive(Target)) return false;
         if(Target == Self) return false;
         if(!IsEnemyTeam(Target, Self)) return false;
@@ -20,7 +20,7 @@ public static class TargetScoringLibrary
 
     public static bool IsAlive(CharacterStats Target)
     {
-        if(Target == null) return false;
+        if(!Target) return false;
         if(Target.IsDead) return false;
         return true;
     }

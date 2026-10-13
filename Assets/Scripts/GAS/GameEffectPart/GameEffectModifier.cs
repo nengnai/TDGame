@@ -42,21 +42,19 @@ using UnityEngine;
 
 [Serializable] public class ModifyModifier : GameEffectModifier
 {
+    // @todo:修复层级对修改结果的影响
     public FGameTag TargetAttribute;
     public float Value;
 
 
     public override void Apply(CharacterStats Target, GameEffect Effect)
     {
-        ValueChange VC = new ValueChange{Add = Value};
-        Target.AddModifier(TargetAttribute, VC);
+        Target.AddAddModifier(TargetAttribute, Value);
     }
 
     public override void Remove(CharacterStats Target, GameEffect Effect)
     {
-        ValueChange VC = new ValueChange {Add = Value};
-        Target.RemoveModifier(TargetAttribute, VC);
-        
+        Target.RemoveAddModifier(TargetAttribute, Value);
     }
 
     public override void OnStackChanged(CharacterStats Target, GameEffect Effect)

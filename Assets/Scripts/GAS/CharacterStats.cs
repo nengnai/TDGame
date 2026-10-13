@@ -5,15 +5,79 @@ using System.Collections.Generic;
 using UnityEngine;
 using TDGameLibrary;
 
-public struct ValueChange
+public class ValueChange
 {
     public float Add;
-    public float Percent;
+    public readonly List<float> Percent = new();
+    public float MaxPercent = 0.0f;
+    public float NegativeMaxPercent = 0.0f;
 
 
     public float ChangedValue(float OriginalValue)
     {
-        return (OriginalValue + Add) * (1 + Percent);
+        return (OriginalValue + Add) * (1 + MaxPercent + NegativeMaxPercent);
+    }
+
+    public void AddAddChanged(float InAdd)
+    {
+        Add += InAdd;
+    }
+
+    public void AddPercentChanged(float InPercent)
+    {
+        if (InPercent == 0.0f) return;
+        
+        Percent.Add(InPercent);
+        if (InPercent > 0.0f)
+        {
+            MaxPercent = Math.Max(InPercent, MaxPercent);
+        }
+        else
+        {
+            NegativeMaxPercent = Math.Min(InPercent, NegativeMaxPercent);
+        }
+    }
+
+    public void RemoveAddChanged(float InAdd)
+    {
+        Add -= InAdd;
+    }
+    public void RemovePercentChanged(float InPercent)
+    {
+        if (InPercent == 0.0f) return;
+        if (!Percent.Remove(InPercent)) return;
+        
+        const float Tolerance = 0.00001f;
+        if (InPercent > 0.0f)
+        {
+            // 只有当被移除的值可能影响正最大值时才重算
+            if (InPercent >= (MaxPercent - Tolerance))
+            {
+                MaxPercent = 0.0f;
+                foreach (var i in Percent)
+                {
+                    if (i > 0.0f)
+                    {
+                        MaxPercent = Math.Max(i, MaxPercent);
+                    }
+                }
+            }
+        }
+        else if (InPercent < 0.0f)
+        {
+            // 只有当被移除的值可能影响负最大值时才重算
+            if (InPercent <= (NegativeMaxPercent + Tolerance))
+            {
+                NegativeMaxPercent = 0.0f;
+                foreach (var i in Percent)
+                {
+                    if (i < 0.0f)
+                    {
+                        NegativeMaxPercent = Math.Min(i, NegativeMaxPercent);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -75,8 +139,8 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public Dictionary<FName, float> AdditionalStats = new(); 
-    private Dictionary<FGameTag, List<ValueChange>> Modifiers= new();
+    public readonly Dictionary<FName, float> AdditionalStats = new(); 
+    private readonly Dictionary<FGameTag, ValueChange> Modifiers= new();
     private Dictionary<FGameTag, (Func<float> Get, Action<float> Set)> StatAccessors;
 
     void Awake()
@@ -132,47 +196,38 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public float GetModifiedValue(FGameTag Tag, float Value)
-    {
-        if(!Modifiers.TryGetValue(Tag, out List<ValueChange> ValueList) || ValueList.Count == 0) return Value;
-        float Add = 0;
-        float 最终正数值 = 0;
-        float 最终负数值 = 0;
-        for(int i = 0; i < ValueList.Count; i++)
-        {
-            Add += ValueList[i].Add;
-            if (ValueList[i].Percent > 最终正数值) 最终正数值 = ValueList[i].Percent;
-            if (ValueList[i].Percent < 最终负数值) 最终负数值 = ValueList[i].Percent;
-        }
+    public float GetModifiedValue(FGameTag Tag, float Value) 
+        => !Modifiers.TryGetValue(Tag, out ValueChange ValueList) ? Value : ValueList.ChangedValue(Value);
+    
 
-        float FinalValue = (Value + Add) * (1 + (最终正数值 + 最终负数值));
-        return FinalValue;
+    public void AddAddModifier(FGameTag Tag, float InAddModifier)
+    {
+        if(!Modifiers.TryGetValue(Tag, out ValueChange ValueList)) return;
+        ValueList.AddAddChanged(InAddModifier);
     }
-
-    public void AddModifier(FGameTag Tag, ValueChange VC)
+    public void AddPercentModifier(FGameTag Tag, float InPercentModifier)
     {
-        if (!Modifiers.ContainsKey(Tag))
-        {
-            Modifiers.Add(Tag, new List<ValueChange>());
-        }
-
-        Modifiers[Tag].Add(VC);
+        if(!Modifiers.TryGetValue(Tag, out ValueChange ValueList)) return;
+        ValueList.AddPercentChanged(InPercentModifier);
     }
 
 
-    public void RemoveModifier(FGameTag Tag, ValueChange VC)
+    public void RemoveAddModifier(FGameTag Tag, float InAddModifier)
     {
-        if(!Modifiers.ContainsKey(Tag)) return;
-        Modifiers[Tag].Remove(VC);
-
-        if(Modifiers[Tag].Count == 0) Modifiers.Remove(Tag);
+        if(!Modifiers.TryGetValue(Tag, out ValueChange ValueList)) return;
+        ValueList.RemoveAddChanged(InAddModifier);
+    }
+    public void RemovePercentModifier(FGameTag Tag, float InPercentModifier)
+    {
+        if(!Modifiers.TryGetValue(Tag, out ValueChange ValueList)) return;
+        ValueList.RemovePercentChanged(InPercentModifier);
     }
 
     
 
-    public List<ValueChange> GetModifyRef(FGameTag Tag)
+    public ValueChange GetModifyRef(FGameTag Tag)
     {
-        if(!Modifiers.TryGetValue(Tag, out List<ValueChange> VC)) return null;
+        if(!Modifiers.TryGetValue(Tag, out var VC)) return null;
         return VC;
     }
 
@@ -227,9 +282,9 @@ public class CharacterStats : MonoBehaviour
     }
 
 
-    public void DecreaseHealth(float Damage)
+    public void DecreaseHealth(float InDamage)
     {
-        float FinalDamage = Mathf.FloorToInt((Damage - Armor) * (1 + FinalFixed));
+        float FinalDamage = Mathf.FloorToInt((InDamage - Armor) * (1 + FinalFixed));
 
         CurrentHealth -= FinalDamage;
         if(CurrentHealth < 0)
