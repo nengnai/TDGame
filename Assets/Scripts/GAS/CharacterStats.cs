@@ -133,7 +133,6 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public bool 是否属于玩家;
     public bool IsSelected;
     public bool IsDead;
 

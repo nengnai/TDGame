@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Pathfinding;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -45,7 +46,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            RightClick(HasHit);
+            RightClick();
         }
     }
 
@@ -55,7 +56,7 @@ public class PlayerController : MonoBehaviour
         if(!HasHit) return;
         if(HitInfo.collider.gameObject.layer == LayerMask.NameToLayer("Student"))
         {   
-            if(选中的单位.Count > 0)
+            if(选中的单位.Count > 0)                              //如果手里有选中的单位 取消选中
             {   
                 foreach(RaycastHit Hit in 选中的单位)
                 {
@@ -65,27 +66,55 @@ public class PlayerController : MonoBehaviour
                 选中的单位.Clear();
             }
             CharacterStats TargetStats = HitInfo.collider.GetComponentInChildren<CharacterStats>();
-            if(TargetStats.是否属于玩家)
+            AbilitySystemComponent ASC = HitInfo.collider.GetComponentInChildren<AbilitySystemComponent>();
+            if(ASC.Tags.HasTagExact(TDGameTags.IsPlayer))          //选中自己的单位或友军的单位 友军单位选中后不可进行指令（不知道这样写行不行 还是说也没必要写
             {
                 选中的单位.Add(HitInfo);
+                TargetStats.IsSelected = true;
             }
-            TargetStats.IsSelected = true;
+            else if (ASC.Tags.HasTagExact(TDGameTags.IsAlly))
+            {
+                TargetStats.IsSelected = true;
+            }
 
         }
         else if(HitInfo.collider.gameObject.layer == LayerMask.NameToLayer("Building"))
         {
-            
+            //选中建筑后 如果建筑是功能性建筑（非红警那种平民建筑 建筑不可进驻驻守）则选中并且出对应UI什么的
         }
         else if(HitInfo.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            
+            if(选中的单位.Count > 0)        //如果有选中的单位 则命令单位前往地点
+            {
+                foreach(RaycastHit Hit in 选中的单位)
+                {
+                    AbilitySystemComponent ASC = Hit.collider.GetComponentInChildren<AbilitySystemComponent>();
+                    CharacterStats TargetStats = Hit.collider.GetComponentInChildren<CharacterStats>();
+                    if (!ASC.Tags.HasTagExact(TDGameTags.IsPlayer))                    //如果被选中的单位是敌军或友军 则取消选中 否则进入寻路
+                    {
+                        TargetStats.IsSelected = false;
+                        continue;
+                    }
+
+                    FollowerEntity 寻路系统 = Hit.collider.GetComponent<FollowerEntity>();
+                    寻路系统.SetDestination(HitInfo.point);
+                }
+            }
+            else if(选中的建筑.Count > 0)
+            {
+                选中的建筑.Clear();
+            }
+            else if(选中的主动技能.Count > 0)
+            {
+                //释放技能
+            }
         }
     }
 
 
-    void RightClick(bool HasHit)
+    void RightClick()
     {
-        if(选中的单位.Count > 0)
+        if(选中的单位.Count > 0)                              //如果有选中的单位 取消选中
         {
             foreach(RaycastHit Hit in 选中的单位)
             {

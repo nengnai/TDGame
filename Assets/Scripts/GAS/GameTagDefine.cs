@@ -36,4 +36,13 @@ public static class TDGameTags
     
     /* ---- 动画事件 ---- */
     public static readonly FGameTag AnimatorFireEvent = new("Animator.Event.Fire");
+
+
+    /* ---- 关系所属 ---- */
+    public static readonly FGameTag IsPlayer = new("Game.Relation.IsPlayer");
+    public static readonly FGameTag IsAlly = new("Game.Relation.IsAlly");
+
+
+
+
 }
