@@ -8,21 +8,17 @@ public class SearchingTarget : MonoBehaviour
     public float ScanDur = 0.1f;
     private float LastScanTime;
     public CharacterStats Myself;
+    public CharacterController Controller;
 
 
+    private CharacterStats MyTarget;
 
-    private CharacterStats CurrentAttackTarget;
-    private CharacterStats CurrentChaseTarget;
-    private CharacterStats FocusTarget;
 
     private Collider[] OverlapBuffer = new Collider[100];
     private List<CharacterStats> CandidateBuffer = new();
 
 
 
-
-    public CharacterStats AttackTarget => FocusTarget ?? CurrentAttackTarget;
-    public CharacterStats ChaseTarget => CurrentChaseTarget;
 
 
 
@@ -37,9 +33,7 @@ public class SearchingTarget : MonoBehaviour
 
     void Update()
     {
-        if(!IsTargetValid(CurrentAttackTarget)) CurrentAttackTarget = null;
-        if(!IsTargetValid(CurrentChaseTarget)) CurrentChaseTarget = null;
-        if(!IsTargetValid(FocusTarget)) FocusTarget = null;
+        if(!IsTargetValid(MyTarget))  MyTarget = null;
     }
 
 
@@ -49,15 +43,6 @@ public class SearchingTarget : MonoBehaviour
         return TargetScoringLibrary.IsAlive(Target);
     }
 
-    public void SetFocusTarget(CharacterStats Target)
-    {
-        FocusTarget = Target;
-    }
-
-    public void ClearFocusTarget()
-    {
-        FocusTarget = null;
-    }
 
 
 
@@ -76,15 +61,13 @@ public class SearchingTarget : MonoBehaviour
         CollectCandidatesInRange(Weapon.GetShootRange());
         if(CandidateBuffer.Count > 0)
         {
-            CurrentAttackTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself, false);
-            CurrentChaseTarget = null;
-            return CurrentAttackTarget;
+            MyTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself);
+            return MyTarget;
         }
 
         CollectCandidatesInRange(Weapon.GetDetectRange());
-        CurrentChaseTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself, true);
-        CurrentAttackTarget = null;
-        return CurrentChaseTarget;
+        MyTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself);
+        return MyTarget;
     }
 
 
@@ -102,13 +85,13 @@ public class SearchingTarget : MonoBehaviour
 
 
 
-    CharacterStats SelectNormalShootTarget(List<CharacterStats> Candidates, GA_BaseAttack Weapon, CharacterStats Self, bool IsForChase)
+    CharacterStats SelectNormalShootTarget(List<CharacterStats> Candidates, GA_BaseAttack Weapon, CharacterStats Self)
     {
         if(Candidates.Count == 0) return null;
         CharacterStats BestTarget = null;
 
         float BestScore = float.MinValue;
-        float Range = IsForChase ? Weapon.GetDetectRange() : Weapon.GetShootRange();
+        float Range = Weapon.GetDetectRange();
         foreach(var Candidate in Candidates)
         {
             float CurrentScore = 0f;

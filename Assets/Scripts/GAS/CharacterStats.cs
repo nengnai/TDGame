@@ -124,12 +124,17 @@ public class CharacterStats : MonoBehaviour
     public float VS轻甲 = 50.0f;
     public float VS中甲 = 0f;
     public float VS重甲 = -50.0f;
-    public float DetectRange = 100.0f;
-    public float ShootRange = 100.0f;
+    public float DetectRange = 20.0f;
+    public float ShootRange = 20.0f;
 
     public float FinalFixed = 0.0f;              //造成最终伤害之前的独立增减伤乘区值
 
     public Action OnDeath;
+
+
+
+    public bool 是否属于玩家;
+    public bool IsSelected;
     public bool IsDead;
 
 

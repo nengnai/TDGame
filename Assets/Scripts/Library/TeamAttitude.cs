@@ -8,7 +8,7 @@ namespace TDGameLibrary
     {
         Neutral,
         Hostile,
-        Friendly
+        Friendly,
     }
     
     public struct FTeamID

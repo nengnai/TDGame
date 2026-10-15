@@ -46,7 +46,10 @@ public class CharacterController : MonoBehaviour
 
 
         //主动/被动技能检测和释放
-
+        if(MyTarget != null && !寻路系统.hasPath)
+        {
+            SearchingTarget.ScanWithWeapon(MyStats.NormalAttack);
+        }
 
         if (寻路系统.hasPath)
         {
