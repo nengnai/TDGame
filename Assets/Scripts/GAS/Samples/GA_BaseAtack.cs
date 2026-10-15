@@ -11,6 +11,7 @@ interface IWeaponAtackInterface
     float GetDetectRange();
 }
 
+[CreateAssetMenu(fileName = "普攻", menuName = "Scriptable GAS/NewScriptableObjectScript")]
 public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
 {
     // 攻击间隔
