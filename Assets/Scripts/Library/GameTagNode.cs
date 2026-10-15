@@ -232,17 +232,20 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
     /* ---- 序列化 ---- */
     public void OnBeforeSerialize()
     {
-        //EnsureIndex(); // 顺带清掉上一次遗留的载荷
-
-        SerializedTags ??= new List<FGameTag>();
-        SerializedTags.Clear();
-
-        foreach (FGameTag Tag in ExactTag)
+        if (SerializedTags == null)
         {
-            // 在副本上补全字符串：这样即使序列化器不回调元素，写出的也是完整路径
-            FGameTag SerializableTag = Tag;
-            SerializableTag.OnBeforeSerialize();
-            SerializedTags.Add(SerializableTag);
+            EnsureIndex();
+
+            SerializedTags ??= new List<FGameTag>();
+            SerializedTags.Clear();
+
+            foreach (FGameTag Tag in ExactTag)
+            {
+                // 在副本上补全字符串：这样即使序列化器不回调元素，写出的也是完整路径
+                FGameTag SerializableTag = Tag;
+                SerializableTag.OnBeforeSerialize();
+                SerializedTags.Add(SerializableTag);
+            }
         }
 
         // 让序列化顺序稳定
@@ -252,7 +255,7 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
     public void OnAfterDeserialize()
     {
         IndexReady = false;
-        //EnsureIndex();
+        EnsureIndex();
     }
 
     private static int CompareTagPath(FGameTag A, FGameTag B)
@@ -283,7 +286,7 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
 
         // 先摘下载荷再清空字段: AddTag 内部会调 EnsureIndex(它会把字段置 null)，若直接遍历字段本身，会在遍历途中被置空而炸掉
         List<FGameTag> Payload = SerializedTags;
-        SerializedTags = null;
+        //SerializedTags = null;
 
         if (Payload != null)
         {
@@ -342,7 +345,7 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
         if (Node == null) return;
         
         if (!ExactTag.Remove(Tag)) return;
-
+        
         GameTagNode CurrentNode = Node;
         while (CurrentNode.InParent != null)
         {
@@ -361,7 +364,7 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
     public bool HasTag(FGameTag Tag)
     {
         EnsureIndex();
-
+        
         GameTagNode Node = Tag.Node;
         if (Node == null) return false;
         return ImplicitTag.ContainsKey(Node);
@@ -372,7 +375,7 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
     public bool HasTagExact(FGameTag Tag)
     {
         EnsureIndex();
-
+        
         if (Tag.Node == null) return false;
         return ExactTag.Contains(Tag);
     }
@@ -383,119 +386,119 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
     public bool HasAnyTag(List<FGameTag> Tags)
     {
         if (Tags == null) return false;
-
+        
         foreach (FGameTag Tag in Tags)
         {
             if (HasTag(Tag)) return true;
         }
-
+        
         return false;
     }
 
     public bool HasAllTags(List<FGameTag> Tags)
     {
         if (Tags == null) return false;
-
+        
         foreach (FGameTag Tag in Tags)
         {
             if (!HasTag(Tag)) return false;
         }
-
+        
         return true;
     }
 
     public bool HasAnyTagExact(List<FGameTag> Tags)
     {
         if (Tags == null) return false;
-
+        
         foreach (FGameTag Tag in Tags)
         {
             if (HasTagExact(Tag)) return true;
         }
-
+        
         return false;
     }
-
+    
     public bool HasAllTagsExact(List<FGameTag> Tags)
     {
         if (Tags == null) return false;
-
+        
         foreach (FGameTag Tag in Tags)
         {
             if (!HasTagExact(Tag)) return false;
         }
-
+        
         return true;
     }
-
-
-
-
+    
+    
+    
+    
     /// 全部匹配(包含继承)：自身拥有 Container 中的每一个 Tag；空容器视为满足
     public bool MatchAllContainer(GameTagContainer Container)
     {
         EnsureIndex();
-
+        
         if (Container == null) return true;
-
+        
         Container.EnsureIndex();
         if (Container.ExactTag.Count == 0) return true;
-
+        
         foreach (FGameTag Tag in Container.ExactTag)
         {
             if (!HasTag(Tag)) return false;
         }
-
+        
         return true;
     }
-
-
+    
+    
     /// 任意匹配(包含继承)：自身至少拥有 Container 中的某一个 Tag
     public bool MatchAnyContainer(GameTagContainer Container)
     {
         EnsureIndex();
-
+        
         if (Container == null) return false;
-
+        
         Container.EnsureIndex();
         if (Container.ExactTag.Count == 0) return false;
-
+        
         foreach (FGameTag Tag in Container.ExactTag)
         {
             if (HasTag(Tag)) return true;
         }
-
+        
         return false;
     }
-
-
-
+    
+    
+    
     // 将 Container 的 Tag 全部加入
     public void AppendTags(GameTagContainer Other)
     {
         if (Other == null || ReferenceEquals(Other, this)) return;
-
+        
         Other.EnsureIndex();
-
+        
         foreach (FGameTag Tag in Other.ExactTag)
         {
             AddTag(Tag);
         }
     }
-
+    
     // 将 Container 的 Tag 全部移除
     public void RemoveTags(GameTagContainer Other)
     {
         if (Other == null || ReferenceEquals(Other, this)) return;
-
+        
         Other.EnsureIndex();
-
+        
         foreach (FGameTag Tag in Other.ExactTag)
         {
             RemoveTag(Tag);
         }
     }
-
+    
     public IEnumerator<FGameTag> GetEnumerator()
     {
         EnsureIndex();

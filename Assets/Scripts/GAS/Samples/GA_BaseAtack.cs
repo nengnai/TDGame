@@ -11,7 +11,7 @@ interface IWeaponAtackInterface
     float GetDetectRange();
 }
 
-[CreateAssetMenu(fileName = "普通射击", menuName = "Scriptable Objects/NewScriptableObjectScript")]
+[CreateAssetMenu(fileName = "普通射击", menuName = "Scriptable GAS/NewScriptableObjectScript")]
 public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
 {
     // 攻击间隔
@@ -20,6 +20,10 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
     
     //一轮最大连发次数
     public int MaxBurstCount = 1;
+    
+    // 攻击距离
+    public float DetectRange = 100.0f;
+    public float ShootRange = 100.0f;
     
     private FTimerHandle BurstDelayHandle;
     private FTimerHandle ShootDelayHandle;

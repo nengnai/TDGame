@@ -131,15 +131,15 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
         int Index = List.Count;
         
         // 创建新句柄
-        FTimerHandle TimerHandle = new FTimerHandle(ID++);
+        FTimerHandle TimerHandle = new(ID++);
         
         // 创建计时用元素
-        FTimer Timer = new FTimer(
+        FTimer Timer = new(
             (IsUnscaledTime ? Time.unscaledTime : Time.time) + CostTime,
             TimerHandle);
         
         // 创建数据保存元素
-        FTimerData TimerData = new FTimerData(
+        FTimerData TimerData = new(
             Index,
             CostTime, 
             IsLoop,
