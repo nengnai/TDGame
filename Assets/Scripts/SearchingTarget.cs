@@ -94,7 +94,7 @@ public class SearchingTarget : MonoBehaviour
         int HitCount = Physics.OverlapSphereNonAlloc(transform.position, Range, OverlapBuffer);
         for (int i = 0; i < HitCount; i++)
         {
-            CharacterStats TargetStats = OverlapBuffer[i].GetComponent<CharacterStats>();
+            CharacterStats TargetStats = OverlapBuffer[i].GetComponentInChildren<CharacterStats>();
             if(TargetStats == null) continue;
             if(TargetScoringLibrary.IsValidTarget(TargetStats, Myself)) CandidateBuffer.Add(TargetStats);
         }

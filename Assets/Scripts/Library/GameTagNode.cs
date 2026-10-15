@@ -204,7 +204,7 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
 {
     // 只在 写出读入 的瞬间存在，运行期一律为 null
     [SerializeField]
-    private List<FGameTag> SerializedTags;
+    private List<FGameTag> SerializedTags = new();
 
     [NonSerialized]
     private HashSet<FGameTag> ExactTag = new();
@@ -232,7 +232,7 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
     /* ---- 序列化 ---- */
     public void OnBeforeSerialize()
     {
-        EnsureIndex(); // 顺带清掉上一次遗留的载荷
+        //EnsureIndex(); // 顺带清掉上一次遗留的载荷
 
         SerializedTags ??= new List<FGameTag>();
         SerializedTags.Clear();
@@ -252,7 +252,7 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
     public void OnAfterDeserialize()
     {
         IndexReady = false;
-        EnsureIndex();
+        //EnsureIndex();
     }
 
     private static int CompareTagPath(FGameTag A, FGameTag B)

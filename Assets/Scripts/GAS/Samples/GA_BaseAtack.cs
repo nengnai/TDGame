@@ -11,6 +11,7 @@ interface IWeaponAtackInterface
     float GetDetectRange();
 }
 
+[CreateAssetMenu(fileName = "普通射击", menuName = "Scriptable Objects/NewScriptableObjectScript")]
 public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
 {
     // 攻击间隔
@@ -19,10 +20,6 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
     
     //一轮最大连发次数
     public int MaxBurstCount = 1;
-    
-    // 攻击距离
-    public float DetectRange = 100.0f;
-    public float ShootRange = 100.0f;
     
     private FTimerHandle BurstDelayHandle;
     private FTimerHandle ShootDelayHandle;
@@ -64,8 +61,8 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
     
     /* ---- 实现接口 ---- */
     // 获取射击距离
-    public float GetShootRange() => MyStats.GetModifiedValue(TDGameTags.ShootRange, ShootRange);
-    public float GetDetectRange() => MyStats.GetModifiedValue(TDGameTags.DetectRange, DetectRange);
+    public float GetShootRange() => MyStats.GetModifiedValue(TDGameTags.ShootRange);
+    public float GetDetectRange() => MyStats.GetModifiedValue(TDGameTags.DetectRange);
     
     // 获取射击时间
     protected float GetFireDelay(bool IsBurst = false) => IsBurst ? 
@@ -122,6 +119,7 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
         MyStats.AnimatorEvent?.TriggerAction(TDGameTags.AnimatorFireEvent, AnimatorData);
         
         
+        Target.DecreaseHealth(MyStats.Damage);
         // @todo: 调用 CharacterStats 的一个伤害函数，传入攻击类型与伤害
     }
     
