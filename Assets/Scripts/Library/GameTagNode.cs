@@ -204,7 +204,7 @@ public class GameTagContainer : IEnumerable<FGameTag>, ISerializationCallbackRec
 {
     // 只在 写出读入 的瞬间存在，运行期一律为 null
     [SerializeField]
-    private List<FGameTag> SerializedTags;
+    private List<FGameTag> SerializedTags = new();
 
     [NonSerialized]
     private HashSet<FGameTag> ExactTag = new();

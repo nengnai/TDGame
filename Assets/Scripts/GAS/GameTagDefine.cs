@@ -10,9 +10,6 @@ public static class TDGameTags
     public static readonly FGameTag Armor = new("Modify.Stats.Armor");
     public static readonly FGameTag MoveSpeed = new("Modify.Stats.MoveSpeed");
     public static readonly FGameTag ArmorKind = new("Modify.Stats.ArmorKind");
-    public static readonly FGameTag ExplosionDmg = new("Modify.Stats.ExplosionDmg");
-    public static readonly FGameTag PenetrationDmg = new("Modify.Stats.PenetrationDmg");
-    public static readonly FGameTag EnergyDmg = new("Modify.Stats.EnergyDmg");
     public static readonly FGameTag DetectRange = new("Modify.Stats.DetectRange");
     public static readonly FGameTag ShootRange = new("Modify.Stats.ShootRange");
     public static readonly FGameTag Damage = new("Modify.Stats.Damage");
@@ -25,6 +22,7 @@ public static class TDGameTags
     
     /* ---- 状态 ---- */
     public static readonly FGameTag IsMove = new("Game.Stats.IsMove");
+    public static readonly FGameTag IsStun = new("Game.Stats.IsStun");
     
     /* ---- 索敌逻辑 ---- */
     public static readonly FGameTag Search优先近距离 = new("Logic.Search.优先近距离");

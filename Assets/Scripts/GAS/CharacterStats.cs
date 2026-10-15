@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TDGameLibrary;
+using Unity.Entities.UniversalDelegates;
 
 public class ValueChange
 {
@@ -96,6 +97,7 @@ public class CharacterStats : MonoBehaviour
 {
     // 动画事件
     public EventSystem<AnimatorEventData> AnimatorEvent = new();
+    public GA_BaseAttack NormalAttack;
 
     public float MaxHealth = 300.0f;
     public float CurrentHealth;
@@ -118,10 +120,12 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public float Damage = 10.0f;
-    public float ExplosionDmg = 70.0f;
-    public float PenetrationDmg;
-    public float EnergyDmg;
+    public float Damage = 150.0f;
+    public float VS轻甲 = 50.0f;
+    public float VS中甲 = 0f;
+    public float VS重甲 = -50.0f;
+    public float DetectRange = 100.0f;
+    public float ShootRange = 100.0f;
 
     public float FinalFixed = 0.0f;              //造成最终伤害之前的独立增减伤乘区值
 
@@ -134,6 +138,10 @@ public class CharacterStats : MonoBehaviour
     public readonly Dictionary<FName, float> AdditionalStats = new(); 
     private readonly Dictionary<FGameTag, ValueChange> Modifiers= new();
     private Dictionary<FGameTag, (Func<float> Get, Action<float> Set)> StatAccessors;
+
+
+    public List<GameAbility> Skills;
+    public List<GameAbility> PSkills;
 
     void Awake()
     {
@@ -149,11 +157,12 @@ public class CharacterStats : MonoBehaviour
             [TDGameTags.Shield]         = (() => CurrentShield,   v => CurrentShield = v),
             [TDGameTags.Armor]          = (() => Armor,           v => Armor = v),
             [TDGameTags.MoveSpeed]      = (() => MoveSpeed,       v => MoveSpeed = v),
-            [TDGameTags.Damage]         = (() => Damage,          v => Damage = v),
-            [TDGameTags.ExplosionDmg]   = (() => ExplosionDmg,    v => ExplosionDmg = v),
-            [TDGameTags.PenetrationDmg] = (() => PenetrationDmg,  v => PenetrationDmg = v),
-            [TDGameTags.EnergyDmg]      = (() => EnergyDmg,       v => EnergyDmg = v),
+            [TDGameTags.DetectRange]    = (() => DetectRange,     v => DetectRange = v),
+            [TDGameTags.ShootRange]     = (() => ShootRange,      v => ShootRange = v)
         };
+
+
+        
     }
 
 
@@ -180,10 +189,6 @@ public class CharacterStats : MonoBehaviour
     {
         return AdditionalStats.ContainsKey(StatName);
     }
-
-
-    
-
 
 
     public float GetModifiedValue(FGameTag Tag, float Value) 
@@ -275,9 +280,10 @@ public class CharacterStats : MonoBehaviour
     public void DecreaseHealth(float InDamage)
     {
         float FinalDamage = Mathf.FloorToInt((InDamage - Armor) * (1 + FinalFixed));
+        FinalDamage = Mathf.Max(1.0f, FinalDamage);
 
         CurrentHealth -= FinalDamage;
-        if(CurrentHealth < 0)
+        if(CurrentHealth <= 0)
         {
             CurrentHealth = 0;
             DeathDetection();
