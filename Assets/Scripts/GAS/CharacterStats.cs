@@ -165,7 +165,7 @@ public class CharacterStats : MonoBehaviour
             [TDGameTags.ShootRange]     = (() => ShootRange,      v => ShootRange = v)
         };
 
-
+        
         
     }
 

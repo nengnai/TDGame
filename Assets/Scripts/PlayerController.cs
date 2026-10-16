@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         MainCam = Camera.main;
+        选中的单位 = new();
+        选中的建筑 = new();
+        选中的主动技能 = new();
     }
 
 
@@ -48,6 +51,8 @@ public class PlayerController : MonoBehaviour
         {
             RightClick();
         }
+
+        
     }
 
 
@@ -62,6 +67,7 @@ public class PlayerController : MonoBehaviour
                 {
                     CharacterStats 现有的单位 = Hit.collider.GetComponentInChildren<CharacterStats>();
                     现有的单位.IsSelected = false;
+                    Debug.Log("取消选中当前选中的单位");
                 }
                 选中的单位.Clear();
             }
@@ -76,10 +82,20 @@ public class PlayerController : MonoBehaviour
             {
                 TargetStats.IsSelected = true;
             }
-
+            Debug.Log("选中了单位");
         }
         else if(HitInfo.collider.gameObject.layer == LayerMask.NameToLayer("Building"))
         {
+            if(选中的单位.Count > 0)                              //如果手里有选中的单位 取消选中
+            {   
+                foreach(RaycastHit Hit in 选中的单位)
+                {
+                    CharacterStats 现有的单位 = Hit.collider.GetComponentInChildren<CharacterStats>();
+                    现有的单位.IsSelected = false;
+                    Debug.Log("取消选中当前选中的单位");
+                }
+                选中的单位.Clear();
+            }
             //选中建筑后 如果建筑是功能性建筑（非红警那种平民建筑 建筑不可进驻驻守）则选中并且出对应UI什么的
         }
         else if(HitInfo.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
@@ -98,6 +114,7 @@ public class PlayerController : MonoBehaviour
 
                     FollowerEntity 寻路系统 = Hit.collider.GetComponent<FollowerEntity>();
                     寻路系统.SetDestination(HitInfo.point);
+
                 }
             }
             else if(选中的建筑.Count > 0)
@@ -122,6 +139,7 @@ public class PlayerController : MonoBehaviour
                 现有的单位.IsSelected = false;
             }
             选中的单位.Clear();
+            Debug.Log("取消选中当前选中的单位");
         }
         else if(选中的建筑.Count > 0)
         {

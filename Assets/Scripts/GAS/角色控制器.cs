@@ -1,7 +1,7 @@
 using Pathfinding;
 using UnityEngine;
 
-public class CharacterController : MonoBehaviour
+public class 角色控制器 : MonoBehaviour
 {
     
     CharacterStats MyStats;
@@ -34,6 +34,9 @@ public class CharacterController : MonoBehaviour
     void Update()
     {
         if(MyStats.IsDead) return;
+        
+       
+
         if (ASC.Tags.HasTag(TDGameTags.IsStun))
         {
             寻路系统.SetPath(null);
