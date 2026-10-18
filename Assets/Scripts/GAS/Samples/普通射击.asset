@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: "\u666E\u901A\u5C04\u51FB"
   m_EditorClassIdentifier: Assembly-CSharp::GA_BaseAttack
-  Policy: 1
+  Policy: 0
   RequiredTags:
     SerializedTags: []
   BlockedByTags:
@@ -23,6 +23,8 @@ MonoBehaviour:
     SerializedTags: []
   OwnTags:
     SerializedTags: []
-  ShootDelay: 3
-  BurstDelay: 1
+  ShootDelay: 0.1
+  BurstDelay: 0.01
   MaxBurstCount: 1
+  DetectRange: 100
+  ShootRange: 100

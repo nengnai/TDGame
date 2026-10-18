@@ -109,6 +109,8 @@ GameObject:
   - component: {fileID: 6116595100470518560}
   - component: {fileID: 7817367282305191756}
   - component: {fileID: 231665174001782676}
+  - component: {fileID: 3936956996937687407}
+  - component: {fileID: 5956608759376925174}
   m_Layer: 7
   m_Name: Misaki_AI
   m_TagString: Untagged
@@ -144,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 519ca8dbc5cfabb4a8817526b90faa3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NormalAttack: {fileID: 0}
+  NormalAttack: {fileID: 11400000, guid: 69c4c777bc073ed4d92342bc59aa8b2f, type: 2}
   MaxHealth: 300
   CurrentHealth: 300
   MaxShield: 0
@@ -222,6 +224,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4390c83164b0bbc46b760334de083971, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3936956996937687407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212633480827569464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa1eb6f172ae35745ba42a564e8eb94f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5956608759376925174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212633480827569464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c38fab81a13ade45aefc33c84a34f2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &566853173291898499

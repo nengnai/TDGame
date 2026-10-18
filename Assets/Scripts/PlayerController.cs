@@ -112,9 +112,8 @@ public class PlayerController : MonoBehaviour
                         continue;
                     }
 
-                    FollowerEntity 寻路系统 = Hit.collider.GetComponent<FollowerEntity>();
-                    寻路系统.SetDestination(HitInfo.point);
-
+                    角色控制器 控制器 = Hit.collider.GetComponentInChildren<角色控制器>();
+                    控制器.移动目标地点 = HitInfo.point;
                 }
             }
             else if(选中的建筑.Count > 0)
