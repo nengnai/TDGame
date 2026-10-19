@@ -23,7 +23,7 @@ MonoBehaviour:
     SerializedTags: []
   OwnTags:
     SerializedTags: []
-  ShootDelay: 0.1
+  ShootDelay: 1
   BurstDelay: 0.01
   MaxBurstCount: 1
   DetectRange: 100

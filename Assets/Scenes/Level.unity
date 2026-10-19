@@ -6059,7 +6059,6 @@ GameObject:
   - component: {fileID: 6116595099606738381}
   - component: {fileID: 7817367283034687905}
   - component: {fileID: 231665174345435513}
-  - component: {fileID: 3936956996744472450}
   - component: {fileID: 5956608758630094619}
   m_Layer: 7
   m_Name: Misaki_AI
@@ -6082,7 +6081,6 @@ GameObject:
   - component: {fileID: 6116595100210889223}
   - component: {fileID: 7817367282564755051}
   - component: {fileID: 231665173741645491}
-  - component: {fileID: 3936956997214273608}
   - component: {fileID: 5956608759100076241}
   m_Layer: 7
   m_Name: Misaki_AI
@@ -10495,30 +10493,6 @@ Transform:
   - {fileID: 5468970817189653419}
   m_Father: {fileID: 1840108381343587086}
   m_LocalEulerAnglesHint: {x: -85.658005, y: 172.63988, z: -7.5792394}
---- !u!114 &3936956996744472450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 212633479963329493}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa1eb6f172ae35745ba42a564e8eb94f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &3936956997214273608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 212633480567366687}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa1eb6f172ae35745ba42a564e8eb94f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &3961278030523444537
 GameObject:
   m_ObjectHideFlags: 0

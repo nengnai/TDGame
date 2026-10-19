@@ -109,7 +109,6 @@ GameObject:
   - component: {fileID: 6116595100470518560}
   - component: {fileID: 7817367282305191756}
   - component: {fileID: 231665174001782676}
-  - component: {fileID: 3936956996937687407}
   - component: {fileID: 5956608759376925174}
   m_Layer: 7
   m_Name: Misaki_AI
@@ -226,18 +225,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4390c83164b0bbc46b760334de083971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3936956996937687407
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 212633480827569464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa1eb6f172ae35745ba42a564e8eb94f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5956608759376925174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,6 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c38fab81a13ade45aefc33c84a34f2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  "\u79FB\u52A8\u76EE\u6807\u5730\u70B9": {x: 0, y: 0, z: 0}
 --- !u!1 &566853173291898499
 GameObject:
   m_ObjectHideFlags: 0

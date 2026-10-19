@@ -97,8 +97,10 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
 
         Shoot(Target, BurstCount < MaxBurstCount);
 
+        
         if (BurstCount >= MaxBurstCount)
         {
+            //Debug.LogError(GetFireDelay());
             ShootDelayHandle = TimeManager.AddTimer(GetFireDelay(), false, false, () => 
             {
                 BurstCount = 0;
@@ -107,6 +109,7 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
         }
         else
         {
+            //Debug.LogError(GetFireDelay(true));
             BurstDelayHandle = TimeManager.AddTimer(GetFireDelay(true), false, false, TryShoot);
         }
     }
@@ -120,7 +123,7 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
         
         MyStats.AnimatorEvent?.TriggerAction(TDGameTags.AnimatorFireEvent, AnimatorData);
         
-        
+        Debug.LogWarning("射击");
         Target.DecreaseHealth(MyStats.Damage);
         // @todo: 调用 CharacterStats 的一个伤害函数，传入攻击类型与伤害
     }
