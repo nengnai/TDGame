@@ -4,11 +4,7 @@ using UnityEngine;
 
 public class SearchingTarget : MonoBehaviour
 {
-    //检测间隔(sec)
-    public float ScanDur = 0.1f;
-    private float LastScanTime;
     public CharacterStats Myself;
-    public CharacterController Controller;
 
 
     private CharacterStats MyTarget;

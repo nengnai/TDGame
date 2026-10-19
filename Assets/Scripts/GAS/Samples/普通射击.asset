@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: "\u666E\u901A\u5C04\u51FB"
   m_EditorClassIdentifier: Assembly-CSharp::GA_BaseAttack
-  Policy: 0
+  Policy: 1
   RequiredTags:
     SerializedTags: []
   BlockedByTags:

@@ -9,6 +9,7 @@ public class 角色控制器 : MonoBehaviour
     SearchingTarget SearchingTarget;
     AbilitySystemComponent ASC;
     FollowerEntity 寻路系统;
+    GA_BaseAttack 普攻实例;
 
 
     float 目标距离;
@@ -20,6 +21,11 @@ public class 角色控制器 : MonoBehaviour
 
 
 
+    public float ScanDur;
+    float LastScan;
+
+
+
     void Awake()
     {
         MyStats = GetComponent<CharacterStats>();
@@ -28,7 +34,7 @@ public class 角色控制器 : MonoBehaviour
         寻路系统 = GetComponentInParent<FollowerEntity>();
 
         普攻 = ASC.AddAbility(MyStats.NormalAttack);
-
+        普攻实例 = ASC.GetLiveAbility(普攻) as GA_BaseAttack;
     }
 
 
@@ -41,49 +47,43 @@ public class 角色控制器 : MonoBehaviour
         {
             寻路系统.SetPath(null);
             停止移动();
-            ASC.Tags.RemoveTag(TDGameTags.IsMove);
-
-            ASC.EndAbility(普攻);
-            //去掉tag
-
-
+            停止攻击();
             return;
         }
 
 
-
         //主动/被动技能检测和释放
-        if(MyTarget != null && !寻路系统.hasPath)
-        {
-            SearchingTarget.ScanWithWeapon(MyStats.NormalAttack);
-        }
-
-
-
-
+        
 
 
         if(上次移动地点 != 移动目标地点)
         {
+            MyTarget = null;
             开始移动();
             寻路系统.SetDestination(移动目标地点);
             上次移动地点 = 移动目标地点;
         }
 
+        if(MyTarget == null && !寻路系统.hasPath)
+        {
+            if(Time.time - LastScan >= ScanDur)
+            {
+                LastScan = Time.time;
+                MyTarget = SearchingTarget.ScanWithWeapon(普攻实例);
+            }
+            
+        }
+
 
         if (寻路系统.hasPath)
         {
-            ASC.EndAbility(普攻);
-            //去掉tag
+            停止攻击();
             if(!ASC.Tags.HasTagExact(TDGameTags.IsMove))  ASC.Tags.AddTag(TDGameTags.IsMove);
 
-
-            
-            if (寻路系统.reachedDestination)
+            if (寻路系统.reachedDestination && 寻路系统.hasPath && 上次移动地点 == 移动目标地点)
             {
                 寻路系统.SetPath(null);
                 停止移动();
-                ASC.Tags.RemoveTag(TDGameTags.IsMove);
             }
         }
 
@@ -92,11 +92,12 @@ public class 角色控制器 : MonoBehaviour
 
 
 
-        if(MyTarget != null)
+        if(MyTarget != null && !ASC.Tags.HasTagExact(TDGameTags.IsMove))
         {
             目标距离 = Vector3.Distance(MyStats.transform.position, MyTarget.transform.position);
             if(目标距离 > MyStats.ShootRange)
             {
+                开始移动();
                 寻路系统.SetDestination(MyTarget.transform.position);
             }
             else                            //记得加减攻击tag
@@ -105,7 +106,7 @@ public class 角色控制器 : MonoBehaviour
                 {                   
                     寻路系统.SetPath(null);
                     停止移动();
-                    ASC.ActivateAbility(普攻);
+                    开始攻击();
                 }
             }
         }
@@ -122,6 +123,7 @@ public class 角色控制器 : MonoBehaviour
         var policy = 寻路系统.autoRepath;
         policy.mode = AutoRepathPolicy.Mode.Never;
         寻路系统.autoRepath = policy;
+        ASC.Tags.RemoveTag(TDGameTags.IsMove);
     }
 
 
@@ -130,7 +132,20 @@ public class 角色控制器 : MonoBehaviour
         var policy = 寻路系统.autoRepath;
         policy.mode = AutoRepathPolicy.Mode.EveryNSeconds;
         寻路系统.autoRepath = policy;
+        ASC.Tags.AddTag(TDGameTags.IsMove);
     }
 
+
+    void 停止攻击()
+    {
+        ASC.EndAbility(普攻);
+        ASC.Tags.RemoveTag(TDGameTags.IsAttack);
+    }
+
+    void 开始攻击()
+    {
+        ASC.ActivateAbility(普攻);
+        ASC.Tags.AddTag(TDGameTags.IsAttack);
+    }
 
 }

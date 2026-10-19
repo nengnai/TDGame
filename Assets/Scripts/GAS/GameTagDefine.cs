@@ -23,6 +23,7 @@ public static class TDGameTags
     /* ---- 状态 ---- */
     public static readonly FGameTag IsMove = new("Game.Stats.IsMove");
     public static readonly FGameTag IsStun = new("Game.Stats.IsStun");
+    public static readonly FGameTag IsAttack = new("Game.Stats.IsAttack");
     
     /* ---- 索敌逻辑 ---- */
     public static readonly FGameTag Search优先近距离 = new("Logic.Search.优先近距离");

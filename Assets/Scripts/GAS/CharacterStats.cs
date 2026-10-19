@@ -99,6 +99,9 @@ public class CharacterStats : MonoBehaviour
     public EventSystem<AnimatorEventData> AnimatorEvent = new();
     public GA_BaseAttack NormalAttack;
 
+
+
+    public string Name;
     public float MaxHealth = 300.0f;
     public float CurrentHealth;
     public float MaxShield = 0.0f;
@@ -124,8 +127,8 @@ public class CharacterStats : MonoBehaviour
     public float VS轻甲 = 50.0f;
     public float VS中甲 = 0f;
     public float VS重甲 = -50.0f;
-    public float DetectRange = 20.0f;
-    public float ShootRange = 20.0f;
+    public float DetectRange;
+    public float ShootRange;
 
     public float FinalFixed = 0.0f;              //造成最终伤害之前的独立增减伤乘区值
 

@@ -101,6 +101,7 @@ public partial class AbilitySystemComponent : MonoBehaviour
             case GameAbility.InstantiationPolicy.OnGranted:
             {
                 Spec.Instance = Instantiate(Config);
+                BindContext(Spec, Spec.Instance);
                 Spec.Instance.OnGranted();
                 break;
             }
@@ -171,6 +172,7 @@ public partial class AbilitySystemComponent : MonoBehaviour
         if (Spec.Config.Policy == GameAbility.InstantiationPolicy.OnActivate)
         {
             Live = Instantiate(Spec.Config);
+            BindContext(Spec, Live);
             Spec.Instance = Live;
             Live.OnGranted();
         }
