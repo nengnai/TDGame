@@ -106,11 +106,12 @@ public class CharacterStats : MonoBehaviour
     public float CurrentHealth;
     public float MaxShield = 0.0f;
     public float CurrentShield;
-    public float Armor = 10.0f;
-    public float MoveSpeed = 5.0f;
-    public ArmorType ArmorKind = ArmorType.Light;
+    public float Armor;
+    public float MoveSpeed;
+    public ArmorType ArmorKind;
     public enum ArmorType 
     {
+        Null,
         Light,
         Medium,
         Heavy
@@ -123,10 +124,10 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public float Damage = 150.0f;
-    public float VS轻甲 = 50.0f;
-    public float VS中甲 = 0f;
-    public float VS重甲 = -50.0f;
+    public float Damage;
+    public float VS轻甲;
+    public float VS中甲;
+    public float VS重甲;
     public float DetectRange;
     public float ShootRange;
 
@@ -286,6 +287,7 @@ public class CharacterStats : MonoBehaviour
 
     public void DecreaseHealth(float InDamage)
     {
+
         float FinalDamage = Mathf.FloorToInt((InDamage - Armor) * (1 + FinalFixed));
         FinalDamage = Mathf.Max(1.0f, FinalDamage);
 

@@ -5,7 +5,7 @@ public class 角色控制器 : MonoBehaviour
 {
     
     CharacterStats MyStats;
-    CharacterStats MyTarget;
+    public CharacterStats MyTarget;
     SearchingTarget SearchingTarget;
     AbilitySystemComponent ASC;
     FollowerEntity 寻路系统;
@@ -26,6 +26,13 @@ public class 角色控制器 : MonoBehaviour
 
 
 
+
+
+    public float 最大转向速度;
+    public float 最小转向速度;
+
+
+
     void Awake()
     {
         MyStats = GetComponent<CharacterStats>();
@@ -40,7 +47,19 @@ public class 角色控制器 : MonoBehaviour
 
     void Update()
     {
-        if(MyStats.IsDead) return;
+        if (MyStats.IsDead)             //单位死亡 清空索敌目标
+        {
+            if(MyTarget != null)   MyTarget = null;
+            if(!ASC.Tags.HasTagExact(TDGameTags.IsDead)) ASC.Tags.AddTag(TDGameTags.IsDead);
+            停止移动();
+            停止攻击();
+            return;
+        }
+
+        if (MyTarget != null && MyTarget.IsDead)         //目标死亡 清空索敌目标
+        {
+            MyTarget = SearchingTarget.ScanWithWeapon(普攻实例);   //目标死亡后立刻进行一次搜索 如果有敌人就继续打 没有就停火归null
+        }    
 
 
         if (ASC.Tags.HasTag(TDGameTags.IsStun))
@@ -92,22 +111,24 @@ public class 角色控制器 : MonoBehaviour
 
 
 
-        if(MyTarget != null && !ASC.Tags.HasTagExact(TDGameTags.IsMove))
+        if(MyTarget != null)
         {
             目标距离 = Vector3.Distance(MyStats.transform.position, MyTarget.transform.position);
             if(目标距离 > MyStats.ShootRange)
             {
-                开始移动();
+                if(!ASC.Tags.HasTagExact(TDGameTags.IsMove)) 开始移动();
                 寻路系统.SetDestination(MyTarget.transform.position);
             }
-            else                            //记得加减攻击tag
+            else                            
             {
-                if (!寻路系统.reachedDestination)
+                if (ASC.Tags.HasTagExact(TDGameTags.IsMove))
                 {                   
                     寻路系统.SetPath(null);
-                    停止移动();
-                    开始攻击();
+                    停止移动();   
                 }
+
+                LookAtTarget(MyTarget);
+                开始攻击();
             }
         }
 
@@ -120,6 +141,8 @@ public class 角色控制器 : MonoBehaviour
 
     void 停止移动()
     {
+        寻路系统.updateRotation = false;
+
         var policy = 寻路系统.autoRepath;
         policy.mode = AutoRepathPolicy.Mode.Never;
         寻路系统.autoRepath = policy;
@@ -129,6 +152,8 @@ public class 角色控制器 : MonoBehaviour
 
     void 开始移动()
     {
+        寻路系统.updateRotation = true;
+
         var policy = 寻路系统.autoRepath;
         policy.mode = AutoRepathPolicy.Mode.EveryNSeconds;
         寻路系统.autoRepath = policy;
@@ -147,5 +172,23 @@ public class 角色控制器 : MonoBehaviour
         ASC.ActivateAbility(普攻);
         ASC.Tags.AddTag(TDGameTags.IsAttack);
     }
+
+
+    void LookAtTarget(CharacterStats Target)
+    {
+        Vector3 Direction = Target.transform.position - transform.position;
+        Direction.y = 0f;
+
+        if(Direction.sqrMagnitude < 0.01f) return;
+
+        Quaternion TargetRotation = Quaternion.LookRotation(Direction);
+
+        float Angle = Quaternion.Angle(transform.parent.rotation, TargetRotation);
+
+        float 转向速度 = Mathf.Lerp(最小转向速度, 最大转向速度, Angle / 180f);
+
+        transform.parent.rotation = Quaternion.RotateTowards(transform.parent.rotation, TargetRotation, 转向速度 * Time.deltaTime);
+    }
+
 
 }
