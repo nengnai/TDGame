@@ -30,7 +30,7 @@ public class 角色控制器 : MonoBehaviour
 
     public float 最大转向速度;
     public float 最小转向速度;
-    Vector3 目标位置方向;
+    Vector3? 目标位置方向;
     
 
 
@@ -76,6 +76,11 @@ public class 角色控制器 : MonoBehaviour
             停止移动();
             停止攻击();
             return;
+        }
+
+        if(!MyStats.IsDead && 目标位置方向 != null)
+        {
+            LookAtTarget(目标位置方向.Value);
         }
 
 
@@ -138,7 +143,7 @@ public class 角色控制器 : MonoBehaviour
                     停止移动();   
                 }
 
-                LookAtTarget(MyTarget);
+                目标位置方向 = MyTarget.transform.position;
                 开始攻击();
             }
         }
@@ -163,6 +168,7 @@ public class 角色控制器 : MonoBehaviour
 
     void 开始移动()
     {
+        目标位置方向 = null;
         寻路系统.updateRotation = true;
 
         var policy = 寻路系统.autoRepath;
@@ -185,10 +191,9 @@ public class 角色控制器 : MonoBehaviour
     }
 
 
-    void LookAtTarget(CharacterStats Target)
+    void LookAtTarget(Vector3 Target)
     {
-        目标位置方向 = Target.transform.position;
-        Vector3 Direction = 目标位置方向 - transform.position;
+        Vector3 Direction = Target - transform.position;
         Direction.y = 0f;
 
         if(Direction.sqrMagnitude < 0.01f) return;
