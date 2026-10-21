@@ -30,6 +30,13 @@ public class 角色控制器 : MonoBehaviour
 
     public float 最大转向速度;
     public float 最小转向速度;
+    Vector3 目标位置方向;
+    
+
+
+
+
+    bool 手动移动指令;
 
 
 
@@ -51,6 +58,7 @@ public class 角色控制器 : MonoBehaviour
         {
             if(MyTarget != null)   MyTarget = null;
             if(!ASC.Tags.HasTagExact(TDGameTags.IsDead)) ASC.Tags.AddTag(TDGameTags.IsDead);
+            //原地停下
             停止移动();
             停止攻击();
             return;
@@ -77,13 +85,15 @@ public class 角色控制器 : MonoBehaviour
 
         if(上次移动地点 != 移动目标地点)
         {
+            手动移动指令 = true;
             MyTarget = null;
+            停止攻击();
             开始移动();
             寻路系统.SetDestination(移动目标地点);
             上次移动地点 = 移动目标地点;
         }
 
-        if(MyTarget == null && !寻路系统.hasPath)
+        if(MyTarget == null && !寻路系统.hasPath && !手动移动指令)
         {
             if(Time.time - LastScan >= ScanDur)
             {
@@ -103,6 +113,7 @@ public class 角色控制器 : MonoBehaviour
             {
                 寻路系统.SetPath(null);
                 停止移动();
+                手动移动指令 = false;
             }
         }
 
@@ -111,7 +122,7 @@ public class 角色控制器 : MonoBehaviour
 
 
 
-        if(MyTarget != null)
+        if(MyTarget != null && !手动移动指令)
         {
             目标距离 = Vector3.Distance(MyStats.transform.position, MyTarget.transform.position);
             if(目标距离 > MyStats.ShootRange)
@@ -176,7 +187,8 @@ public class 角色控制器 : MonoBehaviour
 
     void LookAtTarget(CharacterStats Target)
     {
-        Vector3 Direction = Target.transform.position - transform.position;
+        目标位置方向 = Target.transform.position;
+        Vector3 Direction = 目标位置方向 - transform.position;
         Direction.y = 0f;
 
         if(Direction.sqrMagnitude < 0.01f) return;

@@ -10729,12 +10729,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1934254141}
   - component: {fileID: 1934254148}
+  - component: {fileID: 1934254142}
   - component: {fileID: 1934254147}
   - component: {fileID: 1934254146}
   - component: {fileID: 1934254145}
   - component: {fileID: 1934254144}
   - component: {fileID: 1934254143}
-  - component: {fileID: 1934254142}
   m_Layer: 7
   m_Name: Misaki_AI
   m_TagString: Untagged
@@ -10774,7 +10774,7 @@ MonoBehaviour:
   "\u79FB\u52A8\u76EE\u6807\u5730\u70B9": {x: 0, y: 0, z: 0}
   ScanDur: 0.1
   "\u6700\u5927\u8F6C\u5411\u901F\u5EA6": 800
-  "\u6700\u5C0F\u8F6C\u5411\u901F\u5EA6": 30
+  "\u6700\u5C0F\u8F6C\u5411\u901F\u5EA6": 300
 --- !u!114 &1934254143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10823,7 +10823,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f060b05761923747a4e416f1754c66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Myself: {fileID: 1934254148}
 --- !u!95 &1934254147
 Animator:
   serializedVersion: 7
@@ -11561,12 +11560,12 @@ GameObject:
   m_Component:
   - component: {fileID: 592435724219226066}
   - component: {fileID: 5358513431993387255}
+  - component: {fileID: 5956608759100076241}
   - component: {fileID: 2669728353053477415}
   - component: {fileID: 6116595100210889223}
   - component: {fileID: 7817367282564755051}
   - component: {fileID: 231665173741645491}
   - component: {fileID: 3936956997214273608}
-  - component: {fileID: 5956608759100076241}
   m_Layer: 7
   m_Name: Misaki_AI
   m_TagString: Untagged
@@ -15133,7 +15132,7 @@ MonoBehaviour:
   "\u79FB\u52A8\u76EE\u6807\u5730\u70B9": {x: 0, y: 0, z: 0}
   ScanDur: 0.1
   "\u6700\u5927\u8F6C\u5411\u901F\u5EA6": 800
-  "\u6700\u5C0F\u8F6C\u5411\u901F\u5EA6": 30
+  "\u6700\u5C0F\u8F6C\u5411\u901F\u5EA6": 300
 --- !u!4 &5968580042047441974
 Transform:
   m_ObjectHideFlags: 0
@@ -15196,7 +15195,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f060b05761923747a4e416f1754c66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Myself: {fileID: 5358513431993387255}
 --- !u!1 &6117099859787118429
 GameObject:
   m_ObjectHideFlags: 0

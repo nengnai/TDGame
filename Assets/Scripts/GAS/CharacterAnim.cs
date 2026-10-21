@@ -52,7 +52,7 @@ public class CharacterAnim : MonoBehaviour
         }
         else
         {
-            if (当前动画[0] != TDGameTags.AnimIdle)
+            if (当前动画[0] != TDGameTags.AnimIdle && 当前动画[0] != TDGameTags.AnimShooting)
             {
                 if(Controller.MyTarget == null && !ASC.Tags.HasTagExact(TDGameTags.IsAttack))  动画系统.CrossFade("MoveEnd", 0.1f, 0, 0f);
                 当前动画.Clear();
@@ -60,10 +60,12 @@ public class CharacterAnim : MonoBehaviour
             }
         }
 
+
         if(Controller.MyTarget == null && 当前动画[0] == TDGameTags.AnimShooting)
         {
-            当前动画.Remove(TDGameTags.AnimShooting);
-            收枪计时 = 计时器.AddTimer(5f, false, false, () => {动画系统.CrossFade("Base Layer.AttackEnd", 0.1f, 1, 0f);});
+            当前动画[0] = TDGameTags.AnimIdle;
+            Debug.Log("没人了");
+            收枪计时 = 计时器.AddTimer(5f, false, false, () => {动画系统.CrossFade("Base Layer.AttackEnd", 0.1f, 0, 0f);});
         }
 
     }
