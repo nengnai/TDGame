@@ -103,7 +103,7 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public string Name;
+    public string Name; //@todo:替换为 unity 支持多语言的类型
     public float MaxHealth = 300.0f;
     public float CurrentHealth;
     public float MaxShield = 0.0f;
@@ -119,7 +119,7 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public FDamageDefine BaseDamage;
+    public FDamageDefine BaseDamage = new(100.0f);
     public float DetectRange;
     public float ShootRange;
 

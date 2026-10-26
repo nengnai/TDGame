@@ -25,6 +25,9 @@ public class CharacterAnim : MonoBehaviour
         计时器 = new();
 
         当前动画.Add(TDGameTags.AnimIdle);
+        
+        // 监听射击事件
+        MyStats.AnimatorEvent.ListenAction(TDGameTags.AnimatorFireEvent, ShootAnim);
     }
 
     void Update()
@@ -71,7 +74,7 @@ public class CharacterAnim : MonoBehaviour
     }
 
 
-    public void ShootAnim()
+    public void ShootAnim(AnimatorEventData AnimData)
     {   
         if(收枪计时.IsValid()) 计时器.RemoveTimer(收枪计时);
 
