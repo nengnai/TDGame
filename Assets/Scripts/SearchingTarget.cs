@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using TDGameLibrary;
 using UnityEngine;
 
 public class SearchingTarget : MonoBehaviour
@@ -105,11 +106,11 @@ public class SearchingTarget : MonoBehaviour
 
             if(AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先轻甲))
             {
-                TargetScoringLibrary.ScoreByArmorMatch(Candidate, ref CurrentScore, CharacterStats.ArmorType.Light, 2f);
+                TargetScoringLibrary.ScoreByArmorMatch(Candidate, ref CurrentScore, ArmorType.Light, 2f);
             }
             else if(AbilitySystem.Tags.HasTagExact(TDGameTags.Search优先重甲))
             {
-                TargetScoringLibrary.ScoreByArmorMatch(Candidate, ref CurrentScore, CharacterStats.ArmorType.Heavy, 2f);
+                TargetScoringLibrary.ScoreByArmorMatch(Candidate, ref CurrentScore, ArmorType.Heavy, 2f);
             }
             
 

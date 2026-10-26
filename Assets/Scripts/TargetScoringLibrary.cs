@@ -39,7 +39,7 @@ public static class TargetScoringLibrary
         Score += Health * Weight;
     }
 
-    public static void ScoreByArmorMatch(CharacterStats Target, ref float Score, CharacterStats.ArmorType Armor, float BonusScore = 2f)
+    public static void ScoreByArmorMatch(CharacterStats Target, ref float Score, ArmorType Armor, float BonusScore = 2f)
     {
         if(Target.ArmorKind == Armor) Score += BonusScore;
     }

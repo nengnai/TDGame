@@ -10866,10 +10866,11 @@ MonoBehaviour:
   Armor: 10
   MoveSpeed: 5
   ArmorKind: 3
-  Damage: 100
-  "VS\u8F7B\u7532": 50
-  "VS\u4E2D\u7532": 0
-  "VS\u91CD\u7532": -50
+  BaseDamage:
+    Damage: 100
+    "VS\u8F7B\u7532": 0
+    "VS\u4E2D\u7532": 0
+    "VS\u91CD\u7532": 0
   DetectRange: 5
   ShootRange: 5
   FinalFixed: 0
@@ -14764,10 +14765,11 @@ MonoBehaviour:
   Armor: 10
   MoveSpeed: 5
   ArmorKind: 1
-  Damage: 100
-  "VS\u8F7B\u7532": 50
-  "VS\u4E2D\u7532": 0
-  "VS\u91CD\u7532": -50
+  BaseDamage:
+    Damage: 100
+    "VS\u8F7B\u7532": 0
+    "VS\u4E2D\u7532": 0
+    "VS\u91CD\u7532": 0
   DetectRange: 5
   ShootRange: 5
   FinalFixed: 0

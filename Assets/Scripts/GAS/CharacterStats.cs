@@ -93,6 +93,8 @@ public struct AnimatorEventData
 }
 
 
+
+
 public class CharacterStats : MonoBehaviour
 {
     // 动画事件
@@ -109,13 +111,6 @@ public class CharacterStats : MonoBehaviour
     public float Armor;
     public float MoveSpeed;
     public ArmorType ArmorKind;
-    public enum ArmorType 
-    {
-        Null,
-        Light,
-        Medium,
-        Heavy
-    }
     
 
     // 阵营
@@ -124,10 +119,7 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public float Damage;
-    public float VS轻甲;
-    public float VS中甲;
-    public float VS重甲;
+    public FDamageDefine BaseDamage;
     public float DetectRange;
     public float ShootRange;
 

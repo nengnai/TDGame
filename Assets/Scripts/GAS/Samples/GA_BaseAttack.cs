@@ -2,6 +2,7 @@
 
 // @todo:实现伤害、特效函数
 
+using TDGameLibrary;
 using UnityEngine;
 interface IWeaponAtackInterface
 {
@@ -118,29 +119,6 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
         
         MyStats.AnimatorEvent?.TriggerAction(TDGameTags.AnimatorFireEvent, AnimatorData);
         
-        float FDamage;
-        switch (Target.ArmorKind)
-        {
-            case CharacterStats.ArmorType.Light:
-            FDamage = MyStats.Damage + MyStats.VS轻甲;
-            break;
-
-            case CharacterStats.ArmorType.Medium:
-            FDamage = MyStats.Damage + MyStats.VS中甲;
-            break;
-
-            case CharacterStats.ArmorType.Heavy:
-            FDamage = MyStats.Damage + MyStats.VS重甲;
-            break;
-
-            case CharacterStats.ArmorType.Null:
-            FDamage = MyStats.Damage;
-            break;
-
-            default:
-            FDamage = MyStats.Damage;
-            break;
-        }
-        Target.DecreaseHealth(FDamage);
+        Target.DecreaseHealth(MyStats.BaseDamage.GetCurrentDamage(Target.ArmorKind));
     }
 }
