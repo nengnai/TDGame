@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SearchingTarget : MonoBehaviour
 {
-    public CharacterStats Myself;
+    private CharacterStats Myself;
 
 
     private CharacterStats MyTarget;
@@ -24,6 +24,7 @@ public class SearchingTarget : MonoBehaviour
 
     void Awake()
     {
+        Myself = GetComponent<CharacterStats>();
         AbilitySystem = GetComponent<AbilitySystemComponent>();
     }
 

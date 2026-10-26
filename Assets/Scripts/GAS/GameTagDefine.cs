@@ -24,6 +24,7 @@ public static class TDGameTags
     public static readonly FGameTag IsMove = new("Game.Stats.IsMove");
     public static readonly FGameTag IsStun = new("Game.Stats.IsStun");
     public static readonly FGameTag IsAttack = new("Game.Stats.IsAttack");
+    public static readonly FGameTag IsDead = new("Game.Stats.IsDead");
     
     /* ---- 索敌逻辑 ---- */
     public static readonly FGameTag Search优先近距离 = new("Logic.Search.优先近距离");
@@ -42,6 +43,11 @@ public static class TDGameTags
     /* ---- 动画 ---- */
     public static readonly FGameTag AnimIdle = new("Animator.Animation.Idle");
     public static readonly FGameTag AnimMoving = new("Animator.Animation.Moving");
+    public static readonly FGameTag AnimShooting = new("Animator.Animation.Shooting");
+    public static readonly FGameTag AnimStun = new("Animator.Animation.Stun");
+    public static readonly FGameTag AnimDead = new("Animator.Animation.Dead");
+
+
 
 
 

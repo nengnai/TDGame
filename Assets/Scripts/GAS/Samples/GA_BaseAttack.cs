@@ -19,10 +19,6 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
     //一轮最大连发次数
     public int MaxBurstCount = 1;
     
-    // 攻击距离
-    public float DetectRange = 100.0f;
-    public float ShootRange = 100.0f;
-    
     private FTimerHandle BurstDelayHandle;
     private FTimerHandle ShootDelayHandle;
     private int BurstCount = 0;
@@ -97,7 +93,6 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
 
         Shoot(Target, BurstCount < MaxBurstCount);
 
-        
         if (BurstCount >= MaxBurstCount)
         {
             //Debug.LogError(GetFireDelay());
@@ -123,10 +118,29 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
         
         MyStats.AnimatorEvent?.TriggerAction(TDGameTags.AnimatorFireEvent, AnimatorData);
         
-        Debug.LogWarning("射击");
-        Target.DecreaseHealth(MyStats.Damage);
-        // @todo: 调用 CharacterStats 的一个伤害函数，传入攻击类型与伤害
+        float FDamage;
+        switch (Target.ArmorKind)
+        {
+            case CharacterStats.ArmorType.Light:
+            FDamage = MyStats.Damage + MyStats.VS轻甲;
+            break;
+
+            case CharacterStats.ArmorType.Medium:
+            FDamage = MyStats.Damage + MyStats.VS中甲;
+            break;
+
+            case CharacterStats.ArmorType.Heavy:
+            FDamage = MyStats.Damage + MyStats.VS重甲;
+            break;
+
+            case CharacterStats.ArmorType.Null:
+            FDamage = MyStats.Damage;
+            break;
+
+            default:
+            FDamage = MyStats.Damage;
+            break;
+        }
+        Target.DecreaseHealth(FDamage);
     }
-    
-    
 }
