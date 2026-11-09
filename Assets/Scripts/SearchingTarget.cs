@@ -5,33 +5,53 @@ using UnityEngine;
 
 public class SearchingTarget : MonoBehaviour
 {
+    public float ScanDur = 0.1f;
+    public float ReCheckTargetDur = 60.0f;
+    
     private CharacterStats Myself;
-
-
     private CharacterStats MyTarget;
-
-
+    
     private Collider[] OverlapBuffer = new Collider[100];
     private List<CharacterStats> CandidateBuffer = new();
-
-
-
-
-
-
-
+    
     private AbilitySystemComponent AbilitySystem;
+
+
+    // 搜索缓存
+    struct SearchingResult
+    {
+        public SearchingResult(CharacterStats InTarget)
+        {
+            Target = InTarget;
+            Time = UnityEngine.Time.time;
+        }
+        
+        public CharacterStats Target;
+        public float Time;
+    }
+    private Dictionary<GA_BaseAttack, SearchingResult> SearchingCaches = new();
+    private List<GA_BaseAttack> _removeBuffer = new();
 
 
     void Awake()
     {
         Myself = GetComponent<CharacterStats>();
         AbilitySystem = GetComponent<AbilitySystemComponent>();
-    }
 
-    void Update()
-    {
-        if(!IsTargetValid(MyTarget))  MyTarget = null;
+        TimerSubsystem.GetSubsystem().AddTimer(ReCheckTargetDur, true, false,
+            () =>
+            {
+                if(!IsTargetValid(MyTarget))  MyTarget = null;
+                
+                _removeBuffer.Clear();
+                foreach (var Cache in SearchingCaches)
+                {
+                    if(!IsTargetValid(Cache.Value.Target)) _removeBuffer.Add(Cache.Key);
+                }
+                
+                foreach (var key in _removeBuffer) SearchingCaches.Remove(key);
+                _removeBuffer.Clear();
+            });
     }
 
 
@@ -46,25 +66,30 @@ public class SearchingTarget : MonoBehaviour
 
     public CharacterStats ScanWithWeapon(GA_BaseAttack Weapon)
     {
-        if(Weapon == null) return null;
-        if(Myself == null) return null;
+        if(!Weapon) return null;
+        if(!Myself) return null;
 
-
-        // todo:这里限制时间的逻辑不对，1:没区分武器 2:未到的时候应该返回上次检查的缓存值
-        /*if(Time.time - LastScanTime < ScanDur) return null;
-        LastScanTime = Time.time;*/
-
-
-
-        CollectCandidatesInRange(Weapon.GetShootRange());
-        if(CandidateBuffer.Count > 0)
+        SearchingResult Cache;
+        if (SearchingCaches.TryGetValue(Weapon, out Cache))
         {
-            MyTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself);
-            return MyTarget;
+            if(Time.time - Cache.Time < ScanDur) return Cache.Target;
         }
 
-        CollectCandidatesInRange(Weapon.GetDetectRange());
-        MyTarget = SelectNormalShootTarget(CandidateBuffer, Weapon, Myself);
+        CollectCandidatesInRange(Weapon.GetShootRange());
+        if (CandidateBuffer.Count > 0)
+        {
+            Cache = new(SelectNormalShootTarget(CandidateBuffer, Weapon, Myself));
+        }
+        else
+        {
+            CollectCandidatesInRange(Weapon.GetDetectRange());
+            Cache = new(SelectNormalShootTarget(CandidateBuffer, Weapon, Myself));
+        }
+        SearchingCaches[Weapon] = Cache;
+
+        //@todo:不应该将所有武器的结果都设置为全局目标吧？！
+        MyTarget = Cache.Target;
+        
         return MyTarget;
     }
 
@@ -131,12 +156,8 @@ public class SearchingTarget : MonoBehaviour
             {
                 TargetScoringLibrary.ScoreByHealthShield(Candidate, ref CurrentScore, false, -1f);
             }
-
             
-
-
-
-
+            
             if(CurrentScore > BestScore)
             {
                 BestScore = CurrentScore;
@@ -146,12 +167,4 @@ public class SearchingTarget : MonoBehaviour
 
         return BestTarget;
     }
-
-
-
-
-
-
-
-
 }

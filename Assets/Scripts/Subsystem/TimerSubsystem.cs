@@ -15,16 +15,10 @@ public struct FTimerHandle
         TimerHandle = InTimerHandle;
     }
 
-    public bool IsValid()
-    {
-        return TimerHandle != 0 && TimerSubsystem.GetSubsystem().IsValid(this);
-    }
+    public override int GetHashCode() => (int)TimerHandle;
     
-    public override int GetHashCode()
-    {
-        return (int)TimerHandle;
-    }
-
+    public bool IsValid() => TimerHandle != 0 && TimerSubsystem.GetSubsystem().IsValid(this);
+    
     public void RemoveTimer() => TimerSubsystem.GetSubsystem().RemoveTimer(this);
 }
 
@@ -85,7 +79,7 @@ public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
             
             FTimerData Data = TimerDict[Timer.TimerHandle];
 
-            if (Data.IsLoop)
+            if (Data.IsLoop && Data.CallBack != null)
             {
                 Timer.FadedTimer += Data.CostTime;
                 FastSortEnd(TimerList);

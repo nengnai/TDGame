@@ -35,7 +35,7 @@ namespace TDGameLibrary
             
             if (AutoCreateChecker())
             {
-                GameObject NewObject = new GameObject();
+                GameObject NewObject = new();
                 _Subsystem = NewObject.AddComponent<T>();
                 return _Subsystem;
             }
