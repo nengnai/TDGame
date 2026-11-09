@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TDGameLibrary;
-using Unity.Entities.UniversalDelegates;
+using UnityEngine.Localization;
 
 public class ValueChange
 {
@@ -103,7 +103,7 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    public string Name; //@todo:替换为 unity 支持多语言的类型
+    public LocalizedString Name; //@todo:替换为 unity 支持多语言的类型
     public float MaxHealth = 300.0f;
     public float CurrentHealth;
     public float MaxShield = 0.0f;
@@ -126,6 +126,8 @@ public class CharacterStats : MonoBehaviour
     public float FinalFixed = 0.0f;              //造成最终伤害之前的独立增减伤乘区值
 
     public Action OnDeath;
+    
+    public bool IsSelected;
 
 
     
