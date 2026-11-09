@@ -38,6 +38,12 @@ public class 角色控制器 : MonoBehaviour
         普攻实例 = ASC.GetLiveAbility(普攻) as GA_BaseAttack;
     }
 
+    void Start()
+    {
+        停止攻击();
+        停止移动();
+    }
+
 
     void Update()
     {
@@ -45,7 +51,6 @@ public class 角色控制器 : MonoBehaviour
         {
             if(MyTarget)   MyTarget = null;
             if(!ASC.Tags.HasTagExact(TDGameTags.IsDead)) ASC.Tags.AddTag(TDGameTags.IsDead);
-            //原地停下
             停止移动();
             停止攻击();
             return;
@@ -59,7 +64,6 @@ public class 角色控制器 : MonoBehaviour
 
         if (ASC.Tags.HasTag(TDGameTags.IsStun))
         {
-            寻路系统.SetPath(null);
             停止移动();
             停止攻击();
             return;
@@ -104,7 +108,6 @@ public class 角色控制器 : MonoBehaviour
             {
                 if (ASC.Tags.HasTagExact(TDGameTags.IsMove))
                 {                   
-                    寻路系统.SetPath(null);
                     停止移动();   
                 }
 
@@ -130,6 +133,15 @@ public class 角色控制器 : MonoBehaviour
         Policy.mode = AutoRepathPolicy.Mode.Never;
         寻路系统.autoRepath = Policy;
         ASC.Tags.RemoveTag(TDGameTags.IsMove);
+
+
+        var setting = 寻路系统.rvoSettings;
+        setting.locked = true;
+        setting.priority = 1f;
+        寻路系统.rvoSettings = setting;
+        
+
+        寻路系统.SetPath(null);
     }
 
 
@@ -144,6 +156,12 @@ public class 角色控制器 : MonoBehaviour
         Policy.mode = AutoRepathPolicy.Mode.EveryNSeconds;
         寻路系统.autoRepath = Policy;
         ASC.Tags.AddTag(TDGameTags.IsMove);
+
+
+        var setting = 寻路系统.rvoSettings;
+        setting.locked = false;
+        setting.priority = 0.5f;
+        寻路系统.rvoSettings = setting;
     }
 
 

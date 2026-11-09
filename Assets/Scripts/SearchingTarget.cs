@@ -1,6 +1,5 @@
 // 用于目标搜索等功能的组件
 
-using System;
 using System.Collections.Generic;
 using TDGameLibrary;
 using UnityEngine;
@@ -14,7 +13,7 @@ public class SearchingTarget : MonoBehaviour
     private CharacterStats MyTarget;
     
     private Collider[] OverlapBuffer = new Collider[100];
-    private List<CharacterStats> CandidateBuffer = new();
+    private List<CharacterStats> 检测候选目标 = new();
     
     private AbilitySystemComponent AbilitySystem;
     
@@ -34,8 +33,8 @@ public class SearchingTarget : MonoBehaviour
         public CharacterStats Target;
         public float Time;
     }
-    private Dictionary<GA_BaseAttack, SearchingResult> SearchingCaches = new();
-    private List<GA_BaseAttack> _removeBuffer = new();
+    private Dictionary<GA_BaseAttack, SearchingResult> 目标缓存 = new();
+    private List<GA_BaseAttack> 预备删除缓存 = new();
 
 
     void Awake()
@@ -48,14 +47,14 @@ public class SearchingTarget : MonoBehaviour
             {
                 if(!IsTargetValid(MyTarget))  MyTarget = null;
                 
-                _removeBuffer.Clear();
-                foreach (var Cache in SearchingCaches)
+                预备删除缓存.Clear();
+                foreach (var Cache in 目标缓存)
                 {
-                    if(!IsTargetValid(Cache.Value.Target)) _removeBuffer.Add(Cache.Key);
+                    if(!IsTargetValid(Cache.Value.Target)) 预备删除缓存.Add(Cache.Key);
                 }
                 
-                foreach (var key in _removeBuffer) SearchingCaches.Remove(key);
-                _removeBuffer.Clear();
+                foreach (var key in 预备删除缓存) 目标缓存.Remove(key);
+                预备删除缓存.Clear();
             });
     }
 
@@ -79,22 +78,22 @@ public class SearchingTarget : MonoBehaviour
         if(!Myself) return null;
 
         SearchingResult Cache;
-        if (SearchingCaches.TryGetValue(Weapon, out Cache))
+        if (目标缓存.TryGetValue(Weapon, out Cache))
         {
             if(Time.time - Cache.Time < ScanDur) return Cache.Target;
         }
 
         CollectCandidatesInRange(Weapon.GetShootRange());
-        if (CandidateBuffer.Count > 0)
+        if (检测候选目标.Count > 0)
         {
-            Cache = new(SelectNormalShootTarget(CandidateBuffer, Weapon, Myself));
+            Cache = new(SelectNormalShootTarget(检测候选目标, Weapon, Myself));
         }
         else
         {
             CollectCandidatesInRange(Weapon.GetDetectRange());
-            Cache = new(SelectNormalShootTarget(CandidateBuffer, Weapon, Myself));
+            Cache = new(SelectNormalShootTarget(检测候选目标, Weapon, Myself));
         }
-        SearchingCaches[Weapon] = Cache;
+        目标缓存[Weapon] = Cache;
 
         //@todo:不应该将所有武器的结果都设置为全局目标吧？！
         MyTarget = Cache.Target;
@@ -105,13 +104,13 @@ public class SearchingTarget : MonoBehaviour
 
     void CollectCandidatesInRange(float Range)
     {
-        CandidateBuffer.Clear();
+        检测候选目标.Clear();
         int HitCount = Physics.OverlapSphereNonAlloc(transform.position, Range, OverlapBuffer);
         for (int i = 0; i < HitCount; i++)
         {
             CharacterStats TargetStats = OverlapBuffer[i].GetComponentInChildren<CharacterStats>();
             if(TargetStats == null) continue;
-            if(TargetScoringLibrary.IsValidTarget(TargetStats, Myself)) CandidateBuffer.Add(TargetStats);
+            if(TargetScoringLibrary.IsValidTarget(TargetStats, Myself)) 检测候选目标.Add(TargetStats);
         }
     }
 
