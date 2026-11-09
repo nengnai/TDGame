@@ -126,3 +126,6 @@ ProjectSettings/Packages/com.unity.probuilder/Settings.json
 ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json
 Assets/Photon/FusionDemos/Photon-Fusion-Intro-Sample-2.0.4-Stable-884.unitypackage.meta
 Assets/Photon/FusionMenu/Photon-Fusion-Menu-2.0.4-Stable-884.unitypackage.meta
+
+# 排除单元测试结果
+/TestResults.xml
