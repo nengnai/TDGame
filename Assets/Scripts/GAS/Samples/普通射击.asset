@@ -22,7 +22,8 @@ MonoBehaviour:
   CancelTags:
     SerializedTags: []
   OwnTags:
-    SerializedTags: []
+    SerializedTags:
+    - Name: isAttack
   ShootDelay: 3
   BurstDelay: 0.01
   MaxBurstCount: 1

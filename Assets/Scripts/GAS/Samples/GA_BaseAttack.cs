@@ -4,14 +4,14 @@
 
 using TDGameLibrary;
 using UnityEngine;
-interface IWeaponAtackInterface
+interface IWeaponAttackInterface
 {
     float GetShootRange();
     float GetDetectRange();
 }
 
 [CreateAssetMenu(fileName = "普通射击", menuName = "Scriptable GAS/NewScriptableObjectScript")]
-public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
+public class GA_BaseAttack : GameAbility, IWeaponAttackInterface
 {
     // 攻击间隔
     public float ShootDelay = 0.1f;
@@ -35,7 +35,14 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
         
         // 禁止移动时开火
         CancelTags.AddTag(TDGameTags.IsMove);
+        CancelTags.AddTag(TDGameTags.IsStun);
+        CancelTags.AddTag(TDGameTags.IsDead);
+        CancelTags.AddTag(TDGameTags.IsUsingSkill);
+
         BlockedByTags.AddTag(TDGameTags.IsMove);
+        BlockedByTags.AddTag(TDGameTags.IsStun);
+        BlockedByTags.AddTag(TDGameTags.IsDead);
+        BlockedByTags.AddTag(TDGameTags.IsUsingSkill);
         
         MyStats = Owner.GetComponent<CharacterStats>();
         SearchingTarget = Owner.GetComponent<SearchingTarget>();
@@ -87,6 +94,7 @@ public class GA_BaseAttack : GameAbility, IWeaponAtackInterface
         if (!CanShoot())
         {
             // 应该换弹了，但是不在这里触发，在外部 AI 部分
+            // 普攻换弹已取消。
             return;
         }
         

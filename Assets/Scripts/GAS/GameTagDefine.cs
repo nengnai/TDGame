@@ -25,6 +25,7 @@ public static class TDGameTags
     public static readonly FGameTag IsStun = new("Game.Stats.IsStun");
     public static readonly FGameTag IsAttack = new("Game.Stats.IsAttack");
     public static readonly FGameTag IsDead = new("Game.Stats.IsDead");
+    public static readonly FGameTag IsUsingSkill = new("Game.Stats.IsUsingSkill");
     
     /* ---- 索敌逻辑 ---- */
     public static readonly FGameTag Search优先近距离 = new("Logic.Search.优先近距离");
