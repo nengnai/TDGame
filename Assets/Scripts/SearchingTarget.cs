@@ -1,4 +1,6 @@
+// 用于目标搜索等功能的组件
 
+using System;
 using System.Collections.Generic;
 using TDGameLibrary;
 using UnityEngine;
@@ -15,6 +17,9 @@ public class SearchingTarget : MonoBehaviour
     private List<CharacterStats> CandidateBuffer = new();
     
     private AbilitySystemComponent AbilitySystem;
+    
+    
+    private FTimerHandle UpdateLogicTimer;
 
 
     // 搜索缓存
@@ -38,7 +43,7 @@ public class SearchingTarget : MonoBehaviour
         Myself = GetComponent<CharacterStats>();
         AbilitySystem = GetComponent<AbilitySystemComponent>();
 
-        TimerSubsystem.GetSubsystem().AddTimer(ReCheckTargetDur, true, false,
+        UpdateLogicTimer = TimerSubsystem.GetSubsystem().AddTimer(ReCheckTargetDur, true, false,
             () =>
             {
                 if(!IsTargetValid(MyTarget))  MyTarget = null;
@@ -54,6 +59,10 @@ public class SearchingTarget : MonoBehaviour
             });
     }
 
+    private void OnDestroy()
+    {
+        UpdateLogicTimer.RemoveTimer();
+    }
 
 
     bool IsTargetValid(CharacterStats Target)

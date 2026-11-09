@@ -128,8 +128,7 @@ public class CharacterStats : MonoBehaviour
     public Action OnDeath;
 
 
-
-    public bool IsSelected;
+    
     public bool IsDead;
 
 
