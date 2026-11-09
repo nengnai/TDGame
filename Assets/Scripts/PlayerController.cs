@@ -3,24 +3,19 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
-
+    
     public Camera MainCam;
-
-
-
-
+    
     private Ray MouseRay;
     private RaycastHit HitInfo;
 
     public LayerMask LayerMask;
 
+    
 
-
-
-    private List<RaycastHit> 选中的单位;
-    private List<RaycastHit> 选中的主动技能;
-    private List<RaycastHit> 选中的建筑;
+    private List<RaycastHit> 选中的单位 = new();
+    private List<RaycastHit> 选中的主动技能 = new();
+    private List<RaycastHit> 选中的建筑 = new();
 
 
 
@@ -29,9 +24,6 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         MainCam = Camera.main;
-        选中的单位 = new();
-        选中的建筑 = new();
-        选中的主动技能 = new();
     }
 
 
@@ -112,7 +104,7 @@ public class PlayerController : MonoBehaviour
                     }
 
                     角色控制器 控制器 = Hit.collider.GetComponentInChildren<角色控制器>();
-                    控制器.移动目标地点 = HitInfo.point;
+                    控制器.SetMoveTargetLocation(HitInfo.point);
                 }
             }
             else if(选中的建筑.Count > 0)

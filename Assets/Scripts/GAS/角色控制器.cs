@@ -1,42 +1,29 @@
+// 用与角色控制与指令传达
+
 using Pathfinding;
 using UnityEngine;
 
 public class 角色控制器 : MonoBehaviour
 {
-    
+    // 其他组件
     CharacterStats MyStats;
     public CharacterStats MyTarget;
     SearchingTarget SearchingTarget;
     AbilitySystemComponent ASC;
     FollowerEntity 寻路系统;
-    GA_BaseAttack 普攻实例;
-
-
-    float 目标距离;
-    public Vector3 移动目标地点;
-    private Vector3 上次移动地点;
-
-
-    FAbilityHandle 普攻;
-
-
-
-    public float ScanDur;
-    float LastScan;
-
-
-
-
-
+    
+    // 移动
+    private Vector3 移动目标地点;
+    bool 手动移动指令;
+    
+    // 转向
     public float 最大转向速度;
     public float 最小转向速度;
-    Vector3? 目标位置方向;
-    
+    Vector3? 面向位置;
 
-
-
-
-    bool 手动移动指令;
+    // 普攻
+    FAbilityHandle 普攻;
+    GA_BaseAttack 普攻实例;
 
 
 
@@ -56,7 +43,7 @@ public class 角色控制器 : MonoBehaviour
     {
         if (MyStats.IsDead)             //单位死亡 清空索敌目标
         {
-            if(MyTarget != null)   MyTarget = null;
+            if(MyTarget)   MyTarget = null;
             if(!ASC.Tags.HasTagExact(TDGameTags.IsDead)) ASC.Tags.AddTag(TDGameTags.IsDead);
             //原地停下
             停止移动();
@@ -64,10 +51,10 @@ public class 角色控制器 : MonoBehaviour
             return;
         }
 
-        if (MyTarget != null && MyTarget.IsDead)         //目标死亡 清空索敌目标
+        if (MyTarget && MyTarget.IsDead)         //目标死亡 清空索敌目标
         {
             MyTarget = SearchingTarget.ScanWithWeapon(普攻实例);   //目标死亡后立刻进行一次搜索 如果有敌人就继续打 没有就停火归null
-        }    
+        }
 
 
         if (ASC.Tags.HasTag(TDGameTags.IsStun))
@@ -78,48 +65,25 @@ public class 角色控制器 : MonoBehaviour
             return;
         }
 
-        if(!MyStats.IsDead && 目标位置方向 != null)
+        if(!MyStats.IsDead && 面向位置 != null)
         {
-            LookAtTarget(目标位置方向.Value);
+            LookAtTarget(面向位置.Value);
         }
 
 
-        //主动/被动技能检测和释放
+        /*  ---- 主动/被动技能检测和释放 ---- */
         
-
-
-        if(上次移动地点 != 移动目标地点)
+        if(!MyTarget && !寻路系统.hasPath && !手动移动指令)
         {
-            手动移动指令 = true;
-            MyTarget = null;
-            停止攻击();
-            开始移动();
-            寻路系统.SetDestination(移动目标地点);
-            上次移动地点 = 移动目标地点;
-        }
-
-        if(MyTarget == null && !寻路系统.hasPath && !手动移动指令)
-        {
-            if(Time.time - LastScan >= ScanDur)
-            {
-                LastScan = Time.time;
-                MyTarget = SearchingTarget.ScanWithWeapon(普攻实例);
-            }
-            
+            // 使用 SearchingTarget 的缓存，不用外边写
+            MyTarget = SearchingTarget.ScanWithWeapon(普攻实例);
         }
 
 
         if (寻路系统.hasPath)
         {
-            停止攻击();
+            
             if(!ASC.Tags.HasTagExact(TDGameTags.IsMove))  ASC.Tags.AddTag(TDGameTags.IsMove);
-
-            if (寻路系统.reachedDestination && 寻路系统.hasPath && 上次移动地点 == 移动目标地点)
-            {
-                寻路系统.SetPath(null);
-                停止移动();
-                手动移动指令 = false;
-            }
         }
 
 
@@ -127,10 +91,11 @@ public class 角色控制器 : MonoBehaviour
 
 
 
-        if(MyTarget != null && !手动移动指令)
+        // 追击
+        //@todo:正常应改为人机自动追击、玩家的单位无法追击？
+        if(MyTarget && !手动移动指令)
         {
-            目标距离 = Vector3.Distance(MyStats.transform.position, MyTarget.transform.position);
-            if(目标距离 > MyStats.ShootRange)
+            if(Vector3.Distance(MyStats.transform.position, MyTarget.transform.position) > MyStats.ShootRange)
             {
                 if(!ASC.Tags.HasTagExact(TDGameTags.IsMove)) 开始移动();
                 寻路系统.SetDestination(MyTarget.transform.position);
@@ -143,7 +108,7 @@ public class 角色控制器 : MonoBehaviour
                     停止移动();   
                 }
 
-                目标位置方向 = MyTarget.transform.position;
+                面向位置 = MyTarget.transform.position;
                 开始攻击();
             }
         }
@@ -157,29 +122,35 @@ public class 角色控制器 : MonoBehaviour
 
     void 停止移动()
     {
+        if (!ASC.Tags.HasTagExact(TDGameTags.IsMove)) { return; }
+        
         寻路系统.updateRotation = false;
 
-        var policy = 寻路系统.autoRepath;
-        policy.mode = AutoRepathPolicy.Mode.Never;
-        寻路系统.autoRepath = policy;
+        var Policy = 寻路系统.autoRepath;
+        Policy.mode = AutoRepathPolicy.Mode.Never;
+        寻路系统.autoRepath = Policy;
         ASC.Tags.RemoveTag(TDGameTags.IsMove);
     }
 
 
     void 开始移动()
     {
-        目标位置方向 = null;
+        停止攻击();
+        
+        面向位置 = null;
         寻路系统.updateRotation = true;
 
-        var policy = 寻路系统.autoRepath;
-        policy.mode = AutoRepathPolicy.Mode.EveryNSeconds;
-        寻路系统.autoRepath = policy;
+        var Policy = 寻路系统.autoRepath;
+        Policy.mode = AutoRepathPolicy.Mode.EveryNSeconds;
+        寻路系统.autoRepath = Policy;
         ASC.Tags.AddTag(TDGameTags.IsMove);
     }
 
 
     void 停止攻击()
     {
+        if (!ASC.IsAbilityActive(普攻)) { return; }
+        
         ASC.EndAbility(普攻);
         ASC.Tags.RemoveTag(TDGameTags.IsAttack);
     }
@@ -208,4 +179,19 @@ public class 角色控制器 : MonoBehaviour
     }
 
 
+    public void SetMoveTargetLocation(Vector3 TargetLocation, bool IsManual = true)
+    {
+        if (TargetLocation == 移动目标地点)
+        {
+            寻路系统.SetPath(null);
+            停止移动();
+            手动移动指令 = false;
+            return;
+        }
+        移动目标地点 = TargetLocation;
+        手动移动指令 = IsManual;
+        MyTarget = null;
+        开始移动();
+        寻路系统.SetDestination(移动目标地点);
+    }
 }
