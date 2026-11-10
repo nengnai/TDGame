@@ -53,6 +53,7 @@ public class 角色控制器 : MonoBehaviour
             if(!ASC.Tags.HasTagExact(TDGameTags.IsDead)) ASC.Tags.AddTag(TDGameTags.IsDead);
             停止移动();
             停止攻击();
+            MyTarget = null;
             return;
         }
         
@@ -60,6 +61,7 @@ public class 角色控制器 : MonoBehaviour
         {
             停止移动();
             停止攻击();
+            MyTarget = null;
             return;
         }
 
@@ -106,17 +108,20 @@ public class 角色控制器 : MonoBehaviour
         //@todo:正常应改为人机自动追击、玩家的单位无法追击？
         if (MyTarget && !手动移动指令)
         {
-            if(Vector3.Distance(MyStats.transform.position, MyTarget.transform.position) > MyStats.ShootRange)
+            if(Vector3.Distance(MyStats.transform.position, MyTarget.transform.position) > MyStats.ShootRange &&
+                Vector3.Distance(MyStats.transform.position, MyTarget.transform.position) <= MyStats.DetectRange)
             {
-                if(!ASC.Tags.HasTagExact(TDGameTags.IsMove)) { 开始移动(); }
+                if(!ASC.Tags.HasTagExact(TDGameTags.IsMove)) 开始移动();
                 寻路系统.SetDestination(MyTarget.transform.position);
+            }
+            else if(Vector3.Distance(MyStats.transform.position, MyTarget.transform.position) > MyStats.DetectRange)
+            {
+                if (ASC.Tags.HasTagExact(TDGameTags.IsMove)) 停止移动();
+                MyTarget = null;
             }
             else
             {
-                if (ASC.Tags.HasTagExact(TDGameTags.IsMove))
-                {
-                    停止移动();
-                }
+                if (ASC.Tags.HasTagExact(TDGameTags.IsMove)) 停止移动();
                 面向位置 = MyTarget.transform.position;
                 开始攻击();
             }
@@ -157,7 +162,7 @@ public class 角色控制器 : MonoBehaviour
         寻路系统.updateRotation = true;
 
         var Policy = 寻路系统.autoRepath;
-        Policy.mode = AutoRepathPolicy.Mode.EveryNSeconds;
+        Policy.mode = AutoRepathPolicy.Mode.Dynamic;
         寻路系统.autoRepath = Policy;
         ASC.Tags.AddTag(TDGameTags.IsMove);
 
@@ -174,7 +179,7 @@ public class 角色控制器 : MonoBehaviour
         if (!ASC.IsAbilityActive(普攻)) { return; }
         
         ASC.EndAbility(普攻);
-        ASC.Tags.RemoveTag(TDGameTags.IsAttack);
+        ASC.Tags.RemoveTag(TDGameTags.IsAttack);     
     }
 
     void 开始攻击()

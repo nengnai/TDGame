@@ -10872,14 +10872,14 @@ MonoBehaviour:
   MaxShield: 0
   CurrentShield: 0
   Armor: 10
-  MoveSpeed: 5
+  MoveSpeed: 2
   ArmorKind: 3
   BaseDamage:
     Damage: 100
     "VS\u8F7B\u7532": 0
     "VS\u4E2D\u7532": 0
     "VS\u91CD\u7532": 0
-  DetectRange: 5
+  DetectRange: 6
   ShootRange: 5
   FinalFixed: 0
   IsSelected: 0
@@ -14782,7 +14782,7 @@ MonoBehaviour:
   MaxShield: 0
   CurrentShield: 0
   Armor: 10
-  MoveSpeed: 5
+  MoveSpeed: 2
   ArmorKind: 1
   BaseDamage:
     Damage: 100

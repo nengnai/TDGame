@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TDGameLibrary;
 using UnityEngine.Localization;
+using Pathfinding;
 
 public class ValueChange
 {
@@ -100,6 +101,7 @@ public class CharacterStats : MonoBehaviour
     // 动画事件
     public EventSystem<AnimatorEventData> AnimatorEvent = new();
     public GA_BaseAttack NormalAttack;
+    FollowerEntity 寻路系统;
 
 
 
@@ -162,8 +164,13 @@ public class CharacterStats : MonoBehaviour
             [TDGameTags.ShootRange]     = (() => ShootRange,      v => ShootRange = v)
         };
 
+        寻路系统 = GetComponentInParent<FollowerEntity>();
         
-        
+    }
+
+    void Start() 
+    {
+        寻路系统.maxSpeed = MoveSpeed;
     }
 
 
@@ -302,10 +309,6 @@ public class CharacterStats : MonoBehaviour
 
 
 
-    void Start()
-    {
-        
-    }
 
 
 

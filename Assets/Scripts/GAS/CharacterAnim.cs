@@ -49,6 +49,7 @@ public class CharacterAnim : MonoBehaviour
             if(当前动画[0] != TDGameTags.AnimMoving)
             {
                 动画系统.CrossFade("Moving", 0.1f, 0, 0f);
+                动画系统.Play("Shoot.Empty", 1);
                 当前动画.Clear();
                 当前动画.Add(TDGameTags.AnimMoving);
             }
