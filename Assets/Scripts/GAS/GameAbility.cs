@@ -35,14 +35,14 @@ public class GameAbility : ScriptableObject
     // 只在 OnGranted / OnActivate 的实例上被调用；Static 不调用
     public virtual void OnGranted()
     {
-        TimeManager = new AbilityTimeManager();
+        TimeManager = new();
         LongTimeManager = new();
     }
 
     // 是否可以激活技能
     public virtual bool CanActivate()
     {
-        if (Owner == null) return false;
+        if (!Owner) return false;
 
         if (!RequiredTags.IsEmpty && !Owner.Tags.MatchAllContainer(RequiredTags)) return false;
         if (!BlockedByTags.IsEmpty && Owner.Tags.MatchAnyContainer(BlockedByTags)) return false;
@@ -69,6 +69,12 @@ public class GameAbility : ScriptableObject
         if (Policy == InstantiationPolicy.Static)
         { return; }
     }
+
+    // 移除技能时调用
+    public virtual void OnRemoveAbility()
+    {
+        LongTimeManager?.ClearAll();
+    }
 }
 
 
@@ -85,5 +91,11 @@ public class GameAbilitySpec
     {
         Config = InConfig;
         Handle = InHandle;
+    }
+
+    public GameAbility GetRunningAbility()
+    {
+        if (!Instance) return Config;
+        return Instance;
     }
 }

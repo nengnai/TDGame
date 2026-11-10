@@ -2291,7 +2291,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -167, y: 0, z: -748}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10771,8 +10771,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MyTarget: {fileID: 0}
-  "\u79FB\u52A8\u76EE\u6807\u5730\u70B9": {x: 0, y: 0, z: 0}
-  ScanDur: 0.1
   "\u6700\u5927\u8F6C\u5411\u901F\u5EA6": 800
   "\u6700\u5C0F\u8F6C\u5411\u901F\u5EA6": 300
 --- !u!114 &1934254143
@@ -10823,6 +10821,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f060b05761923747a4e416f1754c66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ScanDur: 0.1
+  ReCheckTargetDur: 60
 --- !u!95 &1934254147
 Animator:
   serializedVersion: 7
@@ -10858,7 +10858,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NormalAttack: {fileID: 11400000, guid: 69c4c777bc073ed4d92342bc59aa8b2f, type: 2}
-  Name: Misaki_E
+  Name:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   MaxHealth: 300
   CurrentHealth: 300
   MaxShield: 0
@@ -10878,6 +10886,9 @@ MonoBehaviour:
   IsDead: 0
   Skills: []
   PSkills: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &1966265996
 GameObject:
   m_ObjectHideFlags: 0
@@ -12314,7 +12325,7 @@ Transform:
   m_GameObject: {fileID: 1422403285329648303}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -24.61, y: 0.29274988, z: -3.7}
+  m_LocalPosition: {x: -22.46, y: 0.29274988, z: -3.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14757,7 +14768,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NormalAttack: {fileID: 11400000, guid: 69c4c777bc073ed4d92342bc59aa8b2f, type: 2}
-  Name: Misaki
+  Name:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   MaxHealth: 300
   CurrentHealth: 300
   MaxShield: 0
@@ -14777,6 +14796,9 @@ MonoBehaviour:
   IsDead: 0
   Skills: []
   PSkills: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &5402376957165035940
 GameObject:
   m_ObjectHideFlags: 0
@@ -15131,8 +15153,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MyTarget: {fileID: 0}
-  "\u79FB\u52A8\u76EE\u6807\u5730\u70B9": {x: 0, y: 0, z: 0}
-  ScanDur: 0.1
   "\u6700\u5927\u8F6C\u5411\u901F\u5EA6": 800
   "\u6700\u5C0F\u8F6C\u5411\u901F\u5EA6": 300
 --- !u!4 &5968580042047441974
@@ -15197,6 +15217,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f060b05761923747a4e416f1754c66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ScanDur: 0.1
+  ReCheckTargetDur: 60
 --- !u!1 &6117099859787118429
 GameObject:
   m_ObjectHideFlags: 0

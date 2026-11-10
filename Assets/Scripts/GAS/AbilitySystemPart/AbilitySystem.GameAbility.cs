@@ -134,8 +134,12 @@ public partial class AbilitySystemComponent : MonoBehaviour
             if (Specs.Count <= 0) TagToSpec.Remove(OwnTag);
         }
         
+        // 调用移除函数
+        Spec.GetRunningAbility().OnRemoveAbility();
+        
         if (Spec.Config.Policy == GameAbility.InstantiationPolicy.OnGranted && Spec.Instance != null)
         {
+            
             Destroy(Spec.Instance); // OnActivate 的实例已在 ShutdownAbility 里销毁
         }
         

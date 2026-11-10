@@ -85,17 +85,17 @@ public class GA_BaseAttack : GameAbility, IWeaponAttackInterface
     // 射击时判断
     private void TryShoot()
     {
-        if (!IsActive) return;
+        if (!IsActive) goto EndAbility;
         
         CharacterStats Target = SearchingTarget.ScanWithWeapon(this);
         
-        if(!Target)return;
+        if(!Target) goto EndAbility;
 
         if (!CanShoot())
         {
             // 应该换弹了，但是不在这里触发，在外部 AI 部分
             // 普攻换弹已取消。
-            return;
+            goto EndAbility;
         }
         
         BurstCount++;
@@ -114,11 +114,12 @@ public class GA_BaseAttack : GameAbility, IWeaponAttackInterface
         else
         {
             //Debug.LogError(GetFireDelay(true));
-            BurstDelayHandle = LongTimeManager.AddTimer(GetFireDelay(true), false, false, () =>
-            {
-                TryShoot();
-            });
+            BurstDelayHandle = LongTimeManager.AddTimer(GetFireDelay(true), false, false, TryShoot);
         }
+
+        return;
+        
+        EndAbility: EndAbility();
     }
 
     // 最终射击代码

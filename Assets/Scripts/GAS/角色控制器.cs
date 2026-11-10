@@ -55,19 +55,19 @@ public class 角色控制器 : MonoBehaviour
             停止攻击();
             return;
         }
-
-        if (MyTarget && MyTarget.IsDead)         //目标死亡 清空索敌目标
-        {
-            MyTarget = SearchingTarget.ScanWithWeapon(普攻实例);   //目标死亡后立刻进行一次搜索 如果有敌人就继续打 没有就停火归null
-        }
-
-
+        
         if (ASC.Tags.HasTag(TDGameTags.IsStun))
         {
             停止移动();
             停止攻击();
             return;
         }
+
+        if (MyTarget && MyTarget.IsDead)         //目标死亡 清空索敌目标
+        {
+            MyTarget = SearchingTarget.ScanWithWeapon(普攻实例);   //目标死亡后立刻进行一次搜索 如果有敌人就继续打 没有就停火归null
+        }
+        
 
         if(!MyStats.IsDead && 面向位置 != null)
         {
@@ -76,18 +76,25 @@ public class 角色控制器 : MonoBehaviour
 
 
         /*  ---- 主动/被动技能检测和释放 ---- */
-        
         if(!MyTarget && !寻路系统.hasPath && !手动移动指令)
         {
             // 使用 SearchingTarget 的缓存，不用外边写
-            MyTarget = SearchingTarget.ScanWithWeapon(普攻实例);
+            if (普攻实例 != null)
+            { MyTarget = SearchingTarget.ScanWithWeapon(普攻实例); }
         }
 
 
         if (寻路系统.hasPath)
         {
-            
+            停止攻击();
             if(!ASC.Tags.HasTagExact(TDGameTags.IsMove))  ASC.Tags.AddTag(TDGameTags.IsMove);
+            
+            if (寻路系统.reachedDestination && 寻路系统.hasPath)
+            {
+                寻路系统.SetPath(null);
+                停止移动();
+                手动移动指令 = false;
+            }
         }
 
 
@@ -97,26 +104,23 @@ public class 角色控制器 : MonoBehaviour
 
         // 追击
         //@todo:正常应改为人机自动追击、玩家的单位无法追击？
-        if(MyTarget && !手动移动指令)
+        if (MyTarget && !手动移动指令)
         {
             if(Vector3.Distance(MyStats.transform.position, MyTarget.transform.position) > MyStats.ShootRange)
             {
-                if(!ASC.Tags.HasTagExact(TDGameTags.IsMove)) 开始移动();
+                if(!ASC.Tags.HasTagExact(TDGameTags.IsMove)) { 开始移动(); }
                 寻路系统.SetDestination(MyTarget.transform.position);
             }
-            else                            
+            else
             {
                 if (ASC.Tags.HasTagExact(TDGameTags.IsMove))
-                {                   
-                    停止移动();   
+                {
+                    停止移动();
                 }
-
                 面向位置 = MyTarget.transform.position;
                 开始攻击();
             }
         }
-
-
     }
 
 
