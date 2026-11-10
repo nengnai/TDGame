@@ -25,6 +25,7 @@ public class GameAbility : ScriptableObject
     [NonSerialized] public AbilitySystemComponent Owner;
     [NonSerialized] public FAbilityHandle Handle;
     [NonSerialized] public AbilityTimeManager TimeManager;   // 仅 OnGranted / OnActivate 会创建
+    [NonSerialized] public AbilityTimeManager LongTimeManager;
     //@todo:Static 策略下上面这些字段写在共享 ScriptableObject 资产上，属于"调用期临时值"，调用结束即被清空
     
     public bool IsActive => Owner != null && Owner.IsAbilityActive(Handle);
@@ -35,6 +36,7 @@ public class GameAbility : ScriptableObject
     public virtual void OnGranted()
     {
         TimeManager = new AbilityTimeManager();
+        LongTimeManager = new();
     }
 
     // 是否可以激活技能

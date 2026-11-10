@@ -105,7 +105,7 @@ public class GA_BaseAttack : GameAbility, IWeaponAttackInterface
         if (BurstCount >= MaxBurstCount)
         {
             //Debug.LogError(GetFireDelay());
-            ShootDelayHandle = TimeManager.AddTimer(GetFireDelay(), false, false, () => 
+            ShootDelayHandle = LongTimeManager.AddTimer(GetFireDelay(), false, false, () => 
             {
                 BurstCount = 0;
                 TryShoot();
@@ -114,7 +114,10 @@ public class GA_BaseAttack : GameAbility, IWeaponAttackInterface
         else
         {
             //Debug.LogError(GetFireDelay(true));
-            BurstDelayHandle = TimeManager.AddTimer(GetFireDelay(true), false, false, TryShoot);
+            BurstDelayHandle = LongTimeManager.AddTimer(GetFireDelay(true), false, false, () =>
+            {
+                TryShoot();
+            });
         }
     }
 
