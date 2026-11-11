@@ -22,7 +22,7 @@ public class 角色控制器 : MonoBehaviour
     Vector3? 面向位置;
 
     // 普攻
-    FAbilityHandle 普攻;
+    public FAbilityHandle 普攻;
     GA_BaseAttack 普攻实例;
 
 
