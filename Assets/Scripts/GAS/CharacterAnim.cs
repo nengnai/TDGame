@@ -29,7 +29,7 @@ public class CharacterAnim : MonoBehaviour
         // 监听射击事件
         MyStats.AnimatorEvent.ListenAction(TDGameTags.AnimatorFireEvent, ShootAnim);
     }
-
+    
     void Update()
     {
         if (MyStats.IsDead)
@@ -43,7 +43,7 @@ public class CharacterAnim : MonoBehaviour
             }
             return;
         }
-
+        
         if (寻路系统.hasPath && !寻路系统.reachedDestination)
         {
             if(当前动画[0] != TDGameTags.AnimMoving)
@@ -58,14 +58,14 @@ public class CharacterAnim : MonoBehaviour
         {
             if (当前动画[0] != TDGameTags.AnimIdle && 当前动画[0] != TDGameTags.AnimShooting)
             {
-                if(Controller.MyTarget == null && !ASC.Tags.HasTagExact(TDGameTags.IsAttack))  动画系统.CrossFade("MoveEnd", 0.1f, 0, 0f);
+                动画系统.CrossFade("MoveEnd", 0.1f, 0, 0f);
                 当前动画.Clear();
                 当前动画.Add(TDGameTags.AnimIdle);
             }
         }
-
-
-        if(Controller.MyTarget == null && 当前动画[0] == TDGameTags.AnimShooting)
+        
+        
+        if(!Controller.MyTarget && 当前动画[0] == TDGameTags.AnimShooting)
         {
             当前动画[0] = TDGameTags.AnimIdle;
             Debug.Log("没人了");
@@ -75,7 +75,7 @@ public class CharacterAnim : MonoBehaviour
     }
 
 
-    public void ShootAnim(AnimatorEventData AnimData)
+    private void ShootAnim(AnimatorEventData AnimData)
     {   
         if(收枪计时.IsValid()) 计时器.RemoveTimer(收枪计时);
 
