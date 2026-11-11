@@ -19,7 +19,10 @@ public struct FTimerHandle
     
     public bool IsValid() => TimerHandle != 0 && TimerSubsystem.GetSubsystem().IsValid(this);
     
-    public void RemoveTimer() => TimerSubsystem.GetSubsystem().RemoveTimer(this);
+    public void RemoveTimer()
+    {
+        if(IsValid())  TimerSubsystem.GetSubsystem().RemoveTimer(this);
+    }
 }
 
 public class TimerSubsystem : WorldSubsystem<TimerSubsystem>
