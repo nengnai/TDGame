@@ -25,6 +25,7 @@ public class CharacterAnim : MonoBehaviour
         计时器 = new();
 
         当前动画.Add(TDGameTags.AnimIdle);
+        动画系统.CrossFade("Idle", 0.1f, 0, 0f);
         
         // 监听射击事件
         MyStats.AnimatorEvent.ListenAction(TDGameTags.AnimatorFireEvent, ShootAnim);
@@ -56,12 +57,19 @@ public class CharacterAnim : MonoBehaviour
         }
         else
         {
-            if (当前动画[0] != TDGameTags.AnimIdle && 当前动画[0] != TDGameTags.AnimShooting)
+            if(当前动画[0] != TDGameTags.AnimIdle)
             {
-                if(Controller.MyTarget == null && !ASC.Tags.HasTagExact(TDGameTags.IsAttack))  动画系统.CrossFade("MoveEnd", 0.1f, 0, 0f);
+                if((Controller.MyTarget == null && !ASC.Tags.HasTagExact(TDGameTags.IsAttack))
+                || (Controller.MyTarget != null && ASC.Tags.HasTagExact(TDGameTags.IsAttack) && 当前动画[0] != TDGameTags.AnimShooting))
+                {
+                    动画系统.CrossFade("MoveEnd", 0.1f, 0, 0f);
+                }
                 当前动画.Clear();
                 当前动画.Add(TDGameTags.AnimIdle);
             }
+
+            
+            
         }
 
 
@@ -78,7 +86,7 @@ public class CharacterAnim : MonoBehaviour
     public void ShootAnim(AnimatorEventData AnimData)
     {   
         if(收枪计时.IsValid()) 计时器.RemoveTimer(收枪计时);
-
+        if(MyStats.IsDead) return;
         动画系统.CrossFade("Base Layer.AttackStart", 0.1f, 0, 0f);
         动画系统.CrossFade("Shoot.Attack", 0.1f, 1, 0f);
         当前动画.Clear();
