@@ -45,6 +45,8 @@ public class CharacterAnim : MonoBehaviour
             return;
         }
 
+        //眩晕
+
         if (寻路系统.hasPath && !寻路系统.reachedDestination)
         {
             if(当前动画[0] != TDGameTags.AnimMoving)
@@ -64,6 +66,8 @@ public class CharacterAnim : MonoBehaviour
                 {
                     动画系统.CrossFade("MoveEnd", 0.1f, 0, 0f);
                 }
+
+
                 当前动画.Clear();
                 当前动画.Add(TDGameTags.AnimIdle);
             }
